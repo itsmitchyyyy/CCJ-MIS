@@ -5,8 +5,11 @@ import {
   StyledButton,
   StyledCard,
 } from './elements';
+import { useNavigate } from 'react-router-dom';
 
 export const LoginForm = () => {
+  const navigate = useNavigate();
+
   return (
     <LoginContainer>
       <StyledCard>
@@ -27,7 +30,11 @@ export const LoginForm = () => {
             </a>
           </RememberMeFormItem>
           <Form.Item>
-            <StyledButton size="large" type="primary" htmlType="submit">
+            <StyledButton
+              onClick={() => navigate('/dashboard')}
+              size="large"
+              type="primary"
+              htmlType="submit">
               Login
             </StyledButton>
           </Form.Item>
