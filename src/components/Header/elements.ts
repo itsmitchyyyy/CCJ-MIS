@@ -54,9 +54,9 @@ export const CustomLayout = styled(Layout)`
   //   }
 `;
 
-export const CustomContent = styled(Layout)<{ imageLogo: string }>`
+export const CustomContent = styled(Layout)<{ $imageLogo: string }>`
   height: calc(100vh - 102px);
-  background: url('${({ imageLogo }) => imageLogo}') no-repeat center center
+  background: url('${({ $imageLogo }) => $imageLogo}') no-repeat center center
     fixed;
   background-size: cover;
 `;
