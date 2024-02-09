@@ -2,7 +2,7 @@
 
 ## Prerequisites
 
-- NodeJS
+- [NodeJS](https://nodejs.org/en)
 
 ### Local Setup
 
