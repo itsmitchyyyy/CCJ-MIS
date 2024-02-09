@@ -43,20 +43,3 @@ export const TitleWrapper = styled.div`
     }
   }
 `;
-
-export const CustomLayout = styled(Layout)`
-  background-color: ${colors.sysLight.surface};
-
-  //   @media ${breakpoints.desktop} {
-  //     max-width: 768px;
-  //     margin-left: auto;
-  //     margin-right: auto;
-  //   }
-`;
-
-export const CustomContent = styled(Layout)<{ $imageLogo: string }>`
-  height: calc(100vh - 102px);
-  background: url('${({ $imageLogo }) => $imageLogo}') no-repeat center center
-    fixed;
-  background-size: cover;
-`;

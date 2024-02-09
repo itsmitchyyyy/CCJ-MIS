@@ -4,5 +4,8 @@ export const PATHS = {
   AUTH: {
     LOGIN: '/login',
   },
+  DASHBOARD: {
+    BASE: '/dashboard',
+  },
   // Todo: Add other paths
 };

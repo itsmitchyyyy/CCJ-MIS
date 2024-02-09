@@ -1,15 +1,16 @@
 import { Header } from '@/components/Header/Header';
-import { CustomContent, CustomLayout } from '@/components/Header/elements';
 import bgLogo from '@/assets/images/background.png';
 import { LoginForm } from '../components/LoginForm';
+import { CustomContentContainer } from '@/components/Layout/elements';
+import { MainLayout } from '@/components/Layout';
 
 export const Login = () => {
   return (
-    <CustomLayout>
+    <MainLayout>
       <Header />
-      <CustomContent $imageLogo={bgLogo}>
+      <CustomContentContainer $imageLogo={bgLogo}>
         <LoginForm />
-      </CustomContent>
-    </CustomLayout>
+      </CustomContentContainer>
+    </MainLayout>
   );
 };
