@@ -1,0 +1,5 @@
+export default {
+  AUTH_TOKEN: 'AUTH_TOKEN',
+  IS_LOGGED_IN: 'IS_LOGGED_IN',
+  EMAIL_ADDRESS: 'EMAIL_ADDRESS',
+};

@@ -3,6 +3,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Col, Row, Spin } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 import { BrowserRouter } from 'react-router-dom';
+import GlobalStateProvider from '@/hooks/global/Provider';
 
 type AppProviderProps = {
   children: React.ReactNode;
@@ -30,7 +31,9 @@ export const AppProvider = ({ children }: AppProviderProps) => {
         </Row>
       }>
       <QueryClientProvider client={queryClient}>
-        <BrowserRouter>{children}</BrowserRouter>
+        <GlobalStateProvider>
+          <BrowserRouter>{children}</BrowserRouter>
+        </GlobalStateProvider>
       </QueryClientProvider>
     </React.Suspense>
   );
