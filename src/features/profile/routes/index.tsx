@@ -1,14 +1,14 @@
 import { PATHS } from '@/constants/paths';
-import PublicRoutes from '@/routes/PublicRoutes';
 import { Outlet, RouteObject } from 'react-router-dom';
 import ProfilePage from './ProfilePage';
+import ProtectedRoutes from '@/routes/ProtectedRoutes';
 
 export const ProfileRoutes: RouteObject = {
   path: PATHS.PROFILE.BASE,
   element: (
-    <PublicRoutes>
+    <ProtectedRoutes>
       <Outlet />
-    </PublicRoutes>
+    </ProtectedRoutes>
   ),
   children: [
     {

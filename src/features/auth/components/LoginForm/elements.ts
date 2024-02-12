@@ -1,5 +1,5 @@
 import { colors } from '@/constants/themes';
-import { Button, Card, Form } from 'antd';
+import { Alert, Button, Card, Form } from 'antd';
 import styled from 'styled-components';
 
 export const LoginContainer = styled.div`
@@ -10,7 +10,7 @@ export const LoginContainer = styled.div`
 `;
 
 export const StyledCard = styled(Card)`
-  height: 421px;
+  min-height: 421px;
   width: 314px;
   box-shadow: -2px 1px 9px 0px ${colors.keyColors.grey};
   padding: 3em 0;
@@ -24,4 +24,8 @@ export const RememberMeFormItem = styled(Form.Item)`
 
 export const StyledButton = styled(Button)`
   width: 100%;
+`;
+
+export const StyledAlert = styled(Alert)`
+  color: ${colors.keyColors.danger};
 `;

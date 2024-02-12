@@ -5,6 +5,7 @@ export const colors = {
     tertiary: '#8B8EB3',
     seed: '#269DB9',
     grey: '#808080',
+    danger: '#ff0000',
   },
   sysLight: {
     primary: '#269DB9',

@@ -9,6 +9,8 @@ type Props = {
 };
 
 const Provider = (props: Props) => {
+  const [isLoggedInError, setIsLoggedInError] = useState<string>('');
+
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(() => {
     try {
       const data = storage.getItem(storageKeys.IS_LOGGED_IN);
@@ -56,13 +58,29 @@ const Provider = (props: Props) => {
         setEmailAddress(email);
         storage.setItem(storageKeys.EMAIL_ADDRESS, JSON.stringify(email));
       },
+      isLoggedInError,
+      setIsLoggedInError: (error: string) => {
+        setIsLoggedInError(error);
+      },
     }),
-    [token, setToken, isLoggedIn, setIsLoggedIn],
+    [
+      token,
+      setToken,
+      isLoggedIn,
+      setIsLoggedIn,
+      isLoggedInError,
+      setIsLoggedInError,
+      emailAddress,
+      setEmailAddress,
+    ],
   );
 
   return (
     <GlobalStateContext.Provider
-      value={useMemo(() => ({ useAuth }), [token, isLoggedIn, emailAddress])}
+      value={useMemo(
+        () => ({ useAuth }),
+        [token, isLoggedIn, emailAddress, isLoggedInError],
+      )}
       {...props}
     />
   );

@@ -5,4 +5,11 @@ export type useAuthState = {
   setIsLoggedIn: (isLoggedIn: boolean) => void;
   emailAddress: string;
   setEmailAddress: (emailAddress: string) => void;
+  isLoggedInError: string;
+  setIsLoggedInError: (error: string) => void;
+};
+
+export type LoginFormValues = {
+  username: string;
+  password: string;
 };

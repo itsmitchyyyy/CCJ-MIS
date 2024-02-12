@@ -2,18 +2,19 @@ import { useGlobalState } from '@/hooks/global';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const PublicRoutes = ({ children }: { children: JSX.Element }) => {
+const ProtectedRoutes = ({ children }: { children: JSX.Element }) => {
   const {
     useAuth: { isLoggedIn, token },
   } = useGlobalState();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (isLoggedIn) {
-      navigate('/dashboard');
+    if (!isLoggedIn) {
+      navigate('/login', { replace: true });
     }
   }, [isLoggedIn, token]);
+
   return children;
 };
 
-export default PublicRoutes;
+export default ProtectedRoutes;
