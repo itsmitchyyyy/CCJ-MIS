@@ -10,9 +10,19 @@ export const Wrapper = styled.div`
 `;
 
 export const StyledCard = styled(CardInfo)`
-  box-shadow: -2px 3px 9px 0px ${colors.keyColors.grey};
-  height: 300px;
-  width: 500px;
+  && {
+    box-shadow: -2px 3px 9px 0px ${colors.violet.main};
+    height: 300px;
+    width: 500px;
+    background: ${colors.violet.main};
+    border: 1px solid ${colors.violet.main};
+  }
+
+  .ant-card-head {
+    background: ${colors.violet.dark};
+    color: ${colors.sysLight.onPrimary};
+    border: 1px solid ${colors.violet.dark};
+  }
 `;
 
 export const StyledText = styled.p`

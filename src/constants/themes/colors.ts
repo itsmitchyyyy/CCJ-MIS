@@ -78,4 +78,8 @@ export const colors = {
     muscleRed: '#DE7678',
     muscleBlue: '#7497CB',
   },
+  violet: {
+    main: '#D4BEEF',
+    dark: '#59308D',
+  },
 };

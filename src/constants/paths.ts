@@ -7,5 +7,8 @@ export const PATHS = {
   DASHBOARD: {
     BASE: '/dashboard',
   },
+  PROFILE: {
+    BASE: '/profile',
+  },
   // Todo: Add other paths
 };

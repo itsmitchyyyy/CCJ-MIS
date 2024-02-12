@@ -1,10 +1,10 @@
 import { PATHS } from '@/constants/paths';
-import { RouteObject, Outlet } from 'react-router-dom';
 import PublicRoutes from '@/routes/PublicRoutes';
-import { Dashboard } from './Dashboard';
+import { Outlet, RouteObject } from 'react-router-dom';
+import ProfilePage from './ProfilePage';
 
-export const DashboardRoutes: RouteObject = {
-  path: PATHS.DASHBOARD.BASE,
+export const ProfileRoutes: RouteObject = {
+  path: PATHS.PROFILE.BASE,
   element: (
     <PublicRoutes>
       <Outlet />
@@ -13,7 +13,7 @@ export const DashboardRoutes: RouteObject = {
   children: [
     {
       path: '',
-      element: <Dashboard />,
+      element: <ProfilePage />,
     },
   ],
 };

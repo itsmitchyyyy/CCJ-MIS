@@ -5,11 +5,12 @@ type Props = {
   title?: string;
   className?: string;
   children?: React.ReactNode;
+  bordered?: boolean;
 };
 
-const CardInfo = ({ children, title, className }: Props) => {
+const CardInfo = ({ children, title, className, bordered }: Props) => {
   return (
-    <Card title={title} className={className}>
+    <Card title={title} bordered={bordered} className={className}>
       {children}
     </Card>
   );

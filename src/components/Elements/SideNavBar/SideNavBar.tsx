@@ -1,7 +1,7 @@
 import Sider from 'antd/es/layout/Sider';
 import DashboardLogo from '@/assets/images/logo_3.png';
 import { LogoWrapper } from './elements';
-import { Menu } from 'antd';
+import { Menu, MenuProps } from 'antd';
 import {
   AlertOutlined,
   DashboardOutlined,
@@ -10,12 +10,47 @@ import {
   UserAddOutlined,
   UserOutlined,
 } from '@ant-design/icons';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 type Props = {
   collapsed: boolean;
 };
 
+type MenuItem = Required<MenuProps>['items'][number];
+
+const getItem = (
+  label: React.ReactNode,
+  key: React.Key,
+  icon?: React.ReactNode,
+  children?: MenuItem[],
+): MenuItem => {
+  return { key, label, icon, children };
+};
+
+const items: MenuItem[] = [
+  getItem('Home', 'dashboard', <DashboardOutlined />),
+  getItem('Profile', 'profile', <UserOutlined />),
+  getItem('Announcement', 'announcement', <AlertOutlined />),
+  getItem('Approval', 'approval', <SignatureOutlined />),
+  getItem('Manage', 'manage', <SettingOutlined />),
+  getItem('Create Account', 'create-account', <UserAddOutlined />),
+];
+
 const SideNavBar = ({ collapsed }: Props) => {
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
+
+  const handleMenuClick = ({ key }: { key: string }) => {
+    switch (key) {
+      case 'dashboard':
+        navigate('/dashboard');
+        break;
+      case 'profile':
+        navigate('/profile');
+        break;
+    }
+  };
+
   return (
     <Sider trigger={null} collapsible collapsed={collapsed}>
       <LogoWrapper>
@@ -24,39 +59,9 @@ const SideNavBar = ({ collapsed }: Props) => {
       <Menu
         theme="dark"
         mode="inline"
-        defaultSelectedKeys={['dashboard']}
-        items={[
-          {
-            key: 'dashboard',
-            icon: <DashboardOutlined />,
-            label: 'Home',
-          },
-          {
-            key: 'profile',
-            icon: <UserOutlined />,
-            label: 'Profile',
-          },
-          {
-            key: 'announcement',
-            icon: <AlertOutlined />,
-            label: 'Announcement',
-          },
-          {
-            key: 'approval',
-            icon: <SignatureOutlined />,
-            label: 'Approval',
-          },
-          {
-            key: 'manage',
-            icon: <SettingOutlined />,
-            label: 'Manage',
-          },
-          {
-            key: 'create-account',
-            icon: <UserAddOutlined />,
-            label: 'Create Account',
-          },
-        ]}
+        selectedKeys={[pathname.replace('/', '')]}
+        items={items}
+        onClick={handleMenuClick}
       />
     </Sider>
   );
