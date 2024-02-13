@@ -22,8 +22,6 @@ export const LoginForm = ({ onSubmit, loading }: Props) => {
     useAuth: { isLoggedInError },
   } = useGlobalState();
 
-  console.log(isLoggedInError);
-
   const {
     handleSubmit,
     control,

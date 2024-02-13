@@ -18,6 +18,7 @@ export const components = {
   },
   Input: {
     colorBgContainer: colors.sysLight.surface,
+    colorTextDisabled: colors.sysLight.onSurfaceVariant,
   },
   Checkbox: {
     colorPrimary: colors.sysNewPrimary.newPrimary,

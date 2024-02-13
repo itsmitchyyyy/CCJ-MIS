@@ -46,7 +46,7 @@ const Provider = (props: Props) => {
       token,
       setToken: (token: string) => {
         setToken(token);
-        storage.setItem(storageKeys.AUTH_TOKEN, JSON.stringify(token));
+        storage.setItem(storageKeys.AUTH_TOKEN, token);
       },
       isLoggedIn,
       setIsLoggedIn: (isLoggedIn: boolean) => {
@@ -56,7 +56,7 @@ const Provider = (props: Props) => {
       emailAddress,
       setEmailAddress: (email: string) => {
         setEmailAddress(email);
-        storage.setItem(storageKeys.EMAIL_ADDRESS, JSON.stringify(email));
+        storage.setItem(storageKeys.EMAIL_ADDRESS, email);
       },
       isLoggedInError,
       setIsLoggedInError: (error: string) => {

@@ -3,4 +3,7 @@ export default {
     login: `/login`,
     register: `/register`,
   },
+  user: {
+    base: '/user',
+  },
 };

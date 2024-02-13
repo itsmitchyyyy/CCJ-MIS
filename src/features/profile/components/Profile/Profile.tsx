@@ -12,7 +12,11 @@ import {
 import { useState } from 'react';
 import { UserOutlined } from '@ant-design/icons';
 
-const Profile = () => {
+type Props = {
+  detail: ProfileDetail;
+};
+
+const Profile = ({ detail }: Props) => {
   const [isEdit, setIsEdit] = useState<boolean>(false);
   const fileRef = useRef<HTMLInputElement | null>(null);
 
@@ -42,13 +46,25 @@ const Profile = () => {
           <Flex gap="middle">
             <StyledFlex vertical>
               <Form.Item label="First Name" required>
-                <Input disabled={!isEdit} size="large" />
+                <Input
+                  disabled={!isEdit}
+                  size="large"
+                  value={detail.firstName}
+                />
               </Form.Item>
               <Form.Item label="Last Name" required>
-                <Input disabled={!isEdit} size="large" />
+                <Input
+                  disabled={!isEdit}
+                  size="large"
+                  value={detail.lastName}
+                />
               </Form.Item>
               <Form.Item label="Contact Number" required>
-                <Input disabled={!isEdit} size="large" />
+                <Input
+                  disabled={!isEdit}
+                  size="large"
+                  value={detail.contactNumber}
+                />
               </Form.Item>
               <Form.Item>
                 <Flex gap="middle">
@@ -78,40 +94,18 @@ const Profile = () => {
             </StyledFlex>
             <StyledFlex vertical>
               <Form.Item label="User ID">
-                <Input disabled size="large" />
+                <Input disabled size="large" value={detail.username} />
               </Form.Item>
               <Form.Item label="Email" required>
-                <Input type="email" disabled={!isEdit} size="large" />
+                <Input
+                  type="email"
+                  disabled={!isEdit}
+                  size="large"
+                  value={detail.email}
+                />
               </Form.Item>
             </StyledFlex>
           </Flex>
-          {/* <Row gutter={[16, 24]}>
-            <Col span={12}>
-              <Form.Item label="First Name" required>
-                <Input />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item label="First Name" required>
-                <Input />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item label="First Name" required>
-                <Input />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item label="First Name" required>
-                <Input />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item label="First Name" required>
-                <Input />
-              </Form.Item>
-            </Col>
-          </Row> */}
         </Form>
       </Wrapper>
     </Container>
