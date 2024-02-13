@@ -15,7 +15,6 @@ export const components = {
     colorPrimaryHover: colors.sysNewPrimary.newPrimary,
     colorBgContainerDisabled: colors.sysNewPrimary.primaryContainer,
     borderRadius: 0,
-    colorBorder: 'none',
   },
   Input: {
     colorBgContainer: colors.sysLight.surface,

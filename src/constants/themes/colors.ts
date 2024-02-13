@@ -83,4 +83,7 @@ export const colors = {
     main: '#D4BEEF',
     dark: '#59308D',
   },
+  profile: {
+    changeImage: '#2f2e2eb3',
+  },
 };
