@@ -21,4 +21,8 @@ export default class AuthRepository implements AuthRepositoryInterface {
   register = async (data: RegisterDTO): Promise<LoginSuccessDTO> => {
     return await this.httpAdapter.post(urls.auth.register, data);
   };
+
+  logout = async (): Promise<void> => {
+    return await this.httpAdapter.post(urls.auth.logout, {});
+  };
 }

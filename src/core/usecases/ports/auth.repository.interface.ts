@@ -7,4 +7,5 @@ import {
 export default interface AuthRepositoryInterface {
   login(data: LoginDTO): Promise<LoginSuccessDTO>;
   register(data: RegisterDTO): Promise<LoginSuccessDTO>;
+  logout(): Promise<void>;
 }

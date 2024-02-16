@@ -26,6 +26,7 @@ export const AdminLayoutContainer = styled(Layout)``;
 export const StyledHeader = styled(Header)`
   background: ${colors.sysLight.surface};
   padding: 0;
+  display: flex;
 `;
 
 export const ToggleSidebar = styled(Button)`
@@ -43,3 +44,13 @@ export const StyledContent = styled(Content)`
 `;
 
 export const AdminContentLayoutContainer = styled(Layout)``;
+
+export const LogoutWrapper = styled.div`
+  display: flex;
+  flex: 1;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 0 1em;
+`;
+
+export const LogoutButton = styled(Button)``;

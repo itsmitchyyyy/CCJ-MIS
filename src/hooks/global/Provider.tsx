@@ -62,6 +62,13 @@ const Provider = (props: Props) => {
       setIsLoggedInError: (error: string) => {
         setIsLoggedInError(error);
       },
+      resetAuth: () => {
+        setToken('');
+        setEmailAddress('');
+        setIsLoggedIn(false);
+        storage.removeItem(storageKeys.AUTH_TOKEN);
+        storage.removeItem(storageKeys.EMAIL_ADDRESS);
+      },
     }),
     [
       token,

@@ -6,8 +6,11 @@ import {
   ToggleSidebar,
   StyledHeader,
   StyledContent,
+  LogoutWrapper,
+  LogoutButton,
 } from './elements';
 import { MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons';
+import { useLogout } from '@/features/auth/api/logout';
 
 type Props = {
   children: React.ReactNode;
@@ -15,6 +18,7 @@ type Props = {
 
 const AdminLayout = ({ children }: Props) => {
   const [collapsed, setCollapsed] = useState<boolean>(false);
+  const { mutate: logout, isPending } = useLogout();
 
   return (
     <AdminLayoutContainer>
@@ -27,6 +31,14 @@ const AdminLayout = ({ children }: Props) => {
             icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
             onClick={() => setCollapsed(!collapsed)}
           />
+          <LogoutWrapper>
+            <LogoutButton
+              type="text"
+              onClick={() => logout()}
+              disabled={isPending}>
+              Logout
+            </LogoutButton>
+          </LogoutWrapper>
         </StyledHeader>
         <StyledContent>{children}</StyledContent>
       </AdminContentLayoutContainer>
