@@ -4,7 +4,7 @@ import { Col, Row, Spin } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 import { BrowserRouter } from 'react-router-dom';
 import GlobalStateProvider from '@/hooks/global/Provider';
-import { Toast } from '@/components/Toast';
+import { Toast } from '@/components/Elements/Toast';
 
 type AppProviderProps = {
   children: React.ReactNode;
