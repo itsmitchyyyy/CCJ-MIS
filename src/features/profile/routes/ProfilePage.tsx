@@ -3,6 +3,7 @@ import Profile from '../components/Profile/Profile';
 import { useProfileDetails } from '../api/getProfileDetails';
 import { convertJsonToCamelCase } from '@/utils/json';
 import { useUpdateAccountDetails } from '../api/updateAccountDetails';
+import { Loader } from '@/components/Elements/Loader';
 
 const ProfilePage = () => {
   const { data, isLoading } = useProfileDetails();
@@ -18,7 +19,7 @@ const ProfilePage = () => {
   };
 
   return isLoading ? (
-    <h1>Loading...</h1>
+    <Loader />
   ) : (
     <AdminLayout>
       <Profile

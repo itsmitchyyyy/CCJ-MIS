@@ -6,6 +6,8 @@ export const colors = {
     seed: '#269DB9',
     grey: '#808080',
     danger: '#ff0000',
+    black: '#000',
+    black02: '#0000',
   },
   sysLight: {
     primary: '#269DB9',
