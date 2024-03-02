@@ -6,5 +6,6 @@ export default {
   },
   user: {
     base: '/user',
+    update: (id: string | number) => `/user/${id}`,
   },
 };

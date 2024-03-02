@@ -4,6 +4,7 @@ import { Col, Row, Spin } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 import { BrowserRouter } from 'react-router-dom';
 import GlobalStateProvider from '@/hooks/global/Provider';
+import { Toast } from '@/components/Toast';
 
 type AppProviderProps = {
   children: React.ReactNode;
@@ -32,7 +33,10 @@ export const AppProvider = ({ children }: AppProviderProps) => {
       }>
       <QueryClientProvider client={queryClient}>
         <GlobalStateProvider>
-          <BrowserRouter>{children}</BrowserRouter>
+          <BrowserRouter>
+            <Toast />
+            {children}
+          </BrowserRouter>
         </GlobalStateProvider>
       </QueryClientProvider>
     </React.Suspense>

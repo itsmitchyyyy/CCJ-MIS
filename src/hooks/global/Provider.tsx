@@ -68,6 +68,7 @@ const Provider = (props: Props) => {
         setIsLoggedIn(false);
         storage.removeItem(storageKeys.AUTH_TOKEN);
         storage.removeItem(storageKeys.EMAIL_ADDRESS);
+        storage.removeItem(storageKeys.IS_LOGGED_IN);
       },
     }),
     [

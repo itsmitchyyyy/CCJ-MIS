@@ -4,6 +4,7 @@ type FetchAccountDetailsResponse = {
   last_name: string;
   contact_number: string;
   username: string;
+  profile_picture: string;
   access_type: string;
   status: string;
   email: string;
@@ -16,10 +17,19 @@ type ProfileDetail = {
   firstName: string;
   lastName: string;
   contactNumber: string;
+  profilePicture: string;
   username: string;
   accessType?: string;
   status?: string;
   email: string;
   createdAt?: Date;
   updatedAt?: Date;
+};
+
+type UpdateAccountDetails = {
+  first_name: string;
+  last_name: string;
+  contact_number: string;
+  email: string;
+  profile_picture?: File;
 };
