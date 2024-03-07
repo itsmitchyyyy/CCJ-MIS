@@ -10,5 +10,7 @@ export const PATHS = {
   PROFILE: {
     BASE: '/profile',
   },
-  // Todo: Add other paths
+  ACCOUNT: {
+    BASE: '/account',
+  },
 };

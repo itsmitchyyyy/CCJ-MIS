@@ -33,7 +33,7 @@ const items: MenuItem[] = [
   getItem('Announcement', 'announcement', <AlertOutlined />),
   getItem('Approval', 'approval', <SignatureOutlined />),
   getItem('Manage', 'manage', <SettingOutlined />),
-  getItem('Create Account', 'create-account', <UserAddOutlined />),
+  getItem('Account', 'account', <UserAddOutlined />),
 ];
 
 const SideNavBar = ({ collapsed }: Props) => {
@@ -47,6 +47,9 @@ const SideNavBar = ({ collapsed }: Props) => {
         break;
       case 'profile':
         navigate('/profile');
+        break;
+      case 'account':
+        navigate('/account');
         break;
     }
   };

@@ -1,5 +1,3 @@
-import { useState } from 'react';
-
 import './App.css';
 import { ConfigProvider } from 'antd';
 import { token, components } from '@/config/antdTheme';
