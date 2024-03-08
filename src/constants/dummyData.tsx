@@ -1,3 +1,4 @@
+import { Account } from '@/features/account/types';
 import { Space, TableProps } from 'antd';
 
 export const TableDummyData: Account[] = [
