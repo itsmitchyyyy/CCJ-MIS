@@ -14,4 +14,5 @@ export default interface AdminRepositoryInterface {
   fetchAccounts(
     queryParams?: FetchAccountsParams,
   ): Promise<FetchAccountsResponse>;
+  deleteAccount(id: string): Promise<void>;
 }

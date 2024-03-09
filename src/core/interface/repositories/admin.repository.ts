@@ -54,4 +54,8 @@ export default class AdminRepository implements AdminRepositoryInterface {
       },
     });
   };
+
+  deleteAccount = async (id: string): Promise<void> => {
+    return await this.httpAdapter.delete(urls.user.delete(id), {});
+  };
 }

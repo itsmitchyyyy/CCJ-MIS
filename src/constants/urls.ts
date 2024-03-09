@@ -9,5 +9,6 @@ export default {
     update: (id: string | number) => `/user/${id}`,
     store: '/user',
     list: '/users',
+    delete: (id: string | number) => `/user/${id}`,
   },
 };

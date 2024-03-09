@@ -34,9 +34,10 @@ const AccountAccessType = [
 type Props = {
   isLoading?: boolean;
   data: AccountDetails[];
+  onDeleteAccount: (id: string) => void;
 };
 
-export const ManageAccount = ({ isLoading, data }: Props) => {
+export const ManageAccount = ({ isLoading, data, onDeleteAccount }: Props) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
 
@@ -78,7 +79,7 @@ export const ManageAccount = ({ isLoading, data }: Props) => {
       key: 'action',
       render: (_, record) => (
         <Space size="middle">
-          <a>Delete</a>
+          <a onClick={() => onDeleteAccount(record.id)}>Delete</a>
         </Space>
       ),
     },

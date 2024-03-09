@@ -23,4 +23,8 @@ export default class HttpAxiosAdapter implements HttpAdapter {
   put = async (url: string, body: Object): Promise<any> => {
     return await this.axios.put(url, body);
   };
+
+  delete = async (url: string, options: AxiosRequestConfig) => {
+    return await this.axios.delete(url, options);
+  };
 }
