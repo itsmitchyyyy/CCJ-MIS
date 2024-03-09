@@ -33,3 +33,13 @@ type UpdateAccountDetails = {
   email: string;
   profile_picture?: File;
 };
+
+type CreateAccountDetails = {
+  first_name: string;
+  last_name: string;
+  contact_number: string;
+  email: string;
+  username: string;
+  password: string;
+  profile_picture?: File;
+};

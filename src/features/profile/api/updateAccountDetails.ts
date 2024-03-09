@@ -16,8 +16,7 @@ const updateAccountDetails = async (
 
 const useUpdateAccountDetails = () => {
   const query = useMutation({
-    onSuccess: (response) => {
-      console.log(response);
+    onSuccess: () => {
       toast.success('Account details updated');
     },
     mutationFn: (params: {

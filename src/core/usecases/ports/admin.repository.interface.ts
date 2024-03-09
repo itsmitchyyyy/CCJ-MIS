@@ -5,4 +5,5 @@ export default interface AdminRepositoryInterface {
     data: UpdateAccountDetails,
     hasPutMethod?: boolean,
   ): Promise<FetchAccountDetailsResponse>;
+  createAccount(data: CreateAccountDetails): Promise<void>;
 }

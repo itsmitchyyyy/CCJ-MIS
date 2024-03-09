@@ -34,4 +34,10 @@ export default class AdminRepository implements AdminRepositoryInterface {
 
     return this.httpAdapter.post(urls.user.update(id), formData, formHeaders);
   };
+
+  createAccount(data: CreateAccountDetails): Promise<void> {
+    return this.httpAdapter.post(urls.user.store, data, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+  }
 }

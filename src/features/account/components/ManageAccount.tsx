@@ -9,6 +9,7 @@ import {
 import { TableColumnDummyData, TableDummyData } from '@/constants/dummyData';
 import { AccessType } from '../types';
 import { getEnumKeysByValue } from '@/utils/enums';
+import { useNavigate } from 'react-router-dom';
 
 const AccountAccessType = [
   {
@@ -26,6 +27,8 @@ const AccountAccessType = [
 ];
 
 export const ManageAccount = () => {
+  const navigate = useNavigate();
+
   const handleChangeAccessType = (value: any, _: any) => {
     console.log(value);
   };
@@ -34,7 +37,11 @@ export const ManageAccount = () => {
     <ManageAccountWrapper>
       <ManageAccountHeader>
         <h1>Manage Account</h1>
-        <CreateAccountButton type="primary">Create Account</CreateAccountButton>
+        <CreateAccountButton
+          type="primary"
+          onClick={() => navigate('/account/create')}>
+          Create Account
+        </CreateAccountButton>
       </ManageAccountHeader>
       <ManageAccountContainer>
         <StyledSelect
