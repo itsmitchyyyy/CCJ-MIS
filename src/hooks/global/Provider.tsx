@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { GlobalState, GlobalStateContext } from '.';
 import storage from '@/utils/storage';
 import { storageKeys } from '@/constants/keys';
+import { ErrorMessageObject } from '@/features/account/types';
 
 type Props = {
   value?: GlobalState;
@@ -39,6 +40,11 @@ const Provider = (props: Props) => {
     } catch (error) {
       return '';
     }
+  });
+
+  const [accountError, setAccountError] = useState<ErrorMessageObject>({
+    errors: null,
+    message: '',
   });
 
   const useAuth = useMemo(
@@ -83,11 +89,20 @@ const Provider = (props: Props) => {
     ],
   );
 
+  const useAccount = useMemo(
+    () => ({
+      accountError,
+      setAccountError: (errors: any) => setAccountError(errors),
+      removeAccountError: () => setAccountError({ errors: null, message: '' }),
+    }),
+    [accountError],
+  );
+
   return (
     <GlobalStateContext.Provider
       value={useMemo(
-        () => ({ useAuth }),
-        [token, isLoggedIn, emailAddress, isLoggedInError],
+        () => ({ useAuth, useAccount }),
+        [token, isLoggedIn, emailAddress, isLoggedInError, accountError],
       )}
       {...props}
     />

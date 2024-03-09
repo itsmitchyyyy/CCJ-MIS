@@ -1,5 +1,6 @@
 import { colors } from '@/constants/themes';
 import { CloudUploadOutlined } from '@ant-design/icons';
+import { ErrorMessage } from '@hookform/error-message';
 import { Button, Flex, Select } from 'antd';
 import styled from 'styled-components';
 
@@ -61,4 +62,9 @@ export const ImageWrapper = styled.div`
 
 export const HiddenInput = styled.input`
   display: none;
+`;
+
+export const ErrorWrapper = styled.p`
+  color: ${colors.sysLight.error};
+  margin: 0;
 `;
