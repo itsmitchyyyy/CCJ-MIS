@@ -1,7 +1,7 @@
 import { colors } from '@/constants/themes';
 import { CloudUploadOutlined } from '@ant-design/icons';
 import { ErrorMessage } from '@hookform/error-message';
-import { Button, Flex, Select } from 'antd';
+import { Button, Flex, Select, Table, TableProps } from 'antd';
 import styled from 'styled-components';
 
 export const ManageAccountWrapper = styled.div``;
@@ -67,4 +67,14 @@ export const HiddenInput = styled.input`
 export const ErrorWrapper = styled.p`
   color: ${colors.sysLight.error};
   margin: 0;
+`;
+
+export const AccessTypeWrapper = styled.span`
+  text-transform: capitalize;
+`;
+
+export const StyledTable = styled((props: TableProps) => <Table {...props} />)`
+  .ant-empty-description {
+    color: ${colors.keyColors.black};
+  }
 `;

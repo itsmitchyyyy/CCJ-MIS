@@ -1,17 +1,22 @@
-import { Table } from 'antd';
+import { Space, TableProps } from 'antd';
 import {
+  AccessTypeWrapper,
   CreateAccountButton,
   ManageAccountContainer,
   ManageAccountHeader,
   ManageAccountWrapper,
   StyledSelect,
+  StyledTable,
 } from './elements';
-import { TableColumnDummyData, TableDummyData } from '@/constants/dummyData';
-import { AccessType } from '../types';
+import { AccessType, AccountDetails } from '../types';
 import { getEnumKeysByValue } from '@/utils/enums';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 const AccountAccessType = [
+  {
+    value: 'all',
+    label: 'All',
+  },
   {
     value: AccessType.Student,
     label: getEnumKeysByValue(AccessType, AccessType.Student),
@@ -26,12 +31,58 @@ const AccountAccessType = [
   },
 ];
 
-export const ManageAccount = () => {
+type Props = {
+  isLoading?: boolean;
+  data: AccountDetails[];
+};
+
+export const ManageAccount = ({ isLoading, data }: Props) => {
+  const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
 
   const handleChangeAccessType = (value: any, _: any) => {
-    console.log(value);
+    if (value === 'all' && searchParams.has('access_type')) {
+      searchParams.delete('access_type');
+      setSearchParams(searchParams);
+    } else {
+      setSearchParams({ access_type: value });
+    }
   };
+
+  const TableColumnData: TableProps<AccountDetails>['columns'] = [
+    {
+      title: 'ID',
+      dataIndex: 'id',
+      key: 'id',
+    },
+    {
+      title: 'First Name',
+      dataIndex: 'first_name',
+      key: 'first_name',
+    },
+    {
+      title: 'Last Name',
+      dataIndex: 'last_name',
+      key: 'last_name',
+    },
+    {
+      title: 'Role',
+      dataIndex: 'access_type',
+      key: 'access_type',
+      render: (_, record) => (
+        <AccessTypeWrapper>{record.access_type}</AccessTypeWrapper>
+      ),
+    },
+    {
+      title: 'Action',
+      key: 'action',
+      render: (_, record) => (
+        <Space size="middle">
+          <a>Delete</a>
+        </Space>
+      ),
+    },
+  ];
 
   return (
     <ManageAccountWrapper>
@@ -45,14 +96,15 @@ export const ManageAccount = () => {
       </ManageAccountHeader>
       <ManageAccountContainer>
         <StyledSelect
-          defaultValue={AccessType.Student}
+          defaultValue="all"
           onChange={handleChangeAccessType}
           options={AccountAccessType}
         />
-        <Table
-          columns={TableColumnDummyData}
-          dataSource={TableDummyData}
+        <StyledTable
+          columns={TableColumnData}
+          dataSource={data}
           rowKey="id"
+          loading={isLoading}
         />
       </ManageAccountContainer>
     </ManageAccountWrapper>

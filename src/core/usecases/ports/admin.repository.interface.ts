@@ -1,3 +1,8 @@
+import {
+  FetchAccountsParams,
+  FetchAccountsResponse,
+} from '@/features/account/types';
+
 export default interface AdminRepositoryInterface {
   fetchAccountDetails(): Promise<FetchAccountDetailsResponse>;
   updateAccountDetails(
@@ -6,4 +11,7 @@ export default interface AdminRepositoryInterface {
     hasPutMethod?: boolean,
   ): Promise<FetchAccountDetailsResponse>;
   createAccount(data: CreateAccountDetails): Promise<void>;
+  fetchAccounts(
+    queryParams?: FetchAccountsParams,
+  ): Promise<FetchAccountsResponse>;
 }

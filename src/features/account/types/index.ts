@@ -4,6 +4,11 @@ export type useAccountState = {
   removeAccountError: () => void;
 };
 
+export enum AccountStatus {
+  Active = 'active',
+  Inactive = 'inactive',
+}
+
 export enum AccessType {
   Student = 'student',
   Admin = 'admin',
@@ -20,4 +25,25 @@ export type ErrorMessageObject = {
 export type Account = {
   id: string;
   name: string;
+};
+
+export type AccountDetails = {
+  id: string;
+  first_name: string;
+  last_name: string;
+  contact_number: string;
+  username: string;
+  access_type: AccessType;
+  status: AccountStatus;
+  email: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+};
+
+export type FetchAccountsResponse = {
+  data: AccountDetails[];
+};
+
+export type FetchAccountsParams = {
+  access_type?: AccessType;
 };

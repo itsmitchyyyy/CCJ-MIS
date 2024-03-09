@@ -1,6 +1,10 @@
 import urls from '@/constants/urls';
 import AdminRepositoryInterface from '@/core/usecases/ports/admin.repository.interface';
 import { HttpAdapter } from '@/core/usecases/ports/httpAdapter.interface';
+import {
+  FetchAccountsParams,
+  FetchAccountsResponse,
+} from '@/features/account/types';
 import { AxiosRequestConfig } from 'axios';
 
 export default class AdminRepository implements AdminRepositoryInterface {
@@ -35,9 +39,19 @@ export default class AdminRepository implements AdminRepositoryInterface {
     return this.httpAdapter.post(urls.user.update(id), formData, formHeaders);
   };
 
-  createAccount(data: CreateAccountDetails): Promise<void> {
-    return this.httpAdapter.post(urls.user.store, data, {
+  createAccount = async (data: CreateAccountDetails): Promise<void> => {
+    return await this.httpAdapter.post(urls.user.store, data, {
       headers: { 'Content-Type': 'multipart/form-data' },
     });
-  }
+  };
+
+  fetchAccounts = async (
+    queryParams?: FetchAccountsParams,
+  ): Promise<FetchAccountsResponse> => {
+    return await this.httpAdapter.get(urls.user.list, {
+      params: {
+        ...queryParams,
+      },
+    });
+  };
 }

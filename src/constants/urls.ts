@@ -8,5 +8,6 @@ export default {
     base: '/user',
     update: (id: string | number) => `/user/${id}`,
     store: '/user',
+    list: '/users',
   },
 };
