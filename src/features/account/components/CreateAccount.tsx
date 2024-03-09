@@ -37,7 +37,7 @@ const DefaultFormValues = {
   last_name: '',
   contact_number: '',
   email: '',
-  role: 'student' as RoleType,
+  access_type: 'student' as RoleType,
   username: '',
   password: '',
 };
@@ -50,7 +50,7 @@ type Props = {
 
 export const CreateAccount = ({ onSubmit, isLoading, isSuccess }: Props) => {
   const {
-    useAccount: { accountError, removeAccountError },
+    useAccount: { accountError },
   } = useGlobalState();
 
   const fileRef = useRef<HTMLInputElement | null>(null);
@@ -252,12 +252,12 @@ export const CreateAccount = ({ onSubmit, isLoading, isSuccess }: Props) => {
               />
 
               <ErrorMessage
-                name="role"
+                name="access_type"
                 errors={errors}
                 render={({ message }) => <ErrorWrapper>{message}</ErrorWrapper>}
               />
               <Controller
-                name="role"
+                name="access_type"
                 control={control}
                 render={({ field }) => (
                   <Form.Item label="Role" required>

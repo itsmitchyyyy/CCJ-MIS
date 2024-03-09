@@ -11,7 +11,7 @@ export const validationSchema = yup
       .string()
       .email('Email must be a valid email')
       .required('Email is required'),
-    role: yup
+    access_type: yup
       .string()
       .required('Role is required')
       .oneOf(roleList.map((role) => role.toLocaleLowerCase()))
