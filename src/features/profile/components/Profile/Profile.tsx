@@ -26,11 +26,18 @@ import ChangePasswordModal from '../ChangePasswordModal';
 type Props = {
   detail: ProfileDetail;
   onSubmit: (data: UpdateAccountDetails & { id: string }) => void;
+  onChangePassword: (data: ChangePasswordRequest) => void;
   isSuccess?: boolean;
   isLoading?: boolean;
 };
 
-const Profile = ({ detail, onSubmit, isSuccess, isLoading }: Props) => {
+const Profile = ({
+  detail,
+  onSubmit,
+  isSuccess,
+  isLoading,
+  onChangePassword,
+}: Props) => {
   const [openChangePasswordModal, setOpenChangePasswordModal] =
     useState<boolean>(false);
   const [isEdit, setIsEdit] = useState<boolean>(false);
@@ -208,9 +215,7 @@ const Profile = ({ detail, onSubmit, isSuccess, isLoading }: Props) => {
           </Flex>
         </Form>
         <ChangePasswordModal
-          onOk={(data: ChangePasswordRequest) => {
-            console.log(data);
-          }}
+          onOk={onChangePassword}
           open={openChangePasswordModal}
           onCancel={() => setOpenChangePasswordModal(false)}
         />

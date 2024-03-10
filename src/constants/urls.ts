@@ -3,6 +3,7 @@ export default {
     login: `/login`,
     register: `/register`,
     logout: `/logout`,
+    changePassword: '/change-password',
   },
   user: {
     base: '/user',

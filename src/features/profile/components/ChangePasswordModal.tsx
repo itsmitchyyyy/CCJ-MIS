@@ -6,17 +6,24 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { validationSchema } from './validation';
 import { ErrorMessage } from '@hookform/error-message';
 import { useEffect } from 'react';
+import { useGlobalState } from '@/hooks/global';
 
 type Props = {
   open: boolean;
   onCancel: () => void;
   onOk: (data: ChangePasswordRequest) => void;
+  isLoading?: boolean;
 };
 
-const ChangePasswordModal = ({ open, onCancel, onOk }: Props) => {
+const ChangePasswordModal = ({ open, onCancel, onOk, isLoading }: Props) => {
+  const {
+    useAccount: { accountError },
+  } = useGlobalState();
+
   const {
     control,
     handleSubmit,
+    setError,
     formState: { errors },
   } = useForm({
     mode: 'onChange',
@@ -29,8 +36,12 @@ const ChangePasswordModal = ({ open, onCancel, onOk }: Props) => {
   });
 
   useEffect(() => {
-    console.log(errors);
-  }, [errors]);
+    if (accountError.errors) {
+      Object.keys(accountError.errors).forEach((key: any) => {
+        setError(key, { type: 'custom', message: accountError.errors[key] });
+      });
+    }
+  }, [accountError]);
 
   return (
     <Modal
@@ -38,6 +49,7 @@ const ChangePasswordModal = ({ open, onCancel, onOk }: Props) => {
       open={open}
       onCancel={onCancel}
       okText="Change"
+      confirmLoading={isLoading}
       onOk={handleSubmit(onOk)}>
       <Form layout="vertical">
         <StyledFlex vertical>

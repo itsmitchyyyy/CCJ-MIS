@@ -5,6 +5,7 @@ import { convertJsonToCamelCase } from '@/utils/json';
 import { useUpdateAccountDetails } from '../api/updateAccountDetails';
 import { Loader } from '@/components/Elements/Loader';
 import { UpdateAccountDetails } from '../types';
+import { useChangePassword } from '@/features/auth/api/changePassword';
 
 const ProfilePage = () => {
   const { data, isLoading } = useProfileDetails();
@@ -13,6 +14,9 @@ const ProfilePage = () => {
     isSuccess,
     isPending,
   } = useUpdateAccountDetails();
+
+  const { mutate: changePassword, isPending: isChangingPassword } =
+    useChangePassword();
 
   const onSubmit = (data: UpdateAccountDetails & { id: string }) => {
     const { id, ...rest } = data;
@@ -24,9 +28,10 @@ const ProfilePage = () => {
   ) : (
     <AdminLayout>
       <Profile
+        onChangePassword={changePassword}
         onSubmit={onSubmit}
         detail={convertJsonToCamelCase(data)}
-        isLoading={isPending}
+        isLoading={isPending || isChangingPassword}
         isSuccess={isSuccess}
       />
     </AdminLayout>

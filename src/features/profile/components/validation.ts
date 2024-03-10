@@ -27,7 +27,7 @@ export const validationSchema = yup
       .matches(/[@$!%*#?&]+/, 'One special character')
       .matches(/\d+/, 'One number')
       .oneOf(
-        [yup.ref('current_password'), ''],
+        [yup.ref('new_password'), ''],
         'New Password and New Password Confirmation must match',
       ),
   })

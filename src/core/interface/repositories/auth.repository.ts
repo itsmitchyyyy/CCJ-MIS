@@ -6,6 +6,7 @@ import {
 } from '@/core/domain/dto/auth.dto';
 import AuthRepositoryInterface from '@/core/usecases/ports/auth.repository.interface';
 import { HttpAdapter } from '@/core/usecases/ports/httpAdapter.interface';
+import { ChangePasswordRequest } from '@/features/profile/types';
 
 export default class AuthRepository implements AuthRepositoryInterface {
   httpAdapter: HttpAdapter;
@@ -24,5 +25,9 @@ export default class AuthRepository implements AuthRepositoryInterface {
 
   logout = async (): Promise<void> => {
     return await this.httpAdapter.post(urls.auth.logout, {});
+  };
+
+  changePassword = async (data: ChangePasswordRequest): Promise<void> => {
+    return await this.httpAdapter.post(urls.auth.changePassword, data);
   };
 }
