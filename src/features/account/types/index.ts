@@ -47,3 +47,16 @@ export type FetchAccountsResponse = {
 export type FetchAccountsParams = {
   access_type?: AccessType;
 };
+
+export type FetchAccountResponse = {
+  data: AccountDetails;
+};
+
+export type UpdateAccountDetail = AccountDetails & {
+  profile_picture?: File;
+};
+
+export type UpdateAccountDetailRequset = Omit<
+  UpdateAccountDetail,
+  'status' | 'id'
+>;

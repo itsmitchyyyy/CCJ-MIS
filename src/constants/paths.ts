@@ -13,5 +13,6 @@ export const PATHS = {
   ACCOUNT: {
     BASE: '/account',
     CREATE: '/account/create',
+    UPDATE: '/account/:id',
   },
 };

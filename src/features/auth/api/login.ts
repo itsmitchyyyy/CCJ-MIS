@@ -29,7 +29,6 @@ export const useLogin = () => {
     onError: (error: AxiosError) => {
       const errorMessage = (error.response?.data as { message: string })
         .message;
-      console.log(errorMessage);
       setIsLoggedInError(errorMessage);
     },
     mutationFn: login,

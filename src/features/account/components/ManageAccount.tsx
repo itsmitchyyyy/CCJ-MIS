@@ -80,6 +80,7 @@ export const ManageAccount = ({ isLoading, data, onDeleteAccount }: Props) => {
       render: (_, record) => (
         <Space size="middle">
           <a onClick={() => onDeleteAccount(record.id)}>Delete</a>
+          <a onClick={() => navigate(`/account/${record.id}`)}>Update</a>
         </Space>
       ),
     },

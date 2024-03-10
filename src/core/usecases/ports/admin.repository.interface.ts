@@ -1,4 +1,5 @@
 import {
+  FetchAccountResponse,
   FetchAccountsParams,
   FetchAccountsResponse,
 } from '@/features/account/types';
@@ -14,5 +15,6 @@ export default interface AdminRepositoryInterface {
   fetchAccounts(
     queryParams?: FetchAccountsParams,
   ): Promise<FetchAccountsResponse>;
+  fetchAccount(id: string): Promise<FetchAccountResponse>;
   deleteAccount(id: string): Promise<void>;
 }

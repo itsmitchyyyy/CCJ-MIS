@@ -45,7 +45,7 @@ const Provider = (props: Props) => {
   const [accessType, setAccessType] = useState<AccessType | string>(() => {
     try {
       const data = storage.getItem(storageKeys.ACCESS_TYPE);
-      const parsedData = data ? JSON.parse(data) : AccessType.Admin;
+      const parsedData = data ? data : AccessType.Admin;
       return parsedData as AccessType;
     } catch (error) {
       return '';
@@ -99,6 +99,8 @@ const Provider = (props: Props) => {
       setToken,
       isLoggedIn,
       setIsLoggedIn,
+      accessType,
+      setAccessType,
       isLoggedInError,
       setIsLoggedInError,
       emailAddress,
@@ -119,7 +121,14 @@ const Provider = (props: Props) => {
     <GlobalStateContext.Provider
       value={useMemo(
         () => ({ useAuth, useAccount }),
-        [token, isLoggedIn, emailAddress, isLoggedInError, accountError],
+        [
+          token,
+          isLoggedIn,
+          emailAddress,
+          accessType,
+          isLoggedInError,
+          accountError,
+        ],
       )}
       {...props}
     />

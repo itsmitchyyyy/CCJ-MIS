@@ -10,5 +10,6 @@ export default {
     store: '/user',
     list: '/users',
     delete: (id: string | number) => `/user/${id}`,
+    get: (id: string | number) => `/user/${id}`,
   },
 };
