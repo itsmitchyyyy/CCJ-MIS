@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { GlobalState, GlobalStateContext } from '.';
 import storage from '@/utils/storage';
 import { storageKeys } from '@/constants/keys';
-import { ErrorMessageObject } from '@/features/account/types';
+import { AccessType, ErrorMessageObject } from '@/features/account/types';
 
 type Props = {
   value?: GlobalState;
@@ -42,6 +42,16 @@ const Provider = (props: Props) => {
     }
   });
 
+  const [accessType, setAccessType] = useState<AccessType | string>(() => {
+    try {
+      const data = storage.getItem(storageKeys.ACCESS_TYPE);
+      const parsedData = data ? JSON.parse(data) : AccessType.Admin;
+      return parsedData as AccessType;
+    } catch (error) {
+      return '';
+    }
+  });
+
   const [accountError, setAccountError] = useState<ErrorMessageObject>({
     errors: null,
     message: '',
@@ -64,6 +74,11 @@ const Provider = (props: Props) => {
         setEmailAddress(email);
         storage.setItem(storageKeys.EMAIL_ADDRESS, email);
       },
+      accessType,
+      setAccessType: (accessType: AccessType | string) => {
+        setAccessType(accessType);
+        storage.setItem(storageKeys.ACCESS_TYPE, accessType);
+      },
       isLoggedInError,
       setIsLoggedInError: (error: string) => {
         setIsLoggedInError(error);
@@ -72,9 +87,11 @@ const Provider = (props: Props) => {
         setToken('');
         setEmailAddress('');
         setIsLoggedIn(false);
+        setAccessType('');
         storage.removeItem(storageKeys.AUTH_TOKEN);
         storage.removeItem(storageKeys.EMAIL_ADDRESS);
         storage.removeItem(storageKeys.IS_LOGGED_IN);
+        storage.removeItem(storageKeys.ACCESS_TYPE);
       },
     }),
     [

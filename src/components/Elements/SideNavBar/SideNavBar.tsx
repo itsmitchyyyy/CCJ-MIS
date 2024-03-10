@@ -11,6 +11,8 @@ import {
   UserOutlined,
 } from '@ant-design/icons';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useGlobalState } from '@/hooks/global';
+import { AccessType } from '@/features/account/types';
 
 type Props = {
   collapsed: boolean;
@@ -39,6 +41,9 @@ const items: MenuItem[] = [
 const SideNavBar = ({ collapsed }: Props) => {
   const navigate = useNavigate();
   const { pathname } = useLocation();
+  const {
+    useAuth: { accessType },
+  } = useGlobalState();
 
   const handleMenuClick = ({ key }: { key: string }) => {
     switch (key) {
@@ -54,6 +59,14 @@ const SideNavBar = ({ collapsed }: Props) => {
     }
   };
 
+  const filteredItem = items.filter((item) => {
+    if (accessType !== AccessType.Admin) {
+      return item?.key !== 'account';
+    }
+
+    return item;
+  });
+
   return (
     <Sider trigger={null} collapsible collapsed={collapsed}>
       <LogoWrapper>
@@ -63,7 +76,7 @@ const SideNavBar = ({ collapsed }: Props) => {
         theme="dark"
         mode="inline"
         selectedKeys={[pathname.replace('/', '')]}
-        items={items}
+        items={filteredItem}
         onClick={handleMenuClick}
       />
     </Sider>

@@ -1,4 +1,8 @@
+import { AccessType } from '@/features/account/types';
+
 export type useAuthState = {
+  accessType: string;
+  setAccessType: (type: AccessType | string) => void;
   token: string;
   setToken: (token: string) => void;
   isLoggedIn: boolean;

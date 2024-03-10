@@ -10,7 +10,13 @@ export const login = async (data: LoginDTO): Promise<LoginSuccessDTO> => {
 
 export const useLogin = () => {
   const {
-    useAuth: { setIsLoggedIn, setToken, setEmailAddress, setIsLoggedInError },
+    useAuth: {
+      setIsLoggedIn,
+      setToken,
+      setEmailAddress,
+      setIsLoggedInError,
+      setAccessType,
+    },
   } = useGlobalState();
 
   return useMutation({
@@ -18,6 +24,7 @@ export const useLogin = () => {
       setIsLoggedIn(true);
       setToken(response.token);
       setEmailAddress(response.user.email);
+      setAccessType(response.user.access_type);
     },
     onError: (error: AxiosError) => {
       const errorMessage = (error.response?.data as { message: string })
