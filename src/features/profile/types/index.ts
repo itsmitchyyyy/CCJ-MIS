@@ -1,4 +1,6 @@
-type FetchAccountDetailsResponse = {
+import { AccessType } from '@/features/account/types';
+
+export type FetchAccountDetailsResponse = {
   id: string;
   first_name: string;
   last_name: string;
@@ -12,7 +14,7 @@ type FetchAccountDetailsResponse = {
   updated_at: Date;
 };
 
-type ProfileDetail = {
+export type ProfileDetail = {
   id: string;
   firstName: string;
   lastName: string;
@@ -26,15 +28,17 @@ type ProfileDetail = {
   updatedAt?: Date;
 };
 
-type UpdateAccountDetails = {
+export type UpdateAccountDetails = {
   first_name: string;
   last_name: string;
   contact_number: string;
   email: string;
   profile_picture?: File;
+  username?: string;
+  access_type?: AccessType;
 };
 
-type CreateAccountDetails = {
+export type CreateAccountDetails = {
   first_name: string;
   last_name: string;
   contact_number: string;

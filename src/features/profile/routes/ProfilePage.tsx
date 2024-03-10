@@ -4,6 +4,7 @@ import { useProfileDetails } from '../api/getProfileDetails';
 import { convertJsonToCamelCase } from '@/utils/json';
 import { useUpdateAccountDetails } from '../api/updateAccountDetails';
 import { Loader } from '@/components/Elements/Loader';
+import { UpdateAccountDetails } from '../types';
 
 const ProfilePage = () => {
   const { data, isLoading } = useProfileDetails();

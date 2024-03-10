@@ -6,6 +6,11 @@ import {
   FetchAccountsParams,
   FetchAccountsResponse,
 } from '@/features/account/types';
+import {
+  CreateAccountDetails,
+  FetchAccountDetailsResponse,
+  UpdateAccountDetails,
+} from '@/features/profile/types';
 import { AxiosRequestConfig } from 'axios';
 
 export default class AdminRepository implements AdminRepositoryInterface {
@@ -27,7 +32,7 @@ export default class AdminRepository implements AdminRepositoryInterface {
     let formHeaders = {};
     const formData = new FormData();
     Object.entries(data).forEach(([key, value]) => {
-      formData.append(key, value);
+      formData.append(key, value === null ? '' : value);
     });
 
     if (hasPutMethod) {

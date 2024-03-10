@@ -76,8 +76,6 @@ export const UpdateAccount = ({
     },
   });
 
-  console.log(user);
-
   const handleChangeFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       setFile(e.target.files[0]);

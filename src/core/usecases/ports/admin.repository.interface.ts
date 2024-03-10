@@ -3,6 +3,11 @@ import {
   FetchAccountsParams,
   FetchAccountsResponse,
 } from '@/features/account/types';
+import {
+  CreateAccountDetails,
+  FetchAccountDetailsResponse,
+  UpdateAccountDetails,
+} from '@/features/profile/types';
 
 export default interface AdminRepositoryInterface {
   fetchAccountDetails(): Promise<FetchAccountDetailsResponse>;

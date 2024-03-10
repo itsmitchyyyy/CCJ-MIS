@@ -1,11 +1,14 @@
 import { AdminLayout } from '@/components/Layout';
 import { UpdateAccount } from '../components/UpdateAccount';
 import { useFetchAccount } from '../api/fetchAccount';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { AccessType, AccountStatus, UpdateAccountDetail } from '../types';
 import { Loader } from '@/components/Elements/Loader';
+import { useUpdateAccountDetails } from '@/features/profile/api/updateAccountDetails';
+import { useEffect } from 'react';
 
 const UpdateAccountPage = () => {
+  const navigate = useNavigate();
   const { id } = useParams() as { id: string };
 
   const {
@@ -26,9 +29,21 @@ const UpdateAccountPage = () => {
     isLoading,
   } = useFetchAccount(id);
 
+  const {
+    mutate: updateAccountDetails,
+    isSuccess,
+    isPending,
+  } = useUpdateAccountDetails();
+
   const onSubmit = (data: UpdateAccountDetail) => {
-    console.log(data);
+    updateAccountDetails({ id: data.id, data, hasPutMethod: true });
   };
+
+  useEffect(() => {
+    if (isSuccess) {
+      navigate('/account');
+    }
+  }, [isSuccess]);
 
   return isLoading ? (
     <Loader />
@@ -36,7 +51,7 @@ const UpdateAccountPage = () => {
     <AdminLayout>
       <UpdateAccount
         onSubmit={onSubmit}
-        isLoading={isLoading}
+        isLoading={isPending}
         user={response.data}
       />
     </AdminLayout>

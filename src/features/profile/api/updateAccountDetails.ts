@@ -1,6 +1,7 @@
 import dependencies from '@/core/dependencies';
 import { useMutation } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
+import { FetchAccountDetailsResponse, UpdateAccountDetails } from '../types';
 
 const updateAccountDetails = async (
   id: string,
