@@ -20,22 +20,18 @@ import {
   Wrapper,
 } from './elements';
 import React, { useEffect, useRef, useState } from 'react';
-import {
-  EyeInvisibleOutlined,
-  EyeTwoTone,
-  UserOutlined,
-} from '@ant-design/icons';
+import { UserOutlined } from '@ant-design/icons';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { validationSchema } from './validation';
+import { updateValidationSchema } from './validation';
 import {
   AccessType,
-  RoleType,
   UpdateAccountDetail,
   UpdateAccountDetailRequset,
 } from '../types';
 import { ErrorMessage } from '@hookform/error-message';
 import { useGlobalState } from '@/hooks/global';
+import { BACKEND_URL } from '@/config';
 
 type Props = {
   onSubmit: (data: UpdateAccountDetail) => void;
@@ -55,7 +51,9 @@ export const UpdateAccount = ({
   } = useGlobalState();
 
   const fileRef = useRef<HTMLInputElement | null>(null);
-  const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [imageUrl, setImageUrl] = useState<string | null>(
+    `${BACKEND_URL}/${user.profile_picture}`,
+  );
   const [file, setFile] = useState<File | null>(null);
 
   const {
@@ -65,7 +63,7 @@ export const UpdateAccount = ({
     setError,
     reset,
   } = useForm({
-    resolver: yupResolver(validationSchema),
+    resolver: yupResolver(updateValidationSchema),
     defaultValues: {
       first_name: user.first_name,
       last_name: user.last_name,
@@ -88,8 +86,9 @@ export const UpdateAccount = ({
   };
 
   const onClickSubmit = (data: UpdateAccountDetailRequset) => {
+    const { profile_picture, ...rest } = user;
     const newAccountData = {
-      ...user,
+      ...rest,
       ...data,
     };
     const newData = file

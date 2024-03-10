@@ -4,6 +4,7 @@ import { useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { toast } from 'react-toastify';
 import { ErrorMessageObject } from '../types';
+import { CreateAccountDetails } from '@/features/profile/types';
 
 const createAccount = async (data: CreateAccountDetails): Promise<void> => {
   return await dependencies.adminProvider.adminRepository.createAccount(data);

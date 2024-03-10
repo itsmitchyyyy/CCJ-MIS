@@ -52,7 +52,10 @@ export type FetchAccountResponse = {
   data: AccountDetails;
 };
 
-export type UpdateAccountDetail = AccountDetails & {
+export type UpdateAccountDetail = Omit<
+  AccountDetails,
+  'createdAt' | 'updatedAt'
+> & {
   profile_picture?: File;
 };
 

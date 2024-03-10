@@ -1,13 +1,20 @@
 import dependencies from '@/core/dependencies';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
-import { FetchAccountDetailsResponse, UpdateAccountDetails } from '../types';
+import {
+  FetchAccountDetailsResponse,
+  UpdateAccountDetailResponse,
+  UpdateAccountDetails,
+} from '../types';
+import { AxiosError } from 'axios';
+import { ErrorMessageObject } from '@/features/account/types';
+import { useGlobalState } from '@/hooks/global';
 
 const updateAccountDetails = async (
   id: string,
   data: UpdateAccountDetails,
   hasPutMethod?: boolean,
-): Promise<FetchAccountDetailsResponse> => {
+): Promise<UpdateAccountDetailResponse> => {
   return await dependencies.adminProvider.adminRepository.updateAccountDetails(
     id,
     data,
@@ -16,9 +23,32 @@ const updateAccountDetails = async (
 };
 
 const useUpdateAccountDetails = () => {
+  const {
+    useAccount: { setAccountError },
+  } = useGlobalState();
+  const queryClient = useQueryClient();
+
   const query = useMutation({
-    onSuccess: () => {
+    onSuccess: ({ data: { id } }) => {
+      queryClient.invalidateQueries({ queryKey: [`fetch-account-${id}`] });
+      queryClient.invalidateQueries({ queryKey: ['profileDetails'] });
       toast.success('Account details updated');
+    },
+    onError: (error: AxiosError) => {
+      const errorData = error.response?.data as ErrorMessageObject;
+      const mappedErrorData = Object.keys(errorData.errors).map((key) => ({
+        [key]: errorData.errors[key][0],
+      }));
+
+      const errors = mappedErrorData.reduce((arr, obj: any) => {
+        const key = Object.keys(obj)[0];
+        const value = Object.values(obj)[0];
+        arr[key] = value;
+
+        return arr;
+      }, {});
+
+      setAccountError({ ...errorData, errors });
     },
     mutationFn: (params: {
       id: string;

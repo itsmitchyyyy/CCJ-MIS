@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { Avatar, Badge, Button, Col, Flex, Form, Input, Row } from 'antd';
 import {
   AvatarWrapper,
+  ChangePasswordWrapper,
   Container,
   HiddenInput,
   ImageWrapper,
@@ -15,6 +16,12 @@ import { Controller, useForm } from 'react-hook-form';
 import { validationSchema } from './validation';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { BACKEND_URL } from '@/config';
+import {
+  ChangePasswordRequest,
+  ProfileDetail,
+  UpdateAccountDetails,
+} from '../../types';
+import ChangePasswordModal from '../ChangePasswordModal';
 
 type Props = {
   detail: ProfileDetail;
@@ -24,6 +31,8 @@ type Props = {
 };
 
 const Profile = ({ detail, onSubmit, isSuccess, isLoading }: Props) => {
+  const [openChangePasswordModal, setOpenChangePasswordModal] =
+    useState<boolean>(false);
   const [isEdit, setIsEdit] = useState<boolean>(false);
   const fileRef = useRef<HTMLInputElement | null>(null);
   const [file, setFile] = useState<File | null>(null);
@@ -190,9 +199,21 @@ const Profile = ({ detail, onSubmit, isSuccess, isLoading }: Props) => {
                   </Form.Item>
                 )}
               />
+
+              <ChangePasswordWrapper
+                onClick={() => setOpenChangePasswordModal(true)}>
+                Change Password
+              </ChangePasswordWrapper>
             </StyledFlex>
           </Flex>
         </Form>
+        <ChangePasswordModal
+          onOk={(data: ChangePasswordRequest) => {
+            console.log(data);
+          }}
+          open={openChangePasswordModal}
+          onCancel={() => setOpenChangePasswordModal(false)}
+        />
       </Wrapper>
     </Container>
   );

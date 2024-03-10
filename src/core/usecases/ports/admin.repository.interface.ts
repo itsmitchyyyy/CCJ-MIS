@@ -6,6 +6,7 @@ import {
 import {
   CreateAccountDetails,
   FetchAccountDetailsResponse,
+  UpdateAccountDetailResponse,
   UpdateAccountDetails,
 } from '@/features/profile/types';
 
@@ -15,7 +16,7 @@ export default interface AdminRepositoryInterface {
     id: string,
     data: UpdateAccountDetails,
     hasPutMethod?: boolean,
-  ): Promise<FetchAccountDetailsResponse>;
+  ): Promise<UpdateAccountDetailResponse>;
   createAccount(data: CreateAccountDetails): Promise<void>;
   fetchAccounts(
     queryParams?: FetchAccountsParams,

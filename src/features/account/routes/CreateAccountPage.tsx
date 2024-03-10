@@ -1,6 +1,7 @@
 import { AdminLayout } from '@/components/Layout';
 import { CreateAccount } from '../components/CreateAccount';
 import { useCreateAccount } from '../api/createAccount';
+import { CreateAccountDetails } from '@/features/profile/types';
 
 const CreateAccountPage = () => {
   const { isPending, mutate: createAccount, isSuccess } = useCreateAccount();

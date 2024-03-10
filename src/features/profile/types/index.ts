@@ -14,6 +14,10 @@ export type FetchAccountDetailsResponse = {
   updated_at: Date;
 };
 
+export type UpdateAccountDetailResponse = {
+  data: FetchAccountDetailsResponse;
+};
+
 export type ProfileDetail = {
   id: string;
   firstName: string;
@@ -46,4 +50,10 @@ export type CreateAccountDetails = {
   username: string;
   password: string;
   profile_picture?: File;
+};
+
+export type ChangePasswordRequest = {
+  current_password: string;
+  new_password: string;
+  new_password_confirmation: string;
 };

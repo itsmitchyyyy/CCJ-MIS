@@ -22,8 +22,6 @@ const UpdateAccountPage = () => {
         access_type: AccessType.Admin,
         status: AccountStatus.Active,
         email: '',
-        createdAt: new Date(),
-        updatedAt: new Date(),
       },
     },
     isLoading,

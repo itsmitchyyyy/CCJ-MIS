@@ -38,3 +38,5 @@ export const ImageWrapper = styled.div`
 export const HiddenInput = styled.input`
   display: none;
 `;
+
+export const ChangePasswordWrapper = styled.a``;

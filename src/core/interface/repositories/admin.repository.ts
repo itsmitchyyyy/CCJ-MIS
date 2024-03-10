@@ -9,6 +9,7 @@ import {
 import {
   CreateAccountDetails,
   FetchAccountDetailsResponse,
+  UpdateAccountDetailResponse,
   UpdateAccountDetails,
 } from '@/features/profile/types';
 import { AxiosRequestConfig } from 'axios';
@@ -28,7 +29,7 @@ export default class AdminRepository implements AdminRepositoryInterface {
     id: string,
     data: UpdateAccountDetails,
     hasPutMethod = false,
-  ): Promise<FetchAccountDetailsResponse> => {
+  ): Promise<UpdateAccountDetailResponse> => {
     let formHeaders = {};
     const formData = new FormData();
     Object.entries(data).forEach(([key, value]) => {

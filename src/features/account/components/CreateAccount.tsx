@@ -31,6 +31,7 @@ import { validationSchema } from './validation';
 import { RoleType } from '../types';
 import { ErrorMessage } from '@hookform/error-message';
 import { useGlobalState } from '@/hooks/global';
+import { CreateAccountDetails } from '@/features/profile/types';
 
 const DefaultFormValues = {
   first_name: '',
