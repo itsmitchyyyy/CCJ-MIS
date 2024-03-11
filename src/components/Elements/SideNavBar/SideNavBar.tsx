@@ -56,6 +56,9 @@ const SideNavBar = ({ collapsed }: Props) => {
       case 'account':
         navigate('/account');
         break;
+      case 'manage':
+        navigate('/management');
+        break;
     }
   };
 
