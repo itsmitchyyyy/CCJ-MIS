@@ -17,5 +17,6 @@ export const PATHS = {
   },
   MANAGEMENT: {
     BASE: '/management',
+    CREATE_SUBJECT: '/management/create-subject',
   },
 };

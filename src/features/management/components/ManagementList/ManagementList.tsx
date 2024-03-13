@@ -1,11 +1,27 @@
 import { Card, Col, Row } from 'antd';
-import { ManagementWrapper, Wrapper } from './elements';
+import {
+  CreateSubjectButton,
+  ManagementHeader,
+  ManagementWrapper,
+  Wrapper,
+} from './elements';
 import { ClockCircleOutlined, UserOutlined } from '@ant-design/icons';
+import { useNavigate } from 'react-router-dom';
+import { PATHS } from '@/constants/paths';
 
 const ManagementList = () => {
+  const navigate = useNavigate();
+
   return (
     <ManagementWrapper>
-      <h1>Subjects</h1>
+      <ManagementHeader>
+        <h1>Subjects</h1>
+        <CreateSubjectButton
+          type="primary"
+          onClick={() => navigate(PATHS.MANAGEMENT.CREATE_SUBJECT)}>
+          Add Subject
+        </CreateSubjectButton>
+      </ManagementHeader>
       <Wrapper>
         <Row gutter={[16, 16]}>
           {Array.from(Array(10)).map((_, index) => (

@@ -5,7 +5,7 @@ const DashboardDetails = () => {
     <Wrapper>
       <StyledCard title="Vision" bordered={false}>
         <StyledText>
-          To provide our customers with  the most convenient shopping experience
+          To provide our customers with the most convenient shoppingexperience
         </StyledText>
       </StyledCard>
       <StyledCard title="Mission">

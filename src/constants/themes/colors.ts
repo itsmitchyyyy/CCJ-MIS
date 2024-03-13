@@ -8,6 +8,7 @@ export const colors = {
     danger: '#ff0000',
     black: '#000',
     black02: '#0000',
+    blackAlpha: '#00000040',
   },
   sysLight: {
     primary: '#269DB9',
