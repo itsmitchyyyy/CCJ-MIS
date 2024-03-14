@@ -1,5 +1,5 @@
 import { colors } from '@/constants/themes';
-import { Flex, Form, Input, TimePicker } from 'antd';
+import { Button, Flex, Form, Input, TimePicker } from 'antd';
 import styled from 'styled-components';
 
 export const AddSubjectContainer = styled.div`
@@ -28,6 +28,7 @@ export const StyledTextArea = styled(Input.TextArea)`
 
 export const TimePickerContainerFormItem = styled(Form.Item)`
   width: 100%;
+  margin-bottom: 5px;
 `;
 
 export const StyledTimePicker = styled(TimePicker)`
@@ -40,4 +41,23 @@ export const StyledTimePicker = styled(TimePicker)`
       color: ${colors.keyColors.black};
     }
   }
+`;
+
+export const StyledButton = styled(Button)`
+  width: 50%;
+`;
+
+export const ButtonWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+`;
+
+export const ErrorWrapper = styled.p`
+  color: ${colors.sysLight.error};
+  margin: 0;
+`;
+
+export const ClassContainer = styled.div`
+  width: 100%;
+  margin-bottom: 24px;
 `;

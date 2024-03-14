@@ -1,6 +1,10 @@
 import { Flex, Form, Input, Select } from 'antd';
 import {
   AddSubjectContainer,
+  ButtonWrapper,
+  ClassContainer,
+  ErrorWrapper,
+  StyledButton,
   StyledFlex,
   StyledTextArea,
   StyledTimePicker,
@@ -9,22 +13,30 @@ import {
 } from './elements';
 import { Controller, useForm } from 'react-hook-form';
 import dayjs from 'dayjs';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { validationSchema } from './validation';
+import { Subject } from '../../types';
+import { ErrorMessage } from '@hookform/error-message';
 
-type Props = {};
+type Props = {
+  onSubmit: (data: Subject) => void;
+};
 
-export const AddSubject = () => {
+export const AddSubject = ({ onSubmit }: Props) => {
   const {
+    handleSubmit,
     control,
     formState: { errors },
   } = useForm({
+    resolver: yupResolver(validationSchema),
     defaultValues: {
       user_id: '',
       description: '',
       code: '',
       name: '',
       units: 0,
-      time_start: dayjs(new Date()),
-      time_end: dayjs(new Date()),
+      time_start: dayjs(new Date()).toDate(),
+      time_end: dayjs(new Date()).toDate(),
     },
   });
 
@@ -35,12 +47,18 @@ export const AddSubject = () => {
         <Form layout="vertical">
           <Flex gap="large">
             <StyledFlex vertical>
+              <ErrorMessage
+                name="user_id"
+                errors={errors}
+                render={({ message }) => <ErrorWrapper>{message}</ErrorWrapper>}
+              />
               <Controller
                 name="user_id"
                 control={control}
                 render={({ field }) => (
                   <Form.Item label="Assigned Teacher" required>
                     <Select
+                      status={errors.user_id && 'error'}
                       size="large"
                       value={field.value}
                       onChange={field.onChange}>
@@ -52,6 +70,11 @@ export const AddSubject = () => {
                 )}
               />
 
+              <ErrorMessage
+                name="code"
+                errors={errors}
+                render={({ message }) => <ErrorWrapper>{message}</ErrorWrapper>}
+              />
               <Controller
                 name="code"
                 control={control}
@@ -68,6 +91,11 @@ export const AddSubject = () => {
                 )}
               />
 
+              <ErrorMessage
+                name="description"
+                errors={errors}
+                render={({ message }) => <ErrorWrapper>{message}</ErrorWrapper>}
+              />
               <Controller
                 name="description"
                 control={control}
@@ -86,6 +114,11 @@ export const AddSubject = () => {
               />
             </StyledFlex>
             <StyledFlex vertical>
+              <ErrorMessage
+                name="name"
+                errors={errors}
+                render={({ message }) => <ErrorWrapper>{message}</ErrorWrapper>}
+              />
               <Controller
                 name="name"
                 control={control}
@@ -102,6 +135,11 @@ export const AddSubject = () => {
                 )}
               />
 
+              <ErrorMessage
+                name="units"
+                errors={errors}
+                render={({ message }) => <ErrorWrapper>{message}</ErrorWrapper>}
+              />
               <Controller
                 name="units"
                 control={control}
@@ -119,40 +157,71 @@ export const AddSubject = () => {
               />
 
               <Flex gap="middle">
-                <Controller
-                  name="time_start"
-                  control={control}
-                  render={({ field }) => (
-                    <TimePickerContainerFormItem label="Class Start" required>
-                      <StyledTimePicker
-                        size="large"
-                        value={field.value}
-                        use12Hours
-                        format="h:mm a"
-                        onChange={field.onChange}
-                      />
-                    </TimePickerContainerFormItem>
-                  )}
-                />
+                <ClassContainer>
+                  <Controller
+                    name="time_start"
+                    control={control}
+                    render={({ field }) => (
+                      <TimePickerContainerFormItem label="Class Start" required>
+                        <StyledTimePicker
+                          status={errors.time_start && 'error'}
+                          size="large"
+                          value={dayjs(new Date(field.value))}
+                          use12Hours
+                          format="h:mm a"
+                          onChange={field.onChange}
+                          needConfirm={false}
+                        />
+                      </TimePickerContainerFormItem>
+                    )}
+                  />
 
-                <Controller
-                  name="time_end"
-                  control={control}
-                  render={({ field }) => (
-                    <TimePickerContainerFormItem label="Class End" required>
-                      <StyledTimePicker
-                        size="large"
-                        value={field.value}
-                        use12Hours
-                        format="h:mm a"
-                        onChange={field.onChange}
-                      />
-                    </TimePickerContainerFormItem>
-                  )}
-                />
+                  <ErrorMessage
+                    name="time_start"
+                    errors={errors}
+                    render={({ message }) => (
+                      <ErrorWrapper>{message}</ErrorWrapper>
+                    )}
+                  />
+                </ClassContainer>
+
+                <ClassContainer>
+                  <Controller
+                    name="time_end"
+                    control={control}
+                    render={({ field }) => (
+                      <TimePickerContainerFormItem label="Class End" required>
+                        <StyledTimePicker
+                          status={errors.time_end && 'error'}
+                          size="large"
+                          value={dayjs(new Date(field.value))}
+                          use12Hours
+                          format="h:mm a"
+                          onChange={field.onChange}
+                          needConfirm={false}
+                        />
+                      </TimePickerContainerFormItem>
+                    )}
+                  />
+                  <ErrorMessage
+                    name="time_end"
+                    errors={errors}
+                    render={({ message }) => (
+                      <ErrorWrapper>{message}</ErrorWrapper>
+                    )}
+                  />
+                </ClassContainer>
               </Flex>
             </StyledFlex>
           </Flex>
+          <ButtonWrapper>
+            <StyledButton
+              onClick={handleSubmit(onSubmit)}
+              type="primary"
+              size="large">
+              Confirm
+            </StyledButton>
+          </ButtonWrapper>
         </Form>
       </Wrapper>
     </AddSubjectContainer>
