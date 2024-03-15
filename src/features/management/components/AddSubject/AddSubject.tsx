@@ -17,12 +17,15 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { validationSchema } from './validation';
 import { Subject } from '../../types';
 import { ErrorMessage } from '@hookform/error-message';
+import { useFetchTeachers } from '../../api/fetchTeachers';
 
 type Props = {
   onSubmit: (data: Subject) => void;
 };
 
 export const AddSubject = ({ onSubmit }: Props) => {
+  const { data: teachers = [], isLoading } = useFetchTeachers();
+
   const {
     handleSubmit,
     control,
@@ -32,7 +35,7 @@ export const AddSubject = ({ onSubmit }: Props) => {
     defaultValues: {
       user_id: '',
       description: '',
-      code: '',
+      code: 'CCJ',
       name: '',
       units: 0,
       time_start: dayjs(new Date()).toDate(),
@@ -58,14 +61,16 @@ export const AddSubject = ({ onSubmit }: Props) => {
                 render={({ field }) => (
                   <Form.Item label="Assigned Teacher" required>
                     <Select
+                      loading={isLoading}
                       status={errors.user_id && 'error'}
                       size="large"
                       value={field.value}
-                      onChange={field.onChange}>
-                      <Select.Option value="jack">Jack</Select.Option>
-                      <Select.Option value="lucy">Lucy</Select.Option>
-                      <Select.Option value="Yiminghe">yiminghe</Select.Option>
-                    </Select>
+                      options={teachers.map((teacher) => ({
+                        label: `${teacher.first_name} ${teacher.last_name}`,
+                        value: teacher.id,
+                      }))}
+                      onChange={field.onChange}
+                    />
                   </Form.Item>
                 )}
               />
@@ -171,6 +176,7 @@ export const AddSubject = ({ onSubmit }: Props) => {
                           format="h:mm a"
                           onChange={field.onChange}
                           needConfirm={false}
+                          minuteStep={30}
                         />
                       </TimePickerContainerFormItem>
                     )}
@@ -199,6 +205,7 @@ export const AddSubject = ({ onSubmit }: Props) => {
                           format="h:mm a"
                           onChange={field.onChange}
                           needConfirm={false}
+                          minuteStep={30}
                         />
                       </TimePickerContainerFormItem>
                     )}

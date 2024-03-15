@@ -4,7 +4,15 @@ export const validationSchema = yup
   .object({
     user_id: yup.string().required('Assigned Teacher is required'),
     description: yup.string(),
-    code: yup.string().required('Subject Code is required'),
+    code: yup
+      .string()
+      .required('Subject Code is required')
+      .test('Check Prefix', 'Subject Code must start with CCJ', (value) => {
+        if (value) {
+          return value.startsWith('CCJ');
+        }
+        return false;
+      }),
     name: yup.string().required('Subject Name is required'),
     units: yup
       .number()

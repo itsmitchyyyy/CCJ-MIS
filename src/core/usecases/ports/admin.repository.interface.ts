@@ -1,4 +1,8 @@
 import {
+  FetchTeacherQueryParams,
+  FetchTeachersResponseDTO,
+} from '@/core/domain/dto/user.dto';
+import {
   FetchAccountResponse,
   FetchAccountsParams,
   FetchAccountsResponse,

@@ -13,4 +13,10 @@ export default {
     delete: (id: string | number) => `/user/${id}`,
     get: (id: string | number) => `/user/${id}`,
   },
+  teachers: {
+    base: '/teachers',
+  },
+  subjects: {
+    base: '/subjects',
+  },
 };
