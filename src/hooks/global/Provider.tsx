@@ -117,10 +117,24 @@ const Provider = (props: Props) => {
     [accountError],
   );
 
+  const [subjectError, setSubjectError] = useState<ErrorMessageObject>({
+    errors: null,
+    message: '',
+  });
+
+  const useSubject = useMemo(
+    () => ({
+      subjectError,
+      setSubjectError: (errors: any) => setSubjectError(errors),
+      removeSubjectError: () => setSubjectError({ errors: null, message: '' }),
+    }),
+    [subjectError],
+  );
+
   return (
     <GlobalStateContext.Provider
       value={useMemo(
-        () => ({ useAuth, useAccount }),
+        () => ({ useAuth, useAccount, useSubject }),
         [
           token,
           isLoggedIn,
@@ -128,6 +142,7 @@ const Provider = (props: Props) => {
           accessType,
           isLoggedInError,
           accountError,
+          subjectError,
         ],
       )}
       {...props}

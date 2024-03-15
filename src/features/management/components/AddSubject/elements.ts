@@ -1,5 +1,5 @@
 import { colors } from '@/constants/themes';
-import { Button, Flex, Form, Input, TimePicker } from 'antd';
+import { Button, Flex, Form, Input, InputNumber, TimePicker } from 'antd';
 import styled from 'styled-components';
 
 export const AddSubjectContainer = styled.div`
@@ -60,4 +60,8 @@ export const ErrorWrapper = styled.p`
 export const ClassContainer = styled.div`
   width: 100%;
   margin-bottom: 24px;
+`;
+
+export const StyledInputNumber = styled(InputNumber)`
+  width: 100%;
 `;

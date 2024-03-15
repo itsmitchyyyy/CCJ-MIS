@@ -2,6 +2,7 @@ import urls from '@/constants/urls';
 import { AddSubjectRequest } from '@/core/domain/dto/subject.dto';
 import { HttpAdapter } from '@/core/usecases/ports/httpAdapter.interface';
 import SubjectRepositoryInterface from '@/core/usecases/ports/subject.repository.interface';
+import moment from 'moment';
 
 export default class SubjectRepository implements SubjectRepositoryInterface {
   httpAdapter: HttpAdapter;
@@ -11,6 +12,12 @@ export default class SubjectRepository implements SubjectRepositoryInterface {
   }
 
   addSubject = async (data: AddSubjectRequest): Promise<void> => {
-    return await this.httpAdapter.post(urls.subjects.base, data);
+    const { time_start, time_end, ...rest } = data;
+    const formattedData = {
+      ...rest,
+      time_start: moment(time_start).format('HH:mm'),
+      time_end: moment(time_end).format('HH:mm'),
+    };
+    return await this.httpAdapter.post(urls.subjects.base, formattedData);
   };
 }

@@ -6,6 +6,7 @@ import {
   ErrorWrapper,
   StyledButton,
   StyledFlex,
+  StyledInputNumber,
   StyledTextArea,
   StyledTimePicker,
   TimePickerContainerFormItem,
@@ -15,33 +16,58 @@ import { Controller, useForm } from 'react-hook-form';
 import dayjs from 'dayjs';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { validationSchema } from './validation';
-import { Subject } from '../../types';
 import { ErrorMessage } from '@hookform/error-message';
 import { useFetchTeachers } from '../../api/fetchTeachers';
+import { AddSubjectRequest } from '@/core/domain/dto/subject.dto';
+import { useEffect } from 'react';
+import { useGlobalState } from '@/hooks/global';
 
-type Props = {
-  onSubmit: (data: Subject) => void;
+const DefaultValues = {
+  user_id: '',
+  description: '',
+  code: 'CCJ-01',
+  name: '',
+  units: 3,
+  time_start: dayjs().hour(7).minute(0).toDate(),
+  time_end: dayjs().hour(8).minute(0).toDate(),
 };
 
-export const AddSubject = ({ onSubmit }: Props) => {
+type Props = {
+  onSubmit: (data: AddSubjectRequest) => void;
+  isPending: boolean;
+  isSuccess?: boolean;
+};
+
+export const AddSubject = ({ onSubmit, isPending, isSuccess }: Props) => {
   const { data: teachers = [], isLoading } = useFetchTeachers();
+  const {
+    useSubject: { subjectError },
+  } = useGlobalState();
 
   const {
     handleSubmit,
     control,
+    reset,
     formState: { errors },
+    setError,
   } = useForm({
     resolver: yupResolver(validationSchema),
-    defaultValues: {
-      user_id: '',
-      description: '',
-      code: 'CCJ',
-      name: '',
-      units: 0,
-      time_start: dayjs(new Date()).toDate(),
-      time_end: dayjs(new Date()).toDate(),
-    },
+    defaultValues: DefaultValues,
   });
+
+  useEffect(() => {
+    if (isSuccess) {
+      reset(DefaultValues);
+    }
+  }, [isSuccess]);
+
+  useEffect(() => {
+    if (subjectError.errors) {
+      Object.keys(subjectError.errors).forEach((key: any) => {
+        setError(key, { type: 'custom', message: subjectError.errors[key] });
+      });
+    }
+  }, [subjectError]);
 
   return (
     <AddSubjectContainer>
@@ -150,7 +176,8 @@ export const AddSubject = ({ onSubmit }: Props) => {
                 control={control}
                 render={({ field }) => (
                   <Form.Item label="Units" required>
-                    <Input
+                    <StyledInputNumber
+                      min={3}
                       name="units"
                       size="large"
                       value={field.value}
@@ -169,6 +196,12 @@ export const AddSubject = ({ onSubmit }: Props) => {
                     render={({ field }) => (
                       <TimePickerContainerFormItem label="Class Start" required>
                         <StyledTimePicker
+                          disabledTime={() => ({
+                            disabledHours: () => [
+                              0, 1, 2, 3, 4, 5, 6, 21, 22, 23,
+                            ],
+                          })}
+                          hideDisabledOptions
                           status={errors.time_start && 'error'}
                           size="large"
                           value={dayjs(new Date(field.value))}
@@ -198,6 +231,12 @@ export const AddSubject = ({ onSubmit }: Props) => {
                     render={({ field }) => (
                       <TimePickerContainerFormItem label="Class End" required>
                         <StyledTimePicker
+                          disabledTime={() => ({
+                            disabledHours: () => [
+                              0, 1, 2, 3, 4, 5, 6, 7, 22, 23,
+                            ],
+                          })}
+                          hideDisabledOptions
                           status={errors.time_end && 'error'}
                           size="large"
                           value={dayjs(new Date(field.value))}
@@ -223,6 +262,7 @@ export const AddSubject = ({ onSubmit }: Props) => {
           </Flex>
           <ButtonWrapper>
             <StyledButton
+              disabled={isPending}
               onClick={handleSubmit(onSubmit)}
               type="primary"
               size="large">

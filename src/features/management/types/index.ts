@@ -1,3 +1,11 @@
+import { ErrorMessageObject } from '@/features/account/types';
+
+export type useSubjectState = {
+  subjectError: ErrorMessageObject;
+  setSubjectError: (data: ErrorMessageObject) => void;
+  removeSubjectError: () => void;
+};
+
 export type Subject = {
   description?: string | undefined;
   user_id: string;
