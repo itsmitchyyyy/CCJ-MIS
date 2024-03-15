@@ -55,7 +55,14 @@ const ManagementList = ({ subjects, isLoading }: Props) => {
                   <Card
                     loading={isLoading}
                     actions={[
-                      <UserOutlined key="students" />,
+                      <UserOutlined
+                        key="students"
+                        onClick={() =>
+                          navigate(
+                            `/management/subject/${subject.id}/student-list`,
+                          )
+                        }
+                      />,
                       <ClockCircleOutlined key="attendance" />,
                     ]}>
                     <Meta
