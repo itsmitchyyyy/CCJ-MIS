@@ -1,5 +1,5 @@
 import { colors } from '@/constants/themes';
-import { TableProps, Table } from 'antd';
+import { TableProps, Table, Button } from 'antd';
 import styled from 'styled-components';
 
 export const StudentListWrapper = styled.div``;
@@ -20,5 +20,16 @@ export const StyledTable = styled((props: TableProps) => <Table {...props} />)`
 export const StudentListContainer = styled.div`
   display: flex;
   flex-direction: column;
+  gap: 1em;
+`;
+
+export const AddStudentButton = styled(Button)`
+  display: flex;
+  justify-content: end;
+`;
+
+export const StudentSelectContainer = styled.div`
+  display: flex;
+  flex-direction: row;
   gap: 1em;
 `;
