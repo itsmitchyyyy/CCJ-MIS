@@ -19,3 +19,18 @@ export const CreateSubjectButton = styled(Button)`
 `;
 
 export const Wrapper = styled.div``;
+
+export const StyledCardContent = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+export const StyledCardContentWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 0.5em;
+`;
+
+export const StyledCardContentDescription = styled.div`
+  margin-top: 1em;
+`;

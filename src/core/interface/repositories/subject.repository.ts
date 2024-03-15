@@ -1,5 +1,8 @@
 import urls from '@/constants/urls';
-import { AddSubjectRequest } from '@/core/domain/dto/subject.dto';
+import {
+  AddSubjectRequest,
+  FetchSubjectResponseDTO,
+} from '@/core/domain/dto/subject.dto';
 import { HttpAdapter } from '@/core/usecases/ports/httpAdapter.interface';
 import SubjectRepositoryInterface from '@/core/usecases/ports/subject.repository.interface';
 import moment from 'moment';
@@ -19,5 +22,9 @@ export default class SubjectRepository implements SubjectRepositoryInterface {
       time_end: moment(time_end).format('HH:mm'),
     };
     return await this.httpAdapter.post(urls.subjects.base, formattedData);
+  };
+
+  fetchSubjects = async (): Promise<FetchSubjectResponseDTO[]> => {
+    return await this.httpAdapter.get(urls.subjects.base, {});
   };
 }
