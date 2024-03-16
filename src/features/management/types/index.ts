@@ -29,3 +29,8 @@ export type SubjectRequest = {
   room: string;
   days: string[];
 };
+
+export type AddStudentToSubjectRequest = {
+  subjectId: string;
+  studentId: string[];
+};

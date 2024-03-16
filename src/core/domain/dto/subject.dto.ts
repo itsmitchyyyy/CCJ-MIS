@@ -23,4 +23,6 @@ export type FetchSubjectResponseDTO = {
   time_end: string;
   created_at: Date;
   updated_at: Date;
+  room: string;
+  days: string;
 };

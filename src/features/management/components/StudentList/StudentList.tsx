@@ -22,12 +22,15 @@ type StudentListProps = {
 type Props = {
   isLoading?: boolean;
   data: User[];
+  onSubmit: (user_id: string[]) => void;
 };
 
-export const StudentList = ({ data, isLoading }: Props) => {
+export const StudentList = ({ data, isLoading, onSubmit }: Props) => {
   const [openAddModal, setOpenAddModal] = useState(false);
 
-  const { control } = useForm({ defaultValues: { user_id: [{ value: '' }] } });
+  const { handleSubmit, control } = useForm({
+    defaultValues: { user_id: [{ value: '' }] },
+  });
   const { fields, append, remove } = useFieldArray({
     control,
     name: 'user_id',
@@ -37,6 +40,11 @@ export const StudentList = ({ data, isLoading }: Props) => {
   const [selectedStudents, setSelectedStudents] = useState<StudentListProps[]>(
     [],
   );
+
+  const onHandleSubmit = (data: { user_id: { value: string }[] }) => {
+    const newData = data.user_id.map((user) => user.value.toString());
+    onSubmit(newData);
+  };
 
   useEffect(() => {
     setStudents(
@@ -83,8 +91,9 @@ export const StudentList = ({ data, isLoading }: Props) => {
 
         <AddStudentModal
           open={openAddModal}
+          isLoading={isLoading}
           onCancel={() => setOpenAddModal(false)}
-          onSubmit={() => {}}>
+          onSubmit={handleSubmit(onHandleSubmit)}>
           <Form layout="vertical">
             {fields.map((field, index) => (
               <Controller

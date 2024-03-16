@@ -27,4 +27,13 @@ export default class SubjectRepository implements SubjectRepositoryInterface {
   fetchSubjects = async (): Promise<FetchSubjectResponseDTO[]> => {
     return await this.httpAdapter.get(urls.subjects.base, {});
   };
+
+  addStudentToSubject = async (
+    subjectId: string,
+    studentId: string,
+  ): Promise<void> => {
+    return await this.httpAdapter.post(urls.subjects.students(subjectId), {
+      studentId,
+    });
+  };
 }

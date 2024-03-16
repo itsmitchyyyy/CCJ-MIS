@@ -83,6 +83,14 @@ const ManagementList = ({ subjects, isLoading }: Props) => {
                               - {formatStringDate(subject.time_end, 'HH:mm A')}
                             </span>
                           </StyledCardContentWrapper>
+                          <StyledCardContentWrapper>
+                            <span>Room:</span>
+                            <span>{subject.room}</span>
+                          </StyledCardContentWrapper>
+                          <StyledCardContentWrapper>
+                            <span>Schedule Days:</span>
+                            <span>{subject.days}</span>
+                          </StyledCardContentWrapper>
 
                           <StyledCardContentDescription>
                             {subject.description}

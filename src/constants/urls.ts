@@ -18,6 +18,7 @@ export default {
   },
   subjects: {
     base: '/subjects',
+    students: (id: string | number) => `/subjects/${id}/students`,
   },
   students: {
     base: '/students',
