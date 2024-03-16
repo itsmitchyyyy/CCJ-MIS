@@ -1,6 +1,7 @@
 import urls from '@/constants/urls';
 import {
   AddSubjectRequest,
+  FetchStudentSubjectResponseDTO,
   FetchSubjectResponseDTO,
 } from '@/core/domain/dto/subject.dto';
 import { HttpAdapter } from '@/core/usecases/ports/httpAdapter.interface';
@@ -30,10 +31,16 @@ export default class SubjectRepository implements SubjectRepositoryInterface {
 
   addStudentToSubject = async (
     subjectId: string,
-    studentId: string,
+    studentId: string[],
   ): Promise<void> => {
     return await this.httpAdapter.post(urls.subjects.students(subjectId), {
-      studentId,
+      user_id: studentId,
     });
+  };
+
+  fetchStudentSubject = async (
+    subjectId: string,
+  ): Promise<FetchStudentSubjectResponseDTO[]> => {
+    return await this.httpAdapter.get(urls.subjects.students(subjectId), {});
   };
 }

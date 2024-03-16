@@ -1,3 +1,4 @@
+import { Subject } from '@/features/management/types';
 import { User } from '../entities/user.entity';
 
 export type AddSubjectRequest = {
@@ -25,4 +26,12 @@ export type FetchSubjectResponseDTO = {
   updated_at: Date;
   room: string;
   days: string;
+};
+
+export type FetchStudentSubjectResponseDTO = {
+  id: string;
+  subject_id: string;
+  subject: Subject;
+  student_id: string;
+  student: User;
 };

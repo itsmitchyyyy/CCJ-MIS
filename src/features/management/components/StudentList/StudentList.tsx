@@ -1,4 +1,4 @@
-import { TableColumnDummyData, TableDummyData } from '@/constants/dummyData';
+import { TableDummyData } from '@/constants/dummyData';
 import {
   AddStudentButton,
   GlobalStyle,
@@ -10,9 +10,10 @@ import {
 } from './elements';
 import { AddStudentModal } from './AddStudentModal';
 import { useEffect, useState } from 'react';
-import { Button, Form, Select } from 'antd';
+import { Button, Form, Select, Space, TableProps } from 'antd';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import { User } from '@/core/domain/entities/user.entity';
+import { FetchStudentSubjectResponseDTO } from '@/core/domain/dto/subject.dto';
 
 type StudentListProps = {
   label: string;
@@ -21,11 +22,19 @@ type StudentListProps = {
 
 type Props = {
   isLoading?: boolean;
+  isSubmitting?: boolean;
   data: User[];
+  subjectStudentData: FetchStudentSubjectResponseDTO[];
   onSubmit: (user_id: string[]) => void;
 };
 
-export const StudentList = ({ data, isLoading, onSubmit }: Props) => {
+export const StudentList = ({
+  data,
+  isLoading,
+  onSubmit,
+  isSubmitting,
+  subjectStudentData,
+}: Props) => {
   const [openAddModal, setOpenAddModal] = useState(false);
 
   const { handleSubmit, control } = useForm({
@@ -45,6 +54,37 @@ export const StudentList = ({ data, isLoading, onSubmit }: Props) => {
     const newData = data.user_id.map((user) => user.value.toString());
     onSubmit(newData);
   };
+
+  const TableColumnData: TableProps<FetchStudentSubjectResponseDTO>['columns'] =
+    [
+      {
+        title: 'ID',
+        dataIndex: 'id',
+        key: 'id',
+      },
+      {
+        title: 'First Name',
+        dataIndex: 'student',
+        key: 'first_name',
+        render: (record) => record.first_name,
+      },
+      {
+        title: 'Last Name',
+        dataIndex: 'student',
+        key: 'last_name',
+        render: (record) => record.last_name,
+      },
+      {
+        title: 'Action',
+        key: 'action',
+        render: (_, record) => (
+          <Space size="middle">
+            <a>Delete</a>
+            <a>Update</a>
+          </Space>
+        ),
+      },
+    ];
 
   useEffect(() => {
     setStudents(
@@ -83,15 +123,15 @@ export const StudentList = ({ data, isLoading, onSubmit }: Props) => {
         <StudentListContainer>
           <StyledTable
             loading={isLoading}
-            columns={TableColumnDummyData}
-            dataSource={TableDummyData}
+            columns={TableColumnData}
+            dataSource={subjectStudentData}
             rowKey="id"
           />
         </StudentListContainer>
 
         <AddStudentModal
           open={openAddModal}
-          isLoading={isLoading}
+          isLoading={isSubmitting}
           onCancel={() => setOpenAddModal(false)}
           onSubmit={handleSubmit(onHandleSubmit)}>
           <Form layout="vertical">
