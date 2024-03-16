@@ -1,6 +1,14 @@
 import { colors } from '@/constants/themes';
 import { TableProps, Table, Button } from 'antd';
-import styled from 'styled-components';
+import styled, { createGlobalStyle } from 'styled-components';
+
+export const GlobalStyle = createGlobalStyle`
+    .ant-empty-description {
+      &&& {
+        color: ${colors.keyColors.black};
+      }
+    }
+`;
 
 export const StudentListWrapper = styled.div``;
 
