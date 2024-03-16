@@ -2,7 +2,7 @@ import { AccessType } from '@/features/account/types';
 import { UserStatus } from '../entities/user.entity';
 
 export type FetchTeacherQueryParams = {
-  access_type?: AccessType;
+  status?: UserStatus;
 };
 
 export type FetchTeachersResponseDTO = {

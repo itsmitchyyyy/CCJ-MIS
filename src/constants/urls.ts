@@ -19,4 +19,7 @@ export default {
   subjects: {
     base: '/subjects',
   },
+  students: {
+    base: '/students',
+  },
 };
