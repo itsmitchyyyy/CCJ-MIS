@@ -14,4 +14,18 @@ export type Subject = {
   units: number;
   time_start: Date;
   time_end: Date;
+  room: string;
+  days: string;
+};
+
+export type SubjectRequest = {
+  user_id: string;
+  description?: string;
+  code: string;
+  name: string;
+  units: number;
+  time_start: Date;
+  time_end: Date;
+  room: string;
+  days: string[];
 };

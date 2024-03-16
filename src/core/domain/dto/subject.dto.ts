@@ -8,6 +8,8 @@ export type AddSubjectRequest = {
   units: number;
   time_start: Date;
   time_end: Date;
+  room: string;
+  days: string;
 };
 
 export type FetchSubjectResponseDTO = {

@@ -37,5 +37,7 @@ export const validationSchema = yup
 
         return false;
       }),
+    room: yup.string().required('Room is required'),
+    days: yup.array().min(1, 'Days is required').required('Days is required'),
   })
   .required();

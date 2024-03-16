@@ -1,4 +1,4 @@
-import { Flex, Form, Input, Select } from 'antd';
+import { Checkbox, Col, Flex, Form, Input, Row, Select } from 'antd';
 import {
   AddSubjectContainer,
   ButtonWrapper,
@@ -18,9 +18,9 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { validationSchema } from './validation';
 import { ErrorMessage } from '@hookform/error-message';
 import { useFetchTeachers } from '../../api/fetchTeachers';
-import { AddSubjectRequest } from '@/core/domain/dto/subject.dto';
 import { useEffect } from 'react';
 import { useGlobalState } from '@/hooks/global';
+import { SubjectRequest } from '../../types';
 
 const DefaultValues = {
   user_id: '',
@@ -30,10 +30,12 @@ const DefaultValues = {
   units: 3,
   time_start: dayjs().hour(7).minute(0).toDate(),
   time_end: dayjs().hour(8).minute(0).toDate(),
+  room: '',
+  days: [],
 };
 
 type Props = {
-  onSubmit: (data: AddSubjectRequest) => void;
+  onSubmit: (data: SubjectRequest) => void;
   isPending: boolean;
   isSuccess?: boolean;
 };
@@ -123,6 +125,27 @@ export const AddSubject = ({ onSubmit, isPending, isSuccess }: Props) => {
               />
 
               <ErrorMessage
+                name="name"
+                errors={errors}
+                render={({ message }) => <ErrorWrapper>{message}</ErrorWrapper>}
+              />
+              <Controller
+                name="name"
+                control={control}
+                render={({ field }) => (
+                  <Form.Item label="Subject Name" required>
+                    <Input
+                      name="name"
+                      size="large"
+                      value={field.value}
+                      onChange={field.onChange}
+                      status={errors.name && 'error'}
+                    />
+                  </Form.Item>
+                )}
+              />
+
+              <ErrorMessage
                 name="description"
                 errors={errors}
                 render={({ message }) => <ErrorWrapper>{message}</ErrorWrapper>}
@@ -145,27 +168,6 @@ export const AddSubject = ({ onSubmit, isPending, isSuccess }: Props) => {
               />
             </StyledFlex>
             <StyledFlex vertical>
-              <ErrorMessage
-                name="name"
-                errors={errors}
-                render={({ message }) => <ErrorWrapper>{message}</ErrorWrapper>}
-              />
-              <Controller
-                name="name"
-                control={control}
-                render={({ field }) => (
-                  <Form.Item label="Subject Name" required>
-                    <Input
-                      name="name"
-                      size="large"
-                      value={field.value}
-                      onChange={field.onChange}
-                      status={errors.name && 'error'}
-                    />
-                  </Form.Item>
-                )}
-              />
-
               <ErrorMessage
                 name="units"
                 errors={errors}
@@ -258,6 +260,65 @@ export const AddSubject = ({ onSubmit, isPending, isSuccess }: Props) => {
                   />
                 </ClassContainer>
               </Flex>
+
+              <ErrorMessage
+                name="room"
+                errors={errors}
+                render={({ message }) => <ErrorWrapper>{message}</ErrorWrapper>}
+              />
+              <Controller
+                name="room"
+                control={control}
+                render={({ field }) => (
+                  <Form.Item label="Room" required>
+                    <Input
+                      name="name"
+                      size="large"
+                      value={field.value}
+                      onChange={field.onChange}
+                      status={errors.room && 'error'}
+                    />
+                  </Form.Item>
+                )}
+              />
+
+              <ErrorMessage
+                name="days"
+                errors={errors}
+                render={({ message }) => <ErrorWrapper>{message}</ErrorWrapper>}
+              />
+              <Controller
+                name="days"
+                control={control}
+                render={({ field }) => (
+                  <Form.Item label="Days" required>
+                    <Checkbox.Group
+                      value={field.value}
+                      onChange={field.onChange}>
+                      <Row gutter={[16, 8]}>
+                        <Col span={8}>
+                          <Checkbox value="M">Monday</Checkbox>
+                        </Col>
+                        <Col span={8}>
+                          <Checkbox value="T">Tuesday</Checkbox>
+                        </Col>
+                        <Col span={8}>
+                          <Checkbox value="W">Wednesday</Checkbox>
+                        </Col>
+                        <Col span={8}>
+                          <Checkbox value="TH">Thursday</Checkbox>
+                        </Col>
+                        <Col span={8}>
+                          <Checkbox value="F">Friday</Checkbox>
+                        </Col>
+                        <Col span={8}>
+                          <Checkbox value="S">Saturday</Checkbox>
+                        </Col>
+                      </Row>
+                    </Checkbox.Group>
+                  </Form.Item>
+                )}
+              />
             </StyledFlex>
           </Flex>
           <ButtonWrapper>
