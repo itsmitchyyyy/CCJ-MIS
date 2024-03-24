@@ -1,3 +1,4 @@
+import { colors } from '@/constants/themes';
 import { Button } from 'antd';
 import styled from 'styled-components';
 
@@ -16,4 +17,9 @@ export const DocumentsHeader = styled.div`
 export const UploadButton = styled(Button)`
   display: flex;
   justify-content: end;
+`;
+
+export const ErrorWrapper = styled.p`
+  color: ${colors.sysLight.error};
+  margin: 0;
 `;

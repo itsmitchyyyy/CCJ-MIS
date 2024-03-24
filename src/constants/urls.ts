@@ -32,4 +32,7 @@ export default {
     get: (id: string | number) => `/attendances/${id}`,
     update: (id: string | number) => `/attendances/${id}`,
   },
+  documents: {
+    base: '/documents',
+  },
 };

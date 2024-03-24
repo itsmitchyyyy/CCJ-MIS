@@ -1,11 +1,22 @@
 import { Form, Select, Tree, TreeDataNode, Upload, message } from 'antd';
-import { DocumentsHeader, DocumentsWrapper, UploadButton } from './elements';
+import {
+  DocumentsHeader,
+  DocumentsWrapper,
+  ErrorWrapper,
+  UploadButton,
+} from './elements';
 import { useGlobalState } from '@/hooks/global';
 import { AccessType } from '@/features/account/types';
 import { Modal } from '@/components/Elements/Modal';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { InboxOutlined } from '@ant-design/icons';
 import { RcFile, UploadFile } from 'antd/es/upload';
+import { UploadDocumentRequestDTO } from '@/core/domain/dto/document.dto';
+import { Controller, useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { validationSchema } from './validation';
+import { DocumentType } from '../types';
+import { ErrorMessage } from '@hookform/error-message';
 
 const { DirectoryTree } = Tree;
 const { Item } = Form;
@@ -49,17 +60,50 @@ const ParentDirectoryOptions = [
   { label: 'Student Documents', value: 'student' },
 ];
 
-const OfficeDocuments = () => {
+type Props = {
+  onUploadDocuments: (data: UploadDocumentRequestDTO) => void;
+  isLoading?: boolean;
+  isSuccessful?: boolean;
+};
+
+const OfficeDocuments = ({
+  onUploadDocuments,
+  isLoading,
+  isSuccessful,
+}: Props) => {
   const {
-    useAuth: { accessType },
+    useAuth: { accessType, id },
   } = useGlobalState();
   const [openUploadDocumentsModal, setOpenUploadDocumentsModal] =
     useState<boolean>(false);
   const [documentFiles, setDocumentFiles] = useState<UploadFile[]>([]);
   const [messageApi, contextHolder] = message.useMessage();
 
-  const handleUploadFile = () => {
-    console.log(documentFiles);
+  const {
+    handleSubmit,
+    control,
+    formState: { errors },
+    reset,
+  } = useForm({
+    defaultValues: {
+      type: DocumentType.Office,
+      resolver: yupResolver(validationSchema),
+    },
+  });
+
+  const handleUploadFile = (request: { type: string }) => {
+    if (documentFiles.length === 0) {
+      messageApi.error('Please select a file to upload');
+      return;
+    }
+
+    const data: UploadDocumentRequestDTO = {
+      type: request.type as DocumentType,
+      user_id: id,
+      documents: documentFiles,
+    };
+
+    onUploadDocuments(data);
   };
 
   const handleBeforeUploadFile = (_: RcFile, fileList: RcFile[]) => {
@@ -97,6 +141,14 @@ const OfficeDocuments = () => {
     setDocumentFiles(newDocumentFiles);
   };
 
+  useEffect(() => {
+    if (isSuccessful) {
+      setOpenUploadDocumentsModal(false);
+      setDocumentFiles([]);
+      reset();
+    }
+  }, [isSuccessful]);
+
   return (
     <DocumentsWrapper>
       {contextHolder}
@@ -122,14 +174,32 @@ const OfficeDocuments = () => {
       </div>
 
       <Modal
+        isLoading={isLoading}
         open={openUploadDocumentsModal}
-        onSubmit={handleUploadFile}
+        onSubmit={handleSubmit(handleUploadFile)}
         title="Upload Documents"
         onCancel={() => setOpenUploadDocumentsModal(false)}>
         <Form layout="vertical">
-          <Item label="Parent Directory">
-            <Select options={ParentDirectoryOptions} />
-          </Item>
+          <ErrorMessage
+            name="type"
+            errors={errors}
+            render={({ message }) => <ErrorWrapper>{message}</ErrorWrapper>}
+          />
+
+          <Controller
+            control={control}
+            name="type"
+            render={({ field: { onChange, value } }) => (
+              <Item label="Parent Directory">
+                <Select
+                  status={errors.type && 'error'}
+                  value={value}
+                  onChange={onChange}
+                  options={ParentDirectoryOptions}
+                />
+              </Item>
+            )}
+          />
 
           <Dragger
             accept=".xlsx, .xls, .doc, .docx,.ppt, .pptx,.txt,.pdf"
