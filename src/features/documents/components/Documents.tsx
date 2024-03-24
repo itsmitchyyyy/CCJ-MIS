@@ -67,13 +67,6 @@ const OfficeDocuments = () => {
     if (fileList.length > 0) {
       isAllFilesValid = fileList.every((file) => {
         const extension = file.name.split('.').pop() as string;
-        console.log(extension);
-
-        console.log(
-          ['xlsx', 'xls', 'doc', 'docx', 'ppt', 'pptx', 'txt', 'pdf'].includes(
-            extension,
-          ),
-        );
 
         return [
           'xlsx',
@@ -95,6 +88,13 @@ const OfficeDocuments = () => {
     }
 
     return false;
+  };
+
+  const handleOnRemoveFile = (file: UploadFile) => {
+    const index = documentFiles.indexOf(file);
+    const newDocumentFiles = documentFiles.slice();
+    newDocumentFiles.splice(index, 1);
+    setDocumentFiles(newDocumentFiles);
   };
 
   return (
@@ -135,6 +135,7 @@ const OfficeDocuments = () => {
             accept=".xlsx, .xls, .doc, .docx,.ppt, .pptx,.txt,.pdf"
             multiple
             beforeUpload={handleBeforeUploadFile}
+            onRemove={handleOnRemoveFile}
             fileList={documentFiles}>
             <p className="ant-upload-drag-icon">
               <InboxOutlined />
@@ -144,7 +145,7 @@ const OfficeDocuments = () => {
             </p>
             <p className="ant-upload-hint">
               Support for a single or bulk upload. Strictly prohibited from
-              uploading company data or other banned files.
+              banned files.
             </p>
           </Dragger>
         </Form>
