@@ -1,7 +1,7 @@
 import { PATHS } from '@/constants/paths';
 import ProtectedRoutes from '@/routes/ProtectedRoutes';
 import { Outlet, RouteObject } from 'react-router-dom';
-import OfficeDocumentsPage from './OfficeDocumentsPage';
+import DocumentsPage from './DocumentsPage';
 
 export const DocumentsRoutes: RouteObject = {
   path: PATHS.DOCUMENTS.BASE,
@@ -13,7 +13,7 @@ export const DocumentsRoutes: RouteObject = {
   children: [
     {
       path: '',
-      element: <OfficeDocumentsPage />,
+      element: <DocumentsPage />,
     },
   ],
 };
