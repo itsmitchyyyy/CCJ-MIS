@@ -11,6 +11,7 @@ export const login = async (data: LoginDTO): Promise<LoginSuccessDTO> => {
 export const useLogin = () => {
   const {
     useAuth: {
+      setId,
       setIsLoggedIn,
       setToken,
       setEmailAddress,
@@ -21,6 +22,7 @@ export const useLogin = () => {
 
   return useMutation({
     onSuccess: (response) => {
+      setId(response.user.id);
       setIsLoggedIn(true);
       setToken(response.token);
       setEmailAddress(response.user.email);

@@ -1,6 +1,8 @@
 import { AccessType } from '@/features/account/types';
 
 export type useAuthState = {
+  id: string;
+  setId: (id: string) => void;
   accessType: string;
   setAccessType: (type: AccessType | string) => void;
   token: string;

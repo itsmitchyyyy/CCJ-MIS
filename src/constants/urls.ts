@@ -25,6 +25,7 @@ export default {
   students: {
     base: '/students',
     get: (id: string | number) => `/students/${id}`,
+    getSubjects: (id: string | number) => `/students/${id}/subjects`,
   },
   attendances: {
     base: '/attendances',

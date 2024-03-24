@@ -10,6 +10,16 @@ type Props = {
 };
 
 const Provider = (props: Props) => {
+  const [id, setId] = useState<string>(() => {
+    try {
+      const data = storage.getItem(storageKeys.USER_ID);
+      const parsedData = data ? JSON.parse(data) : '';
+      return parsedData as string;
+    } catch (error) {
+      return '';
+    }
+  });
+
   const [isLoggedInError, setIsLoggedInError] = useState<string>('');
 
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(() => {
@@ -59,6 +69,11 @@ const Provider = (props: Props) => {
 
   const useAuth = useMemo(
     () => ({
+      id,
+      setId: (id: string) => {
+        setId(id);
+        storage.setItem(storageKeys.USER_ID, id);
+      },
       token,
       setToken: (token: string) => {
         setToken(token);
@@ -84,6 +99,7 @@ const Provider = (props: Props) => {
         setIsLoggedInError(error);
       },
       resetAuth: () => {
+        setId('');
         setToken('');
         setEmailAddress('');
         setIsLoggedIn(false);
@@ -95,6 +111,8 @@ const Provider = (props: Props) => {
       },
     }),
     [
+      id,
+      setId,
       token,
       setToken,
       isLoggedIn,
@@ -136,6 +154,7 @@ const Provider = (props: Props) => {
       value={useMemo(
         () => ({ useAuth, useAccount, useSubject }),
         [
+          id,
           token,
           isLoggedIn,
           emailAddress,

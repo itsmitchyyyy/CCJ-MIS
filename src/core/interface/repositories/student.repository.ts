@@ -26,4 +26,8 @@ export default class StudentRepository implements StudentRepositoryInterface {
   fetchStudent = async (id: string): Promise<FetchStudentsResponseDTO> => {
     return await this.httpAdapter.get(urls.students.get(id), {});
   };
+
+  fetchSubjects = async (studentId: string) => {
+    return await this.httpAdapter.get(urls.students.getSubjects(studentId), {});
+  };
 }
