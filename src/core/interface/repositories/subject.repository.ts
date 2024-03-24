@@ -43,4 +43,14 @@ export default class SubjectRepository implements SubjectRepositoryInterface {
   ): Promise<FetchStudentSubjectResponseDTO[]> => {
     return await this.httpAdapter.get(urls.subjects.students(subjectId), {});
   };
+
+  removeStudentFromSubject = async (
+    subjectId: string,
+    studentId: string,
+  ): Promise<void> => {
+    return await this.httpAdapter.delete(
+      urls.subjects.deleteStudent(subjectId, studentId),
+      {},
+    );
+  };
 }

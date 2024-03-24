@@ -11,4 +11,5 @@ export default interface SubjectRepositoryInterface {
   fetchStudentSubject(
     subjectId: string,
   ): Promise<FetchStudentSubjectResponseDTO[]>;
+  removeStudentFromSubject(subjectId: string, studentId: string): Promise<void>;
 }

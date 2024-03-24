@@ -4,6 +4,8 @@ import ProtectedRoutes from '@/routes/ProtectedRoutes';
 import ManagementPage from './ManagementPage';
 import AddSubjectPage from './AddSubjectPage';
 import StudentListPage from './StudentListPage';
+import AttendancePage from './AttendancePage';
+import AttendanceRecordPage from './AttendanceRecordPage';
 
 export const ManagementRoutes: RouteObject = {
   path: PATHS.MANAGEMENT.BASE,
@@ -24,6 +26,14 @@ export const ManagementRoutes: RouteObject = {
     {
       path: PATHS.MANAGEMENT.STUDENT_LIST,
       element: <StudentListPage />,
+    },
+    {
+      path: PATHS.MANAGEMENT.ATTENDANCE,
+      element: <AttendancePage />,
+    },
+    {
+      path: PATHS.MANAGEMENT.ATTENDANCE_RECORD,
+      element: <AttendanceRecordPage />,
     },
   ],
 };

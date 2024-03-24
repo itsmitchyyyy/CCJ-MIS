@@ -14,6 +14,8 @@ import { PATHS } from '@/constants/paths';
 import Meta from 'antd/es/card/Meta';
 import { FetchSubjectResponseDTO } from '@/core/domain/dto/subject.dto';
 import { formatStringDate } from '@/utils/format';
+import { useGlobalState } from '@/hooks/global';
+import { AccessType } from '@/features/account/types';
 
 type Props = {
   isLoading?: boolean;
@@ -21,17 +23,22 @@ type Props = {
 };
 
 const ManagementList = ({ subjects, isLoading }: Props) => {
+  const {
+    useAuth: { accessType },
+  } = useGlobalState();
   const navigate = useNavigate();
 
   return (
     <ManagementWrapper>
       <ManagementHeader>
         <h1>Subjects</h1>
-        <CreateSubjectButton
-          type="primary"
-          onClick={() => navigate(PATHS.MANAGEMENT.CREATE_SUBJECT)}>
-          Add Subject
-        </CreateSubjectButton>
+        {accessType === AccessType.Admin && (
+          <CreateSubjectButton
+            type="primary"
+            onClick={() => navigate(PATHS.MANAGEMENT.CREATE_SUBJECT)}>
+            Add Subject
+          </CreateSubjectButton>
+        )}
       </ManagementHeader>
       <Wrapper>
         <Row gutter={[16, 16]}>
@@ -54,17 +61,28 @@ const ManagementList = ({ subjects, isLoading }: Props) => {
                 <Col span={6} key={`${subject.id}-${index}`}>
                   <Card
                     loading={isLoading}
-                    actions={[
-                      <UserOutlined
-                        key="students"
-                        onClick={() =>
-                          navigate(
-                            `/management/subject/${subject.id}/student-list`,
-                          )
-                        }
-                      />,
-                      <ClockCircleOutlined key="attendance" />,
-                    ]}>
+                    actions={
+                      accessType === AccessType.Student
+                        ? undefined
+                        : [
+                            <UserOutlined
+                              key="students"
+                              onClick={() =>
+                                navigate(
+                                  `/management/subject/${subject.id}/student-list`,
+                                )
+                              }
+                            />,
+                            <ClockCircleOutlined
+                              onClick={() =>
+                                navigate(
+                                  `/management/subject/${subject.id}/attendance`,
+                                )
+                              }
+                              key="attendance"
+                            />,
+                          ]
+                    }>
                     <Meta
                       title={subject.name}
                       description={

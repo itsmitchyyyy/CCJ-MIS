@@ -19,8 +19,16 @@ export default {
   subjects: {
     base: '/subjects',
     students: (id: string | number) => `/subjects/${id}/students`,
+    deleteStudent: (subjectId: string | number, studentId: string | number) =>
+      `/subjects/${subjectId}/students/${studentId}`,
   },
   students: {
     base: '/students',
+    get: (id: string | number) => `/students/${id}`,
+  },
+  attendances: {
+    base: '/attendances',
+    get: (id: string | number) => `/attendances/${id}`,
+    update: (id: string | number) => `/attendances/${id}`,
   },
 };

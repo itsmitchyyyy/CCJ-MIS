@@ -1,3 +1,4 @@
+import { AttendanceStatus } from '@/core/domain/dto/attendance.dto';
 import { ErrorMessageObject } from '@/features/account/types';
 
 export type useSubjectState = {
@@ -33,4 +34,11 @@ export type SubjectRequest = {
 export type AddStudentToSubjectRequest = {
   subjectId: string;
   studentId: string[];
+};
+
+export type Attendance = {
+  user_id: string;
+  subject_id: string;
+  date: Date;
+  status: AttendanceStatus;
 };

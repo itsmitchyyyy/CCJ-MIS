@@ -1,19 +1,33 @@
-import { TableDummyData } from '@/constants/dummyData';
 import {
   AddStudentButton,
+  ErrorWrapper,
   GlobalStyle,
   StudentListContainer,
   StudentListHeader,
   StudentListWrapper,
   StudentSelectContainer,
+  StyledDatePicker,
   StyledTable,
 } from './elements';
-import { AddStudentModal } from './AddStudentModal';
-import { useEffect, useState } from 'react';
+import { StudentModal } from './StudentModal';
+import React, { useEffect, useState } from 'react';
 import { Button, Form, Select, Space, TableProps } from 'antd';
-import { Controller, useFieldArray, useForm } from 'react-hook-form';
+import { Controller, set, useFieldArray, useForm } from 'react-hook-form';
 import { User } from '@/core/domain/entities/user.entity';
 import { FetchStudentSubjectResponseDTO } from '@/core/domain/dto/subject.dto';
+import { RangePickerProps } from 'antd/es/date-picker';
+import dayjs from 'dayjs';
+import { AttendanceOptions } from '@/constants/data';
+import { useGlobalState } from '@/hooks/global';
+import { AccessType } from '@/features/account/types';
+import {
+  AttendanceStatus,
+  CreateAttendanceRequestDTO,
+} from '@/core/domain/dto/attendance.dto';
+import { useParams } from 'react-router-dom';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { validationSchema } from './validation';
+import { ErrorMessage } from '@hookform/error-message';
 
 type StudentListProps = {
   label: string;
@@ -26,6 +40,15 @@ type Props = {
   data: User[];
   subjectStudentData: FetchStudentSubjectResponseDTO[];
   onSubmit: (user_id: string[]) => void;
+  onDelete: ({
+    subjectId,
+    studentId,
+  }: {
+    subjectId: string;
+    studentId: string;
+  }) => void;
+  isAdded?: boolean;
+  onCreateAttendance: (data: CreateAttendanceRequestDTO) => void;
 };
 
 export const StudentList = ({
@@ -34,21 +57,43 @@ export const StudentList = ({
   onSubmit,
   isSubmitting,
   subjectStudentData,
+  onDelete,
+  isAdded,
+  onCreateAttendance,
 }: Props) => {
+  const {
+    useAuth: { accessType },
+  } = useGlobalState();
   const [openAddModal, setOpenAddModal] = useState(false);
+  const [openAttendanceModal, setOpenAttendanceModal] = useState(false);
 
-  const { handleSubmit, control } = useForm({
-    defaultValues: { user_id: [{ value: '' }] },
+  const { id } = useParams();
+
+  const {
+    handleSubmit,
+    control,
+    formState: { errors },
+    reset,
+  } = useForm({
+    defaultValues: { user_id: [{ value: '', label: '' }] },
+    resolver: yupResolver(validationSchema),
   });
+
+  const { handleSubmit: onHandleSubmitAttendance, control: attendanceControl } =
+    useForm({
+      defaultValues: {
+        date: new Date(),
+        status: AttendanceOptions[0].value as AttendanceStatus,
+      },
+    });
+
   const { fields, append, remove } = useFieldArray({
     control,
     name: 'user_id',
   });
 
   const [students, setStudents] = useState<StudentListProps[]>([]);
-  const [selectedStudents, setSelectedStudents] = useState<StudentListProps[]>(
-    [],
-  );
+  const [selectedStudent, setSelectedStudent] = useState<User | null>(null);
 
   const onHandleSubmit = (data: { user_id: { value: string }[] }) => {
     const newData = data.user_id.map((user) => user.value.toString());
@@ -79,34 +124,84 @@ export const StudentList = ({
         key: 'action',
         render: (_, record) => (
           <Space size="middle">
-            <a>Delete</a>
-            <a>Update</a>
+            <a
+              onClick={() =>
+                onDelete({
+                  studentId: record.student_id,
+                  subjectId: record.subject_id,
+                })
+              }>
+              Delete
+            </a>
+            <a onClick={() => onClickMarkAttendance(record.student)}>
+              Mark Attendance
+            </a>
+            {accessType === AccessType.Teacher && <a>Add Grade</a>}
           </Space>
         ),
       },
     ];
 
-  useEffect(() => {
-    setStudents(
-      students.filter(
-        (student) =>
-          !selectedStudents.some(
-            (selectedStudent) => selectedStudent.value === student.value,
-          ),
-      ),
-    );
-  }, [selectedStudents]);
+  const disabledDate: RangePickerProps['disabledDate'] = (current) => {
+    // Can not select days before today and today
+    return current && current > dayjs().endOf('day');
+  };
 
   useEffect(() => {
     if (data.length && !isLoading) {
-      const newStudents = data.map((student) => ({
-        label: `${student.first_name} ${student.last_name}`,
-        value: Number(student.id),
-      })) as StudentListProps[];
+      const newStudents = data
+        .map((student) => ({
+          label: `${student.first_name} ${student.last_name}`,
+          value: Number(student.id),
+        }))
+        .filter(
+          (student) =>
+            !subjectStudentData.some(
+              (subjectStudent) =>
+                subjectStudent.student_id.toString() ===
+                student.value.toString(),
+            ),
+        ) as StudentListProps[];
 
       setStudents(newStudents);
     }
-  }, [data, isLoading]);
+  }, [data, isLoading, subjectStudentData]);
+
+  useEffect(() => {
+    if (isAdded) {
+      setOpenAddModal(false);
+      setOpenAttendanceModal(false);
+      reset();
+    }
+  }, [isAdded]);
+
+  const onClickMarkAttendance = (student: User) => {
+    setSelectedStudent(student);
+    setOpenAttendanceModal(true);
+  };
+
+  const onSubmitAttendance = (data: {
+    date: Date;
+    status: AttendanceStatus;
+  }) => {
+    const newData = {
+      ...data,
+      user_id: selectedStudent?.id || '',
+      subject_id: id || '',
+    };
+    onCreateAttendance(newData);
+  };
+
+  const onChangeStudent = (student: StudentListProps, options: any) => {
+    const newData = students.filter(
+      (data) => data.value.toString() !== student.value.toString(),
+    ) as StudentListProps[];
+    setStudents(newData);
+  };
+
+  const onRemoveStudent = (student: StudentListProps) => {
+    setStudents((prev) => [...prev, student]);
+  };
 
   return (
     <>
@@ -114,11 +209,13 @@ export const StudentList = ({
       <StudentListWrapper>
         <StudentListHeader>
           <h1>Student List</h1>
-          <AddStudentButton
-            type="primary"
-            onClick={() => setOpenAddModal(true)}>
-            Add Student
-          </AddStudentButton>
+          {accessType === AccessType.Admin && (
+            <AddStudentButton
+              type="primary"
+              onClick={() => setOpenAddModal(true)}>
+              Add Student
+            </AddStudentButton>
+          )}
         </StudentListHeader>
         <StudentListContainer>
           <StyledTable
@@ -129,64 +226,128 @@ export const StudentList = ({
           />
         </StudentListContainer>
 
-        <AddStudentModal
+        <StudentModal
           open={openAddModal}
           isLoading={isSubmitting}
           onCancel={() => setOpenAddModal(false)}
           onSubmit={handleSubmit(onHandleSubmit)}>
           <Form layout="vertical">
             {fields.map((field, index) => (
-              <Controller
-                key={field.id}
-                name={`user_id.${index}.value`}
-                control={control}
-                render={({ field: { value, onChange } }) => (
-                  <Form.Item>
-                    <StudentSelectContainer>
-                      <Select
-                        loading={isLoading}
-                        size="large"
-                        value={value}
-                        onChange={(
-                          value: string,
-                          options: StudentListProps | StudentListProps[],
-                        ) => {
-                          const selectedOption = options as StudentListProps;
-                          setSelectedStudents((prev) => [
-                            ...prev,
-                            selectedOption,
-                          ]);
-                          onChange(value, options);
-                        }}
-                        options={students}
-                      />
-                      {fields.length > 1 && (
-                        <Button
-                          size="large"
-                          danger
-                          onClick={() => {
-                            setStudents((prev) => [
-                              ...prev,
-                              ...selectedStudents,
-                            ]);
-                            remove(index);
-                          }}>
-                          Remove
-                        </Button>
-                      )}
-                    </StudentSelectContainer>
-                  </Form.Item>
-                )}
-              />
+              <React.Fragment key={`fragment-${field.id}`}>
+                <ErrorMessage
+                  name={`user_id.${index}.value`}
+                  errors={errors}
+                  render={({ message }) => (
+                    <ErrorWrapper>{message}</ErrorWrapper>
+                  )}
+                />
+
+                <Controller
+                  key={field.id}
+                  name={`user_id.${index}`}
+                  control={control}
+                  render={({ field: { value, onChange } }) => {
+                    return (
+                      <Form.Item>
+                        <StudentSelectContainer>
+                          <Select
+                            labelInValue
+                            status={errors.user_id?.[index]?.value && 'error'}
+                            loading={isLoading}
+                            size="large"
+                            value={value as any}
+                            onChange={(
+                              value: string,
+                              options: StudentListProps | StudentListProps[],
+                            ) => {
+                              const selectedOption =
+                                options as StudentListProps;
+                              onChangeStudent(selectedOption, options);
+                              onChange(value, options);
+                            }}
+                            options={students}
+                          />
+                          {fields.length > 1 && (
+                            <Button
+                              size="large"
+                              danger
+                              onClick={() => {
+                                const student = data.find(
+                                  (student) =>
+                                    student.id.toString() ===
+                                    value.value.toString(),
+                                );
+
+                                if (student) {
+                                  onRemoveStudent({
+                                    label: `${student?.first_name} ${student?.last_name}`,
+                                    value: Number(student?.id),
+                                  });
+                                }
+
+                                remove(index);
+                              }}>
+                              Remove
+                            </Button>
+                          )}
+                        </StudentSelectContainer>
+                      </Form.Item>
+                    );
+                  }}
+                />
+              </React.Fragment>
             ))}
           </Form>
 
-          {fields.length < data.length && (
-            <Button type="primary" onClick={() => append({ value: '' })}>
-              Add More Student
-            </Button>
-          )}
-        </AddStudentModal>
+          <Button
+            type="primary"
+            onClick={() => append({ value: '', label: '' })}>
+            Add More Student
+          </Button>
+        </StudentModal>
+
+        <StudentModal
+          isLoading={isSubmitting}
+          open={openAttendanceModal}
+          onCancel={() => setOpenAttendanceModal(false)}
+          onSubmit={onHandleSubmitAttendance(onSubmitAttendance)}>
+          <Form layout="vertical">
+            <Controller
+              name="date"
+              control={attendanceControl}
+              render={({ field: { value, onChange } }) => (
+                <Form.Item label="Attendance Date">
+                  <StudentSelectContainer>
+                    <StyledDatePicker
+                      format="YYYY-MM-DD"
+                      value={dayjs(value)}
+                      onChange={(date: unknown, _: string | string[]) =>
+                        onChange(date)
+                      }
+                      disabledDate={disabledDate}
+                      size="large"
+                    />
+                  </StudentSelectContainer>
+                </Form.Item>
+              )}
+            />
+
+            <Controller
+              name="status"
+              control={attendanceControl}
+              render={({ field: { value, onChange } }) => (
+                <Form.Item label="Status">
+                  <Select
+                    size="large"
+                    onChange={onChange}
+                    value={value}
+                    options={AttendanceOptions}
+                  />
+                </Form.Item>
+              )}
+            />
+          </Form>
+        </StudentModal>
       </StudentListWrapper>
     </>
   );

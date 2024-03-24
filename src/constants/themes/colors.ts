@@ -9,6 +9,7 @@ export const colors = {
     black: '#000',
     black02: '#0000',
     blackAlpha: '#00000040',
+    warning: '#faad14',
   },
   sysLight: {
     primary: '#269DB9',

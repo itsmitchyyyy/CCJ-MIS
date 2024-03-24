@@ -10,7 +10,7 @@ type Props = {
   onCancel?: () => void;
 };
 
-export const AddStudentModal = ({
+export const StudentModal = ({
   title = 'Add Student',
   children,
   open,

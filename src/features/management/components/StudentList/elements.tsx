@@ -1,5 +1,5 @@
 import { colors } from '@/constants/themes';
-import { TableProps, Table, Button } from 'antd';
+import { TableProps, Table, Button, DatePicker } from 'antd';
 import styled, { createGlobalStyle } from 'styled-components';
 
 export const GlobalStyle = createGlobalStyle`
@@ -40,4 +40,13 @@ export const StudentSelectContainer = styled.div`
   display: flex;
   flex-direction: row;
   gap: 1em;
+`;
+
+export const StyledDatePicker = styled(DatePicker)`
+  width: 100%;
+`;
+
+export const ErrorWrapper = styled.p`
+  color: ${colors.sysLight.error};
+  margin: 0;
 `;
