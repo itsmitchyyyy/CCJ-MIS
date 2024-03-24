@@ -5,6 +5,7 @@ import { Menu, MenuProps } from 'antd';
 import {
   AlertOutlined,
   DashboardOutlined,
+  FileProtectOutlined,
   SettingOutlined,
   SignatureOutlined,
   UserAddOutlined,
@@ -33,6 +34,7 @@ const items: MenuItem[] = [
   getItem('Home', 'dashboard', <DashboardOutlined />),
   getItem('Profile', 'profile', <UserOutlined />),
   getItem('Announcement', 'announcement', <AlertOutlined />),
+  getItem('Documents', 'documents', <FileProtectOutlined />),
   getItem('Approval', 'approval', <SignatureOutlined />),
   getItem('Manage', 'manage', <SettingOutlined />),
   getItem('Account', 'account', <UserAddOutlined />),
@@ -59,12 +61,15 @@ const SideNavBar = ({ collapsed }: Props) => {
       case 'manage':
         navigate('/management');
         break;
+      case 'documents':
+        navigate('/documents');
+        break;
     }
   };
 
   const filteredItem = items.filter((item) => {
     if (accessType !== AccessType.Admin) {
-      return item?.key !== 'account';
+      return item?.key !== 'account' && item?.key !== 'approval';
     }
 
     return item;
