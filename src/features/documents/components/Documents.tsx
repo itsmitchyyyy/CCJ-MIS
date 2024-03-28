@@ -11,47 +11,29 @@ import { Modal } from '@/components/Elements/Modal';
 import { useEffect, useState } from 'react';
 import { InboxOutlined } from '@ant-design/icons';
 import { RcFile, UploadFile } from 'antd/es/upload';
-import { UploadDocumentRequestDTO } from '@/core/domain/dto/document.dto';
+import {
+  FetchDocumentsResponseDTO,
+  UploadDocumentRequestDTO,
+} from '@/core/domain/dto/document.dto';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { validationSchema } from './validation';
 import { DocumentType } from '../types';
 import { ErrorMessage } from '@hookform/error-message';
+import { BACKEND_URL } from '@/config';
 
 const { DirectoryTree } = Tree;
 const { Item } = Form;
 const { Dragger } = Upload;
 
-const treeData: TreeDataNode[] = [
+const initTreeData: TreeDataNode[] = [
   {
     title: 'Office Documents',
     key: '0-0',
-    children: [
-      {
-        title: (
-          <a href="/assets/react.svg" download>
-            Test
-          </a>
-        ),
-        key: '0-0-0',
-        isLeaf: true,
-      },
-    ],
   },
   {
     title: 'Student Documents',
     key: '0-1',
-    children: [
-      {
-        title: (
-          <a href="/assets/react.svg" download>
-            Test
-          </a>
-        ),
-        key: '0-1-0',
-        isLeaf: true,
-      },
-    ],
   },
 ];
 
@@ -61,6 +43,7 @@ const ParentDirectoryOptions = [
 ];
 
 type Props = {
+  documents: FetchDocumentsResponseDTO[];
   onUploadDocuments: (data: UploadDocumentRequestDTO) => void;
   isLoading?: boolean;
   isSuccessful?: boolean;
@@ -70,6 +53,7 @@ const OfficeDocuments = ({
   onUploadDocuments,
   isLoading,
   isSuccessful,
+  documents,
 }: Props) => {
   const {
     useAuth: { accessType, id },
@@ -78,6 +62,7 @@ const OfficeDocuments = ({
     useState<boolean>(false);
   const [documentFiles, setDocumentFiles] = useState<UploadFile[]>([]);
   const [messageApi, contextHolder] = message.useMessage();
+  const [treeData, setTreeData] = useState<TreeDataNode[]>(initTreeData);
 
   const {
     handleSubmit,
@@ -148,6 +133,41 @@ const OfficeDocuments = ({
       reset();
     }
   }, [isSuccessful]);
+
+  useEffect(() => {
+    if (documents.length > 0) {
+      setTreeData((origin) => {
+        const office = documents.filter(
+          (document) => document.type === DocumentType.Office,
+        );
+
+        const student = documents.filter(
+          (document) => document.type === DocumentType.Student,
+        );
+
+        origin[0].children = office.map((doc) => ({
+          title: (
+            <a
+              href={`${BACKEND_URL}/${doc.file_path}`}
+              download
+              target="_blank">
+              {doc.name}
+            </a>
+          ),
+          key: doc.id,
+          isLeaf: true,
+        }));
+
+        origin[1].children = student.map((doc) => ({
+          title: doc.name,
+          key: doc.id,
+          isLeaf: true,
+        }));
+
+        return origin;
+      });
+    }
+  }, [documents]);
 
   return (
     <DocumentsWrapper>
