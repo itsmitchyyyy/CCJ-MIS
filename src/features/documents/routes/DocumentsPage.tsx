@@ -3,6 +3,7 @@ import Documents from '../components/Documents';
 import { useUploadDocuments } from '../api/uploadDocuments';
 import { useFetchDocuments } from '../api/fetchDocuments';
 import { Loader } from '@/components/Elements/Loader';
+import { useUpdateDocument } from '../api/updateDocument';
 
 const DocumentsPage = () => {
   const {
@@ -14,11 +15,16 @@ const DocumentsPage = () => {
   const { data: documents = [], isLoading: isFetchingDocuments } =
     useFetchDocuments();
 
+  const { mutate: updateDocument, isPending: isUpdatingDocument } =
+    useUpdateDocument();
+
   return isFetchingDocuments ? (
     <Loader />
   ) : (
     <AdminLayout>
       <Documents
+        isUpdatingDocument={isUpdatingDocument}
+        onUpdateDocument={updateDocument}
         documents={documents}
         onUploadDocuments={uploadDocuments}
         isLoading={isPending}

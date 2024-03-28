@@ -8,7 +8,7 @@ const fetchDocuments = async (): Promise<FetchDocumentsResponseDTO[]> => {
 
 const useFetchDocuments = () => {
   const query = useQuery({
-    queryKey: ['documents'],
+    queryKey: ['fetchDocuments'],
     queryFn: fetchDocuments,
   });
 

@@ -1,6 +1,7 @@
 import urls from '@/constants/urls';
 import {
   FetchDocumentsResponseDTO,
+  UpdateDocumentRequestDTO,
   UploadDocumentRequestDTO,
 } from '@/core/domain/dto/document.dto';
 import DocumentRepositoryInterface from '@/core/usecases/ports/document.repository';
@@ -15,6 +16,11 @@ export default class DocumentRepository implements DocumentRepositoryInterface {
 
   uploadDocument = async (data: UploadDocumentRequestDTO): Promise<void> => {
     const formData = new FormData();
+
+    if (data.status) {
+      formData.append('status', data.status);
+    }
+
     formData.append('type', data.type);
     data.documents.forEach((document) => {
       formData.append('documents[]', document as unknown as Blob);
@@ -28,5 +34,12 @@ export default class DocumentRepository implements DocumentRepositoryInterface {
 
   fetchDocuments = async (): Promise<FetchDocumentsResponseDTO[]> => {
     return await this.httpAdapter.get(urls.documents.base, {});
+  };
+
+  updateDocument = async (
+    id: string,
+    data: UpdateDocumentRequestDTO,
+  ): Promise<void> => {
+    return await this.httpAdapter.put(`${urls.documents.base}/${id}`, data, {});
   };
 }

@@ -1,5 +1,5 @@
 import { colors } from '@/constants/themes';
-import { Button } from 'antd';
+import { Button, Table, TableProps } from 'antd';
 import styled from 'styled-components';
 
 export const DocumentsWrapper = styled.div`
@@ -22,4 +22,10 @@ export const UploadButton = styled(Button)`
 export const ErrorWrapper = styled.p`
   color: ${colors.sysLight.error};
   margin: 0;
+`;
+
+export const StyledTable = styled((props: TableProps) => <Table {...props} />)`
+  .ant-empty-description {
+    color: ${colors.keyColors.black};
+  }
 `;

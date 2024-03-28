@@ -1,10 +1,11 @@
-import { DocumentType } from '@/features/documents/types';
+import { DocumentStatus, DocumentType } from '@/features/documents/types';
 import { UploadFile } from 'antd';
 
 export type UploadDocumentRequestDTO = {
   type: DocumentType;
   documents: UploadFile[];
   user_id: string;
+  status?: DocumentStatus;
 };
 
 export type FetchDocumentsResponseDTO = {
@@ -16,4 +17,8 @@ export type FetchDocumentsResponseDTO = {
   status: string;
   created_at?: Date;
   updated_at?: Date;
+};
+
+export type UpdateDocumentRequestDTO = {
+  status: DocumentStatus;
 };
