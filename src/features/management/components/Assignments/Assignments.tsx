@@ -1,5 +1,5 @@
 import { Form, Input, List } from 'antd';
-import { Assignment } from '../../types';
+import { Assignment, AssignmentRequest } from '../../types';
 import {
   AssignmentsDateContainer,
   AssignmentsWrapper,
@@ -13,7 +13,7 @@ import {
 import { useGlobalState } from '@/hooks/global';
 import { AccessType } from '@/features/account/types';
 import { Modal } from '@/components/Elements/Modal';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import dayjs from 'dayjs';
 import { RangePickerProps } from 'antd/es/date-picker';
@@ -23,39 +23,21 @@ import { ErrorMessage } from '@hookform/error-message';
 import { AssignmentRequestDTO } from '@/core/domain/dto/assignment.dto';
 import { useParams } from 'react-router-dom';
 
-const data: Assignment[] = [
-  {
-    title: 'Ant Design Title 1',
-    due_date: new Date(),
-    description:
-      'Ant Design, a design language for background applications, is refined by Ant UED Team',
-  },
-  {
-    title: 'Ant Design Title 2',
-    due_date: new Date(),
-    description:
-      'Ant Design, a design language for background applications, is refined by Ant UED Team',
-  },
-  {
-    title: 'Ant Design Title 3',
-    due_date: new Date(),
-    description:
-      'Ant Design, a design language for background applications, is refined by Ant UED Team',
-  },
-  {
-    title: 'Ant Design Title 4',
-    due_date: new Date(),
-    description:
-      'Ant Design, a design language for \nbackground applications, is refined by Ant UED Team',
-  },
-];
-
 type Props = {
   onCreateAssignment: (data: AssignmentRequestDTO) => void;
   isLoading?: boolean;
+  isSuccessful?: boolean;
+  isFetching?: boolean;
+  assignments: Assignment[];
 };
 
-export const Assignments = ({ onCreateAssignment, isLoading }: Props) => {
+export const Assignments = ({
+  onCreateAssignment,
+  isLoading,
+  isFetching,
+  isSuccessful,
+  assignments,
+}: Props) => {
   const { id } = useParams();
 
   const {
@@ -82,13 +64,19 @@ export const Assignments = ({ onCreateAssignment, isLoading }: Props) => {
     return current && current < dayjs().startOf('day');
   };
 
-  const onHandleSubmit = (data: Assignment) => {
+  const onHandleSubmit = (data: AssignmentRequest) => {
     onCreateAssignment({
       ...data,
       due_date: new Date(dayjs(data.due_date).format('YYYY-MM-DD')),
       subject_id: id || '',
     });
   };
+
+  useEffect(() => {
+    if (isSuccessful) {
+      setOpenCreateAssignmentModal(false);
+    }
+  }, [isSuccessful]);
 
   return (
     <AssignmentsWrapper>
@@ -104,7 +92,9 @@ export const Assignments = ({ onCreateAssignment, isLoading }: Props) => {
       </AssignmentstHeader>
       <Wrapper>
         <List
-          dataSource={data}
+          itemLayout="vertical"
+          loading={isFetching}
+          dataSource={assignments}
           renderItem={(item: Assignment, index) => (
             <List.Item actions={[<a>View</a>]} key={index}>
               <List.Item.Meta
@@ -114,6 +104,9 @@ export const Assignments = ({ onCreateAssignment, isLoading }: Props) => {
                   <div dangerouslySetInnerHTML={{ __html: item.description }} />
                 }
               />
+              <div>
+                <p>Due on {dayjs(item.due_date).format('MMMM DD, YYYY')}</p>
+              </div>
             </List.Item>
           )}
         />

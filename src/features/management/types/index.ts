@@ -47,4 +47,13 @@ export type Assignment = {
   title: string;
   due_date: Date;
   description: string;
+  subject_id: string;
+  subject: Subject;
+  created_at?: Date;
+  updated_at?: Date;
 };
+
+export type AssignmentRequest = Omit<
+  Assignment,
+  'subject' | 'subject_id' | 'created_at' | 'updated_at'
+>;
