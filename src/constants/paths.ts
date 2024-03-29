@@ -21,6 +21,7 @@ export const PATHS = {
     STUDENT_LIST: '/management/subject/:id/student-list',
     ATTENDANCE: '/management/subject/:id/attendance',
     ATTENDANCE_RECORD: '/management/subject/:id/attendance/:studentId',
+    ASSIGNMENTS: '/management/subject/:id/assignments',
   },
   DOCUMENTS: {
     BASE: '/documents',

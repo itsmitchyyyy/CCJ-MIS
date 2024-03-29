@@ -8,7 +8,11 @@ import {
   StyledCardContentWrapper,
   Wrapper,
 } from './elements';
-import { ClockCircleOutlined, UserOutlined } from '@ant-design/icons';
+import {
+  ClockCircleOutlined,
+  ReadOutlined,
+  UserOutlined,
+} from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { PATHS } from '@/constants/paths';
 import Meta from 'antd/es/card/Meta';
@@ -80,6 +84,14 @@ const ManagementList = ({ subjects, isLoading }: Props) => {
                                 )
                               }
                               key="attendance"
+                            />,
+                            <ReadOutlined
+                              onClick={() =>
+                                navigate(
+                                  `/management/subject/${subject.id}/assignments`,
+                                )
+                              }
+                              key="assignments"
                             />,
                           ]
                     }>

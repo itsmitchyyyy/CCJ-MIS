@@ -42,3 +42,9 @@ export type Attendance = {
   date: Date;
   status: AttendanceStatus;
 };
+
+export type Assignment = {
+  title: string;
+  due_date: Date;
+  description: string;
+};
