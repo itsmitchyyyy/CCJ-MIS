@@ -20,6 +20,8 @@ import { RangePickerProps } from 'antd/es/date-picker';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { validationSchema } from './validation';
 import { ErrorMessage } from '@hookform/error-message';
+import { AssignmentRequestDTO } from '@/core/domain/dto/assignment.dto';
+import { useParams } from 'react-router-dom';
 
 const data: Assignment[] = [
   {
@@ -48,7 +50,14 @@ const data: Assignment[] = [
   },
 ];
 
-export const Assignments = () => {
+type Props = {
+  onCreateAssignment: (data: AssignmentRequestDTO) => void;
+  isLoading?: boolean;
+};
+
+export const Assignments = ({ onCreateAssignment, isLoading }: Props) => {
+  const { id } = useParams();
+
   const {
     useAuth: { accessType },
   } = useGlobalState();
@@ -74,7 +83,11 @@ export const Assignments = () => {
   };
 
   const onHandleSubmit = (data: Assignment) => {
-    console.log(data);
+    onCreateAssignment({
+      ...data,
+      due_date: new Date(dayjs(data.due_date).format('YYYY-MM-DD')),
+      subject_id: id || '',
+    });
   };
 
   return (
@@ -109,6 +122,7 @@ export const Assignments = () => {
       <Modal
         open={openCreateAssignmentModal}
         onSubmit={handleSubmit(onHandleSubmit)}
+        isLoading={isLoading}
         onCancel={() => setOpenCreateAssignmentModal(false)}
         title="Create Assignment">
         <Form layout="vertical">

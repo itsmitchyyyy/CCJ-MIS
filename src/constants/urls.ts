@@ -35,4 +35,7 @@ export default {
   documents: {
     base: '/documents',
   },
+  assignments: {
+    base: '/assignments',
+  },
 };

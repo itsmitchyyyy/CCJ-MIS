@@ -14,6 +14,8 @@ import AttendanceRepository from '../interface/repositories/attendance.repositor
 import attendanceProvider from './providers/attendance.provider';
 import DocumentRepository from '../interface/repositories/document.repository';
 import documentProvider from './providers/document.provider';
+import AssignmentRepository from '../interface/repositories/assignment.repository';
+import assignmentProvider from './providers/assignment.provider';
 
 const httpAdapter = new HttpAxiosAdapter(axiosInstance);
 
@@ -24,6 +26,7 @@ const subjectRepository = new SubjectRepository(httpAdapter);
 const studentRepository = new StudentRepository(httpAdapter);
 const attendanceRepository = new AttendanceRepository(httpAdapter);
 const documentRepository = new DocumentRepository(httpAdapter);
+const assignmentRepository = new AssignmentRepository(httpAdapter);
 
 export default {
   authProvider: authProvider({ authRepository }),
@@ -33,4 +36,5 @@ export default {
   studentProvider: studentProvider({ studentRepository }),
   attendanceProvider: attendanceProvider({ attendanceRepository }),
   documentProvider: documentProvider({ documentRepository }),
+  assignmentProvider: assignmentProvider({ assignmentRepository }),
 };
