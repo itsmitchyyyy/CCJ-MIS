@@ -38,5 +38,9 @@ export default {
   assignments: {
     base: '/assignments',
     studentAssignment: '/student-assignments',
+    studentAssignmentExists: (
+      studentId: string | number,
+      assignmentId: string | number,
+    ) => `/student-assignments/${studentId}/${assignmentId}/exists`,
   },
 };

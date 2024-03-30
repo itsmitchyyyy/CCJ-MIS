@@ -7,6 +7,7 @@ import {
 } from '@/core/domain/dto/assignment.dto';
 import AssignmentRepositoryInterface from '@/core/usecases/ports/assignment.repository.interface';
 import { HttpAdapter } from '@/core/usecases/ports/httpAdapter.interface';
+import { StudentAssignment } from '@/features/management/types';
 
 export default class AssignmentRepository
   implements AssignmentRepositoryInterface
@@ -45,6 +46,16 @@ export default class AssignmentRepository
       {
         headers: { 'Content-Type': 'multipart/form-data' },
       },
+    );
+  };
+
+  checkStudentAssignmentExists = async (
+    studentId: string,
+    assignmentId: string,
+  ): Promise<StudentAssignment> => {
+    return await this.httpAdapter.get(
+      urls.assignments.studentAssignmentExists(studentId, assignmentId),
+      {},
     );
   };
 }

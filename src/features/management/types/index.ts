@@ -58,3 +58,15 @@ export type AssignmentRequest = Omit<
   Assignment,
   'subject' | 'subject_id' | 'created_at' | 'updated_at' | 'id'
 >;
+
+export type StudentAssignment = {
+  id: string;
+  user_id: string;
+  assignment_id: string;
+  score: number;
+  file_paths: string[];
+  comments: string;
+  remarks: string;
+  created_at?: Date;
+  updated_at?: Date;
+};

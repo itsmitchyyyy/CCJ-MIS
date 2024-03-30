@@ -1,5 +1,5 @@
 import { Form, Input, List, Typography, Upload, message } from 'antd';
-import { Assignment, AssignmentRequest } from '../../types';
+import { Assignment, AssignmentRequest, StudentAssignment } from '../../types';
 import {
   AssignmentsDateContainer,
   AssignmentsWrapper,
@@ -40,6 +40,7 @@ type Props = {
   isSuccessful?: boolean;
   isFetching?: boolean;
   assignments: Assignment[];
+  studentAssignment: StudentAssignment | null;
 };
 
 export const Assignments = ({
@@ -49,6 +50,7 @@ export const Assignments = ({
   isFetching,
   isSuccessful,
   assignments,
+  studentAssignment,
 }: Props) => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -89,6 +91,8 @@ export const Assignments = ({
     },
     resolver: yupResolver(studentAssignmentValidationSchema),
   });
+
+  const studentHasAssignment = !!studentAssignment;
 
   const disabledDate: RangePickerProps['disabledDate'] = (current) => {
     return current && current < dayjs().startOf('day');
@@ -158,13 +162,17 @@ export const Assignments = ({
               actions={
                 accessType === AccessType.Student
                   ? [
-                      <a
-                        onClick={() => {
-                          setSelectedAssignment(item);
-                          setOpenStartAssignmentModal(true);
-                        }}>
-                        Start Assignment{' '}
-                      </a>,
+                      studentHasAssignment ? (
+                        <small>Already submitted</small>
+                      ) : (
+                        <a
+                          onClick={() => {
+                            setSelectedAssignment(item);
+                            setOpenStartAssignmentModal(true);
+                          }}>
+                          Start Assignment{' '}
+                        </a>
+                      ),
                     ]
                   : [
                       <a
@@ -177,7 +185,12 @@ export const Assignments = ({
                       </a>,
                     ]
               }
-              key={index}>
+              key={index}
+              extra={
+                accessType === AccessType.Student ? (
+                  <strong>Score: 0</strong>
+                ) : null
+              }>
               <List.Item.Meta
                 style={{ whiteSpace: 'pre' }}
                 title={<a>{item.title}</a>}
