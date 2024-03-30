@@ -37,5 +37,6 @@ export default {
   },
   assignments: {
     base: '/assignments',
+    studentAssignment: '/student-assignments',
   },
 };

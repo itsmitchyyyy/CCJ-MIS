@@ -2,6 +2,7 @@ import {
   AssignmentRequestDTO,
   FetchAssignmentRequestDTO,
   FetchAssignmentResponseDTO,
+  StudentAssignmentRequestDTO,
 } from '@/core/domain/dto/assignment.dto';
 
 export default interface AssignmentRepositoryInterface {
@@ -9,4 +10,5 @@ export default interface AssignmentRepositoryInterface {
   fetchAssignments(
     query?: FetchAssignmentRequestDTO,
   ): Promise<FetchAssignmentResponseDTO[]>;
+  createStudentAssignment(data: StudentAssignmentRequestDTO): Promise<void>;
 }

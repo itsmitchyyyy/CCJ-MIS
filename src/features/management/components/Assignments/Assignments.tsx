@@ -1,4 +1,4 @@
-import { Form, Input, List } from 'antd';
+import { Form, Input, List, Typography, Upload, message } from 'antd';
 import { Assignment, AssignmentRequest } from '../../types';
 import {
   AssignmentsDateContainer,
@@ -18,13 +18,24 @@ import { Controller, useForm } from 'react-hook-form';
 import dayjs from 'dayjs';
 import { RangePickerProps } from 'antd/es/date-picker';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { validationSchema } from './validation';
+import {
+  studentAssignmentValidationSchema,
+  validationSchema,
+} from './validation';
 import { ErrorMessage } from '@hookform/error-message';
-import { AssignmentRequestDTO } from '@/core/domain/dto/assignment.dto';
+import {
+  AssignmentRequestDTO,
+  StudentAssignmentRequestDTO,
+} from '@/core/domain/dto/assignment.dto';
 import { useNavigate, useParams } from 'react-router-dom';
+import { RcFile, UploadFile } from 'antd/es/upload';
+import { InboxOutlined } from '@ant-design/icons';
+
+const { Dragger } = Upload;
 
 type Props = {
   onCreateAssignment: (data: AssignmentRequestDTO) => void;
+  onCreateStudentAssignment: (data: StudentAssignmentRequestDTO) => void;
   isLoading?: boolean;
   isSuccessful?: boolean;
   isFetching?: boolean;
@@ -33,6 +44,7 @@ type Props = {
 
 export const Assignments = ({
   onCreateAssignment,
+  onCreateStudentAssignment,
   isLoading,
   isFetching,
   isSuccessful,
@@ -42,11 +54,17 @@ export const Assignments = ({
   const navigate = useNavigate();
 
   const {
-    useAuth: { accessType },
+    useAuth: { accessType, id: userId },
   } = useGlobalState();
 
   const [openCreateAssignmentModal, setOpenCreateAssignmentModal] =
     useState<boolean>(false);
+  const [openStartAssignmentModal, setOpenStartAssignmentModal] =
+    useState<boolean>(false);
+  const [documentFiles, setDocumentFiles] = useState<UploadFile[]>([]);
+  const [selectedAssignment, setSelectedAssignment] =
+    useState<Assignment | null>();
+  const [messageApi, contextHolder] = message.useMessage();
 
   const {
     control,
@@ -61,6 +79,17 @@ export const Assignments = ({
     resolver: yupResolver(validationSchema),
   });
 
+  const {
+    control: studentAssignmentControl,
+    handleSubmit: handleSubmitStudentAssignment,
+    formState: { errors: studentAssignmentErrors },
+  } = useForm({
+    defaultValues: {
+      comments: '',
+    },
+    resolver: yupResolver(studentAssignmentValidationSchema),
+  });
+
   const disabledDate: RangePickerProps['disabledDate'] = (current) => {
     return current && current < dayjs().startOf('day');
   };
@@ -73,14 +102,42 @@ export const Assignments = ({
     });
   };
 
+  const onHandleSubmitStudentAssignment = (data: { comments?: string }) => {
+    if (documentFiles.length === 0) {
+      messageApi.error('Please select a file to upload');
+      return;
+    }
+
+    onCreateStudentAssignment({
+      ...data,
+      file_paths: documentFiles,
+      assignment_id: selectedAssignment?.id || '',
+      user_id: userId,
+    });
+  };
+
+  const handleBeforeUploadFile = (_: RcFile, fileList: RcFile[]) => {
+    setDocumentFiles([...documentFiles, ...fileList]);
+    return false;
+  };
+
+  const handleOnRemoveFile = (file: UploadFile) => {
+    const index = documentFiles.indexOf(file);
+    const newDocumentFiles = documentFiles.slice();
+    newDocumentFiles.splice(index, 1);
+    setDocumentFiles(newDocumentFiles);
+  };
+
   useEffect(() => {
     if (isSuccessful) {
       setOpenCreateAssignmentModal(false);
+      setOpenStartAssignmentModal(false);
     }
   }, [isSuccessful]);
 
   return (
     <AssignmentsWrapper>
+      {contextHolder}
       <AssignmentstHeader>
         <h1>Assignments</h1>
         {accessType !== AccessType.Student && (
@@ -100,7 +157,15 @@ export const Assignments = ({
             <List.Item
               actions={
                 accessType === AccessType.Student
-                  ? [<a>Start Assignment </a>]
+                  ? [
+                      <a
+                        onClick={() => {
+                          setSelectedAssignment(item);
+                          setOpenStartAssignmentModal(true);
+                        }}>
+                        Start Assignment{' '}
+                      </a>,
+                    ]
                   : [
                       <a
                         onClick={() =>
@@ -125,6 +190,50 @@ export const Assignments = ({
           )}
         />
       </Wrapper>
+
+      <Modal
+        open={openStartAssignmentModal}
+        onCancel={() => setOpenStartAssignmentModal(false)}
+        onSubmit={handleSubmitStudentAssignment(
+          onHandleSubmitStudentAssignment,
+        )}
+        isLoading={isLoading}
+        title="Assigment Form">
+        <Form layout="vertical">
+          <Typography.Text>Upload a file</Typography.Text>
+          <Dragger
+            multiple
+            beforeUpload={handleBeforeUploadFile}
+            onRemove={handleOnRemoveFile}
+            fileList={documentFiles}>
+            <p className="ant-upload-drag-icon">
+              <InboxOutlined />
+            </p>
+            <p className="ant-upload-text">
+              Click or drag file to this area to upload
+            </p>
+            <p className="ant-upload-hint">
+              Support for a single or bulk upload. Strictly prohibited from
+              banned files.
+            </p>
+          </Dragger>
+
+          <Controller
+            control={studentAssignmentControl}
+            name="comments"
+            render={({ field: { value, onChange } }) => (
+              <Form.Item label="Comments">
+                <StyledTextArea
+                  value={value}
+                  onChange={onChange}
+                  rows={5}
+                  status={studentAssignmentErrors.comments && 'error'}
+                />
+              </Form.Item>
+            )}
+          />
+        </Form>
+      </Modal>
 
       <Modal
         open={openCreateAssignmentModal}

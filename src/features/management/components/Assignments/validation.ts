@@ -7,3 +7,9 @@ export const validationSchema = yup
     description: yup.string().required('Description is required'),
   })
   .required();
+
+export const studentAssignmentValidationSchema = yup
+  .object({
+    comments: yup.string(),
+  })
+  .required();
