@@ -67,7 +67,16 @@ const ManagementList = ({ subjects, isLoading }: Props) => {
                     loading={isLoading}
                     actions={
                       accessType === AccessType.Student
-                        ? undefined
+                        ? [
+                            <ReadOutlined
+                              onClick={() =>
+                                navigate(
+                                  `/management/subject/${subject.id}/assignments`,
+                                )
+                              }
+                              key="assignments"
+                            />,
+                          ]
                         : [
                             <UserOutlined
                               key="students"

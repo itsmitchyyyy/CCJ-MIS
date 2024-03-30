@@ -21,7 +21,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { validationSchema } from './validation';
 import { ErrorMessage } from '@hookform/error-message';
 import { AssignmentRequestDTO } from '@/core/domain/dto/assignment.dto';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 type Props = {
   onCreateAssignment: (data: AssignmentRequestDTO) => void;
@@ -39,6 +39,7 @@ export const Assignments = ({
   assignments,
 }: Props) => {
   const { id } = useParams();
+  const navigate = useNavigate();
 
   const {
     useAuth: { accessType },
@@ -96,17 +97,30 @@ export const Assignments = ({
           loading={isFetching}
           dataSource={assignments}
           renderItem={(item: Assignment, index) => (
-            <List.Item actions={[<a>View</a>]} key={index}>
+            <List.Item
+              actions={
+                accessType === AccessType.Student
+                  ? [<a>Start Assignment </a>]
+                  : [
+                      <a
+                        onClick={() =>
+                          navigate(
+                            `/management/subject/${id}/assignments/${item.id}/submissions`,
+                          )
+                        }>
+                        Submissions
+                      </a>,
+                    ]
+              }
+              key={index}>
               <List.Item.Meta
                 style={{ whiteSpace: 'pre' }}
                 title={<a>{item.title}</a>}
                 description={
-                  <div dangerouslySetInnerHTML={{ __html: item.description }} />
+                  <p>Due on {dayjs(item.due_date).format('MMMM DD, YYYY')}</p>
                 }
               />
-              <div>
-                <p>Due on {dayjs(item.due_date).format('MMMM DD, YYYY')}</p>
-              </div>
+              <div dangerouslySetInnerHTML={{ __html: item.description }} />
             </List.Item>
           )}
         />

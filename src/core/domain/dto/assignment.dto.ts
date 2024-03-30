@@ -12,6 +12,7 @@ export type FetchAssignmentRequestDTO = {
 };
 
 export type FetchAssignmentResponseDTO = AssignmentRequestDTO & {
+  id: string;
   subject: Subject;
   created_at?: Date;
   updated_at?: Date;

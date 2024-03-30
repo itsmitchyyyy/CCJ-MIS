@@ -44,6 +44,7 @@ export type Attendance = {
 };
 
 export type Assignment = {
+  id: string;
   title: string;
   due_date: Date;
   description: string;
@@ -55,5 +56,5 @@ export type Assignment = {
 
 export type AssignmentRequest = Omit<
   Assignment,
-  'subject' | 'subject_id' | 'created_at' | 'updated_at'
+  'subject' | 'subject_id' | 'created_at' | 'updated_at' | 'id'
 >;
