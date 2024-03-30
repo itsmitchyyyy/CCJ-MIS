@@ -25,3 +25,9 @@ export type StudentAssignmentRequestDTO = {
   comments?: string;
   file_paths: UploadFile[];
 };
+
+export type FetchStudentAssignmentsQueryDTO = {
+  user_id?: string;
+  assignment_id?: string;
+  load_relations?: boolean;
+};

@@ -1,4 +1,5 @@
 import { AttendanceStatus } from '@/core/domain/dto/attendance.dto';
+import { User } from '@/core/domain/entities/user.entity';
 import { ErrorMessageObject } from '@/features/account/types';
 
 export type useSubjectState = {
@@ -69,4 +70,9 @@ export type StudentAssignment = {
   remarks: string;
   created_at?: Date;
   updated_at?: Date;
+};
+
+export type StudentAssignments = StudentAssignment & {
+  student: User;
+  assignment: Assignment;
 };

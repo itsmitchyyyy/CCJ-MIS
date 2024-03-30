@@ -3,11 +3,15 @@ import {
   AssignmentRequestDTO,
   FetchAssignmentRequestDTO,
   FetchAssignmentResponseDTO,
+  FetchStudentAssignmentsQueryDTO,
   StudentAssignmentRequestDTO,
 } from '@/core/domain/dto/assignment.dto';
 import AssignmentRepositoryInterface from '@/core/usecases/ports/assignment.repository.interface';
 import { HttpAdapter } from '@/core/usecases/ports/httpAdapter.interface';
-import { StudentAssignment } from '@/features/management/types';
+import {
+  StudentAssignment,
+  StudentAssignments,
+} from '@/features/management/types';
 
 export default class AssignmentRepository
   implements AssignmentRepositoryInterface
@@ -57,5 +61,13 @@ export default class AssignmentRepository
       urls.assignments.studentAssignmentExists(studentId, assignmentId),
       {},
     );
+  };
+
+  fetchStudentAssignments = async (
+    query?: FetchStudentAssignmentsQueryDTO,
+  ): Promise<StudentAssignments[]> => {
+    return await this.httpAdapter.get(urls.assignments.studentAssignment, {
+      params: query,
+    });
   };
 }

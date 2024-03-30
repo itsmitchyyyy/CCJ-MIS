@@ -1,5 +1,5 @@
 import { colors } from '@/constants/themes';
-import { Button, DatePicker, Input } from 'antd';
+import { Button, DatePicker, Input, Table, TableProps } from 'antd';
 import styled from 'styled-components';
 
 export const AssignmentsWrapper = styled.div`
@@ -40,4 +40,10 @@ export const StyledDatePicker = styled(DatePicker)`
 export const ErrorWrapper = styled.p`
   color: ${colors.sysLight.error};
   margin: 0;
+`;
+
+export const StyledTable = styled((props: TableProps) => <Table {...props} />)`
+  .ant-empty-description {
+    color: ${colors.keyColors.black};
+  }
 `;

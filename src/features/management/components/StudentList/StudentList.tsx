@@ -124,15 +124,17 @@ export const StudentList = ({
         key: 'action',
         render: (_, record) => (
           <Space size="middle">
-            <a
-              onClick={() =>
-                onDelete({
-                  studentId: record.student_id,
-                  subjectId: record.subject_id,
-                })
-              }>
-              Delete
-            </a>
+            {accessType === AccessType.Admin && (
+              <a
+                onClick={() =>
+                  onDelete({
+                    studentId: record.student_id,
+                    subjectId: record.subject_id,
+                  })
+                }>
+                Delete
+              </a>
+            )}
             <a onClick={() => onClickMarkAttendance(record.student)}>
               Mark Attendance
             </a>

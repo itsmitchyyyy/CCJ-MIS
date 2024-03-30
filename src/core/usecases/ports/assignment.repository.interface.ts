@@ -2,9 +2,13 @@ import {
   AssignmentRequestDTO,
   FetchAssignmentRequestDTO,
   FetchAssignmentResponseDTO,
+  FetchStudentAssignmentsQueryDTO,
   StudentAssignmentRequestDTO,
 } from '@/core/domain/dto/assignment.dto';
-import { StudentAssignment } from '@/features/management/types';
+import {
+  StudentAssignment,
+  StudentAssignments,
+} from '@/features/management/types';
 
 export default interface AssignmentRepositoryInterface {
   createAssignment(data: AssignmentRequestDTO): Promise<void>;
@@ -16,4 +20,7 @@ export default interface AssignmentRepositoryInterface {
     studentId: string,
     assignmentId: string,
   ): Promise<StudentAssignment>;
+  fetchStudentAssignments(
+    query?: FetchStudentAssignmentsQueryDTO,
+  ): Promise<StudentAssignments[]>;
 }
