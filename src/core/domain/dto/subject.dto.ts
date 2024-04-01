@@ -28,10 +28,18 @@ export type FetchSubjectResponseDTO = {
   days: string;
 };
 
+export type Grade = {
+  first_quarter: string;
+  second_quarter: string;
+  third_quarter: string;
+  fourth_quarter: string;
+};
+
 export type FetchStudentSubjectResponseDTO = {
   id: string;
   subject_id: string;
   subject: Subject;
   student_id: string;
   student: User;
+  grade: Grade;
 };

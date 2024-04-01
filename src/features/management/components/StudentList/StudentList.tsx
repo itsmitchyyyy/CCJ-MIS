@@ -120,6 +120,19 @@ export const StudentList = ({
         render: (record) => record.last_name,
       },
       {
+        title: 'Grade',
+        key: 'grade',
+        render: (_, record) => (
+          <Space size="small" direction="vertical">
+            {Object.entries(record.grade).map(([key, value]) => (
+              <span key={`grade-${key}`}>{`${key
+                .replace('_quarter', ' Semester')
+                .toLocaleUpperCase()}: ${value === null ? 'N/A' : ''}`}</span>
+            ))}
+          </Space>
+        ),
+      },
+      {
         title: 'Action',
         key: 'action',
         render: (_, record) => (
