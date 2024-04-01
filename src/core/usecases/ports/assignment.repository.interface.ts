@@ -4,6 +4,7 @@ import {
   FetchAssignmentResponseDTO,
   FetchStudentAssignmentsQueryDTO,
   StudentAssignmentRequestDTO,
+  UpdateStudentAssignmentRequestDTO,
 } from '@/core/domain/dto/assignment.dto';
 import {
   StudentAssignment,
@@ -23,4 +24,8 @@ export default interface AssignmentRepositoryInterface {
   fetchStudentAssignments(
     query?: FetchStudentAssignmentsQueryDTO,
   ): Promise<StudentAssignments[]>;
+  updateStudentAssignment(
+    data: UpdateStudentAssignmentRequestDTO,
+    id: string,
+  ): Promise<StudentAssignments>;
 }

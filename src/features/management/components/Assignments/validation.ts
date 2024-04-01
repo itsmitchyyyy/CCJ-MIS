@@ -13,3 +13,8 @@ export const studentAssignmentValidationSchema = yup
     comments: yup.string(),
   })
   .required();
+
+export const updateScoreValidationSchema = yup.object({
+  score: yup.number().required('Score is required'),
+  remarks: yup.string(),
+});

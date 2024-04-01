@@ -70,4 +70,15 @@ export default class AssignmentRepository
       params: query,
     });
   };
+
+  updateStudentAssignment = async (
+    data: { score: number; remarks?: string },
+    id: string,
+  ): Promise<StudentAssignments> => {
+    return await this.httpAdapter.put(
+      `${urls.assignments.studentAssignment}/${id}`,
+      data,
+      {},
+    );
+  };
 }

@@ -1,5 +1,12 @@
 import { colors } from '@/constants/themes';
-import { Button, DatePicker, Input, Table, TableProps } from 'antd';
+import {
+  Button,
+  DatePicker,
+  Input,
+  InputNumber,
+  Table,
+  TableProps,
+} from 'antd';
 import styled from 'styled-components';
 
 export const AssignmentsWrapper = styled.div`
@@ -46,4 +53,8 @@ export const StyledTable = styled((props: TableProps) => <Table {...props} />)`
   .ant-empty-description {
     color: ${colors.keyColors.black};
   }
+`;
+
+export const StyledInputNumber = styled(InputNumber)`
+  width: 100%;
 `;

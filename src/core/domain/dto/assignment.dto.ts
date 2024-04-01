@@ -31,3 +31,8 @@ export type FetchStudentAssignmentsQueryDTO = {
   assignment_id?: string;
   load_relations?: boolean;
 };
+
+export type UpdateStudentAssignmentRequestDTO = {
+  score: number;
+  remarks?: string;
+};

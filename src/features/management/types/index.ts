@@ -76,3 +76,8 @@ export type StudentAssignments = StudentAssignment & {
   student: User;
   assignment: Assignment;
 };
+
+export type UpdateStudentAssignment = {
+  score: number;
+  remarks?: string;
+};
