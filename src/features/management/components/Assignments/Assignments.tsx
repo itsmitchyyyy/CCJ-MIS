@@ -1,5 +1,11 @@
 import { Form, Input, List, Typography, Upload, message } from 'antd';
-import { Assignment, AssignmentRequest, StudentAssignment } from '../../types';
+import {
+  Assignment,
+  AssignmentRequest,
+  AssignmentWithStudentAssignments,
+  StudentAssignment,
+  StudentAssignments,
+} from '../../types';
 import {
   AssignmentsDateContainer,
   AssignmentsWrapper,
@@ -39,8 +45,7 @@ type Props = {
   isLoading?: boolean;
   isSuccessful?: boolean;
   isFetching?: boolean;
-  assignments: Assignment[];
-  studentAssignment: StudentAssignment | null;
+  assignments: (Assignment & { student_assignments?: StudentAssignments[] })[];
 };
 
 export const Assignments = ({
@@ -50,7 +55,6 @@ export const Assignments = ({
   isFetching,
   isSuccessful,
   assignments,
-  studentAssignment,
 }: Props) => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -91,8 +95,6 @@ export const Assignments = ({
     },
     resolver: yupResolver(studentAssignmentValidationSchema),
   });
-
-  const studentHasAssignment = !!studentAssignment;
 
   const disabledDate: RangePickerProps['disabledDate'] = (current) => {
     return current && current < dayjs().startOf('day');
@@ -157,12 +159,15 @@ export const Assignments = ({
           itemLayout="vertical"
           loading={isFetching}
           dataSource={assignments}
-          renderItem={(item: Assignment, index) => (
+          renderItem={(item: AssignmentWithStudentAssignments, index) => (
             <List.Item
               actions={
                 accessType === AccessType.Student
                   ? [
-                      studentHasAssignment ? (
+                      item.student_assignments?.some(
+                        (student_assignment) =>
+                          student_assignment.assignment_id === item.id,
+                      ) ? (
                         <small>Already submitted</small>
                       ) : (
                         <a
@@ -188,7 +193,13 @@ export const Assignments = ({
               key={index}
               extra={
                 accessType === AccessType.Student ? (
-                  <strong>Score: 0</strong>
+                  <strong>
+                    Score:
+                    {item.student_assignments?.filter(
+                      (student_assignment) =>
+                        student_assignment.assignment_id === item.id,
+                    )[0]?.score || 0}
+                  </strong>
                 ) : null
               }>
               <List.Item.Meta

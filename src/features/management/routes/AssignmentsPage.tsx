@@ -4,8 +4,6 @@ import { useCreateAssignment } from '../api/createAssignment';
 import { useFetchAssignments } from '../api/fetchAssignments';
 import { useParams } from 'react-router-dom';
 import { useCreateStudentAssignment } from '../api/createStudentAssignment';
-import { useCheckStudentAssignmentExists } from '../api/checkStudentAssignmentExists';
-import { useEffect } from 'react';
 import { useGlobalState } from '@/hooks/global';
 
 const AssignmentsPage = () => {
@@ -20,7 +18,7 @@ const AssignmentsPage = () => {
   } = useCreateAssignment();
 
   const { data: assignments = [], isLoading: isFetchingAssignments } =
-    useFetchAssignments({ subject_id: id });
+    useFetchAssignments({ subject_id: id, student_id: userId });
 
   const {
     mutate: createStudentAssignment,
@@ -28,19 +26,15 @@ const AssignmentsPage = () => {
     isSuccess: isSuccessStudentAssignment,
   } = useCreateStudentAssignment();
 
-  const { data: studentAssignment = null, isLoading: isCheckingStudentExists } =
-    useCheckStudentAssignmentExists(userId, id || '');
-
   return (
     <AdminLayout>
       <Assignments
         onCreateStudentAssignment={createStudentAssignment}
         assignments={assignments}
-        isFetching={isFetchingAssignments || isCheckingStudentExists}
+        isFetching={isFetchingAssignments}
         onCreateAssignment={createAssignment}
         isLoading={isPending || isPendingStudentAssignment}
         isSuccessful={isSuccess || isSuccessStudentAssignment}
-        studentAssignment={studentAssignment}
       />
     </AdminLayout>
   );

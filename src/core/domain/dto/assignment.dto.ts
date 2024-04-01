@@ -1,4 +1,4 @@
-import { Subject } from '@/features/management/types';
+import { StudentAssignments, Subject } from '@/features/management/types';
 import { UploadFile } from 'antd';
 
 export type AssignmentRequestDTO = {
@@ -10,11 +10,13 @@ export type AssignmentRequestDTO = {
 
 export type FetchAssignmentRequestDTO = {
   subject_id?: string;
+  student_id?: string;
 };
 
 export type FetchAssignmentResponseDTO = AssignmentRequestDTO & {
   id: string;
   subject: Subject;
+  student_assignments?: StudentAssignments[];
   created_at?: Date;
   updated_at?: Date;
 };
