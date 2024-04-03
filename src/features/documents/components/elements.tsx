@@ -1,5 +1,5 @@
 import { colors } from '@/constants/themes';
-import { Button, Table, TableProps } from 'antd';
+import { Button, Input, Table, TableProps } from 'antd';
 import styled from 'styled-components';
 
 export const DocumentsWrapper = styled.div`
@@ -27,5 +27,11 @@ export const ErrorWrapper = styled.p`
 export const StyledTable = styled((props: TableProps) => <Table {...props} />)`
   .ant-empty-description {
     color: ${colors.keyColors.black};
+  }
+`;
+
+export const StyledTextArea = styled(Input.TextArea)`
+  && {
+    resize: none;
   }
 `;

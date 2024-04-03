@@ -1,5 +1,6 @@
 import urls from '@/constants/urls';
 import {
+  AddRequestToDocumentDTO,
   FetchDocumentsResponseDTO,
   UpdateDocumentRequestDTO,
   UploadDocumentRequestDTO,
@@ -27,6 +28,10 @@ export default class DocumentRepository implements DocumentRepositoryInterface {
     });
     formData.append('user_id', data.user_id);
 
+    if (data.is_private) {
+      formData.append('is_private', JSON.stringify(+data.is_private));
+    }
+
     return await this.httpAdapter.post(urls.documents.base, formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     });
@@ -41,5 +46,11 @@ export default class DocumentRepository implements DocumentRepositoryInterface {
     data: UpdateDocumentRequestDTO,
   ): Promise<void> => {
     return await this.httpAdapter.put(`${urls.documents.base}/${id}`, data, {});
+  };
+
+  addRequestToDocument = async (
+    data: AddRequestToDocumentDTO,
+  ): Promise<void> => {
+    return await this.httpAdapter.post(urls.documents.requests, data, {});
   };
 }

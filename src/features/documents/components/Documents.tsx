@@ -1,166 +1,104 @@
-import {
-  Form,
-  Select,
-  Space,
-  TableProps,
-  Tree,
-  TreeDataNode,
-  Upload,
-  message,
-} from 'antd';
+import { Form, Radio, Tree, TreeDataNode, Upload, message } from 'antd';
 import {
   DocumentsHeader,
   DocumentsWrapper,
   ErrorWrapper,
-  StyledTable,
+  StyledTextArea,
   UploadButton,
 } from './elements';
 import { useGlobalState } from '@/hooks/global';
 import { AccessType } from '@/features/account/types';
 import { Modal } from '@/components/Elements/Modal';
 import { useEffect, useState } from 'react';
-import { InboxOutlined } from '@ant-design/icons';
+import { InboxOutlined, LockOutlined } from '@ant-design/icons';
 import { RcFile, UploadFile } from 'antd/es/upload';
 import {
   FetchDocumentsResponseDTO,
-  UpdateDocumentRequestDTO,
   UploadDocumentRequestDTO,
 } from '@/core/domain/dto/document.dto';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { validationSchema } from './validation';
 import { DocumentStatus, DocumentType } from '../types';
-import { ErrorMessage } from '@hookform/error-message';
 import { BACKEND_URL } from '@/config';
+import { ErrorMessage } from '@hookform/error-message';
 
 const { DirectoryTree } = Tree;
-const { Item } = Form;
 const { Dragger } = Upload;
-
-const initTreeData: TreeDataNode[] = [
-  {
-    title: 'Office Documents',
-    key: '0-0',
-  },
-  {
-    title: 'Student Documents',
-    key: '0-1',
-  },
-];
-
-const ParentDirectoryOptions = [
-  { label: 'Office Documents', value: 'office' },
-  { label: 'Student Documents', value: 'student' },
-];
 
 type Props = {
   documents: FetchDocumentsResponseDTO[];
   onUploadDocuments: (data: UploadDocumentRequestDTO) => void;
   isLoading?: boolean;
   isSuccessful?: boolean;
-  onUpdateDocument: (data: {
-    id: string;
-    request: UpdateDocumentRequestDTO;
-  }) => void;
-  isUpdatingDocument?: boolean;
 };
 
 const OfficeDocuments = ({
   onUploadDocuments,
-  onUpdateDocument,
   isLoading,
   isSuccessful,
   documents,
-  isUpdatingDocument,
 }: Props) => {
   const {
     useAuth: { accessType, id },
   } = useGlobalState();
+
+  const initTreeData: TreeDataNode[] = [
+    {
+      title: 'Office Documents',
+      key: '0-0',
+    },
+    {
+      title:
+        accessType !== AccessType.Teacher
+          ? 'Teacher Documents'
+          : 'Student Documents',
+      key: '0-1',
+    },
+    {
+      title:
+        accessType === AccessType.Admin ? 'Student Documents' : 'My Documents',
+      key: '0-2',
+    },
+  ];
+
   const [openUploadDocumentsModal, setOpenUploadDocumentsModal] =
     useState<boolean>(false);
   const [documentFiles, setDocumentFiles] = useState<UploadFile[]>([]);
   const [messageApi, contextHolder] = message.useMessage();
   const [treeData, setTreeData] = useState<TreeDataNode[]>(initTreeData);
-  const [pendingDocuments, setPendingDocuments] = useState<
-    FetchDocumentsResponseDTO[]
-  >([]);
+  const [openRequestModal, setOpenRequestModal] = useState<boolean>(false);
+  const [selectedDocument, setSelectedDocument] =
+    useState<FetchDocumentsResponseDTO | null>(null);
 
   const {
     handleSubmit,
     control,
     formState: { errors },
-    reset,
   } = useForm({
     defaultValues: {
-      type: DocumentType.Office,
-      resolver: yupResolver(validationSchema),
+      is_private: false,
     },
+    resolver: yupResolver(validationSchema),
   });
 
-  const TableColumnData: TableProps<FetchDocumentsResponseDTO>['columns'] = [
-    {
-      title: 'ID',
-      dataIndex: 'id',
-      key: 'id',
-    },
-    {
-      title: 'Type',
-      key: 'type',
-      render: (_, record) => record.type.toUpperCase(),
-    },
-    {
-      title: 'File',
-      key: 'file',
-      render: (_, record) => (
-        <a href={`${BACKEND_URL}/${record.file_path}`} download target="_blank">
-          {record.name}
-        </a>
-      ),
-    },
-    {
-      title: 'Action',
-      key: 'action',
-      render: (_, record) => (
-        <Space size="middle">
-          <a
-            onClick={() =>
-              onUpdateDocument({
-                id: record.id,
-                request: { status: DocumentStatus.Approved },
-              })
-            }>
-            Approve
-          </a>
-          <a
-            onClick={() =>
-              onUpdateDocument({
-                id: record.id,
-                request: { status: DocumentStatus.Rejected },
-              })
-            }>
-            Reject
-          </a>
-        </Space>
-      ),
-    },
-  ];
-
-  const handleUploadFile = (request: { type: string }) => {
+  const handleUploadFile = (request: { is_private: boolean }) => {
     if (documentFiles.length === 0) {
       messageApi.error('Please select a file to upload');
       return;
     }
 
-    const status =
-      accessType === AccessType.Admin
-        ? DocumentStatus.Approved
-        : DocumentStatus.Pending;
-
     const data: UploadDocumentRequestDTO = {
-      type: request.type as DocumentType,
+      type:
+        accessType === AccessType.Admin
+          ? DocumentType.Office
+          : accessType === AccessType.Teacher
+          ? DocumentType.Teacher
+          : DocumentType.Student,
       user_id: id,
       documents: documentFiles,
-      status,
+      status: DocumentStatus.Approved,
+      is_private: request.is_private,
     };
 
     onUploadDocuments(data);
@@ -205,7 +143,6 @@ const OfficeDocuments = ({
     if (isSuccessful) {
       setOpenUploadDocumentsModal(false);
       setDocumentFiles([]);
-      reset();
     }
   }, [isSuccessful]);
 
@@ -218,26 +155,57 @@ const OfficeDocuments = ({
             document.status === DocumentStatus.Approved,
         );
 
-        const student = documents.filter(
+        const studentOrTeacherDocs = documents.filter(
           (document) =>
-            document.type === DocumentType.Student &&
+            document.type ===
+              (accessType !== AccessType.Teacher
+                ? DocumentType.Teacher
+                : DocumentType.Student) &&
             document.status === DocumentStatus.Approved,
         );
 
+        const myDocuments = documents.filter((document) => {
+          const isValid =
+            document.status === DocumentStatus.Approved &&
+            document.type ===
+              (accessType !== AccessType.Teacher
+                ? DocumentType.Student
+                : DocumentType.Teacher);
+
+          if (accessType === AccessType.Admin) {
+            return isValid;
+          }
+
+          return document.user_id === id && isValid;
+        });
+
         origin[0].children = office.map((doc, index) => ({
-          title: (
-            <a
-              href={`${BACKEND_URL}/${doc.file_path}`}
-              download
-              target="_blank">
-              {doc.name}
-            </a>
-          ),
+          title:
+            doc.is_private && accessType !== AccessType.Admin ? (
+              <a
+                onClick={() => {
+                  setSelectedDocument(doc);
+                  setOpenRequestModal(true);
+                }}>
+                {doc.name}
+              </a>
+            ) : (
+              <a
+                href={`${BACKEND_URL}/${doc.file_path}`}
+                download
+                target="_blank">
+                {doc.name}
+              </a>
+            ),
           key: `0-0-${index}`,
+          icon:
+            doc.is_private && accessType !== AccessType.Admin ? (
+              <LockOutlined />
+            ) : undefined,
           isLeaf: true,
         }));
 
-        origin[1].children = student.map((doc, index) => ({
+        origin[1].children = studentOrTeacherDocs.map((doc, index) => ({
           title: (
             <a
               href={`${BACKEND_URL}/${doc.file_path}`}
@@ -250,18 +218,18 @@ const OfficeDocuments = ({
           isLeaf: true,
         }));
 
-        const pending = documents.filter((document) => {
-          if (accessType === AccessType.Teacher) {
-            return (
-              document.type === DocumentType.Student &&
-              document.status === DocumentStatus.Pending
-            );
-          }
-
-          return document.status === DocumentStatus.Pending;
-        });
-
-        setPendingDocuments(pending);
+        origin[2].children = myDocuments.map((doc, index) => ({
+          title: (
+            <a
+              href={`${BACKEND_URL}/${doc.file_path}`}
+              download
+              target="_blank">
+              {doc.name}
+            </a>
+          ),
+          key: `0-2-${index}`,
+          isLeaf: true,
+        }));
 
         return origin;
       });
@@ -273,14 +241,12 @@ const OfficeDocuments = ({
       {contextHolder}
       <DocumentsHeader>
         <h1>Documents</h1>
-        {accessType !== AccessType.Student && (
-          <UploadButton
-            size="large"
-            type="primary"
-            onClick={() => setOpenUploadDocumentsModal(true)}>
-            Upload Documents
-          </UploadButton>
-        )}
+        <UploadButton
+          size="large"
+          type="primary"
+          onClick={() => setOpenUploadDocumentsModal(true)}>
+          Upload Documents
+        </UploadButton>
       </DocumentsHeader>
 
       <div>
@@ -292,17 +258,17 @@ const OfficeDocuments = ({
         />
       </div>
 
-      {accessType !== AccessType.Student && (
-        <div>
-          <h2>Pending Documents</h2>
-          <StyledTable
-            columns={TableColumnData}
-            rowKey="id"
-            dataSource={pendingDocuments}
-            loading={isUpdatingDocument}
-          />
-        </div>
-      )}
+      <Modal
+        open={openRequestModal}
+        onSubmit={() => {}}
+        onCancel={() => setOpenRequestModal(false)}
+        title="Request Document Access">
+        <Form layout="vertical">
+          <Form.Item label="Reason">
+            <StyledTextArea rows={4} />
+          </Form.Item>
+        </Form>
+      </Modal>
 
       <Modal
         isLoading={isLoading}
@@ -311,27 +277,28 @@ const OfficeDocuments = ({
         title="Upload Documents"
         onCancel={() => setOpenUploadDocumentsModal(false)}>
         <Form layout="vertical">
-          <ErrorMessage
-            name="type"
-            errors={errors}
-            render={({ message }) => <ErrorWrapper>{message}</ErrorWrapper>}
-          />
+          {accessType === AccessType.Admin && (
+            <>
+              <ErrorMessage
+                name="is_private"
+                errors={errors}
+                render={({ message }) => <ErrorWrapper>{message}</ErrorWrapper>}
+              />
 
-          <Controller
-            control={control}
-            name="type"
-            render={({ field: { onChange, value } }) => (
-              <Item label="Parent Directory">
-                <Select
-                  status={errors.type && 'error'}
-                  value={value}
-                  onChange={onChange}
-                  options={ParentDirectoryOptions}
-                />
-              </Item>
-            )}
-          />
-
+              <Controller
+                control={control}
+                name="is_private"
+                render={({ field: { onChange, value } }) => (
+                  <Form.Item label="Confidentiality">
+                    <Radio.Group onChange={onChange} value={value}>
+                      <Radio value={false}>Public</Radio>
+                      <Radio value={true}>Private</Radio>
+                    </Radio.Group>
+                  </Form.Item>
+                )}
+              />
+            </>
+          )}
           <Dragger
             accept=".xlsx, .xls, .doc, .docx,.ppt, .pptx,.txt,.pdf"
             multiple
