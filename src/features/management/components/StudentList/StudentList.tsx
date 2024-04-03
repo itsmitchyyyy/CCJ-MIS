@@ -11,13 +11,13 @@ import {
 } from './elements';
 import { StudentModal } from './StudentModal';
 import React, { useEffect, useState } from 'react';
-import { Button, Form, Select, Space, TableProps } from 'antd';
-import { Controller, set, useFieldArray, useForm } from 'react-hook-form';
+import { Button, Form, Input, Select, Space, TableProps } from 'antd';
+import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import { User } from '@/core/domain/entities/user.entity';
 import { FetchStudentSubjectResponseDTO } from '@/core/domain/dto/subject.dto';
 import { RangePickerProps } from 'antd/es/date-picker';
 import dayjs from 'dayjs';
-import { AttendanceOptions } from '@/constants/data';
+import { AttendanceOptions, GradeOptions } from '@/constants/data';
 import { useGlobalState } from '@/hooks/global';
 import { AccessType } from '@/features/account/types';
 import {
@@ -28,6 +28,7 @@ import { useParams } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { validationSchema } from './validation';
 import { ErrorMessage } from '@hookform/error-message';
+import { Modal } from '@/components/Elements/Modal';
 
 type StudentListProps = {
   label: string;
@@ -64,8 +65,10 @@ export const StudentList = ({
   const {
     useAuth: { accessType },
   } = useGlobalState();
-  const [openAddModal, setOpenAddModal] = useState(false);
-  const [openAttendanceModal, setOpenAttendanceModal] = useState(false);
+  const [openAddModal, setOpenAddModal] = useState<boolean>(false);
+  const [openAttendanceModal, setOpenAttendanceModal] =
+    useState<boolean>(false);
+  const [openGradeModal, setOpenGradeModal] = useState<boolean>(false);
 
   const { id } = useParams();
 
@@ -151,7 +154,9 @@ export const StudentList = ({
             <a onClick={() => onClickMarkAttendance(record.student)}>
               Mark Attendance
             </a>
-            {accessType === AccessType.Teacher && <a>Add Grade</a>}
+            {accessType === AccessType.Teacher && (
+              <a onClick={() => onClickAddGrade(record.student)}>Add Grade</a>
+            )}
           </Space>
         ),
       },
@@ -195,6 +200,11 @@ export const StudentList = ({
     setOpenAttendanceModal(true);
   };
 
+  const onClickAddGrade = (student: User) => {
+    setSelectedStudent(student);
+    setOpenGradeModal(true);
+  };
+
   const onSubmitAttendance = (data: {
     date: Date;
     status: AttendanceStatus;
@@ -207,7 +217,7 @@ export const StudentList = ({
     onCreateAttendance(newData);
   };
 
-  const onChangeStudent = (student: StudentListProps, options: any) => {
+  const onChangeStudent = (student: StudentListProps, _: any) => {
     const newData = students.filter(
       (data) => data.value.toString() !== student.value.toString(),
     ) as StudentListProps[];
@@ -240,6 +250,21 @@ export const StudentList = ({
             rowKey="id"
           />
         </StudentListContainer>
+
+        <Modal
+          onSubmit={() => {}}
+          open={openGradeModal}
+          onCancel={() => setOpenGradeModal(false)}
+          title="Add Grade">
+          <Form layout="vertical">
+            <Form.Item label="Semester">
+              <Select size="large" options={GradeOptions} />
+            </Form.Item>
+            <Form.Item label="Grade">
+              <Input size="large" />
+            </Form.Item>
+          </Form>
+        </Modal>
 
         <StudentModal
           open={openAddModal}
@@ -324,7 +349,10 @@ export const StudentList = ({
         <StudentModal
           isLoading={isSubmitting}
           open={openAttendanceModal}
-          onCancel={() => setOpenAttendanceModal(false)}
+          onCancel={() => {
+            setSelectedStudent(null);
+            setOpenAttendanceModal(false);
+          }}
           onSubmit={onHandleSubmitAttendance(onSubmitAttendance)}>
           <Form layout="vertical">
             <Controller

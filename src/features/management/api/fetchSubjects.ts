@@ -1,21 +1,28 @@
 import dependencies from '@/core/dependencies';
-import { FetchSubjectResponseDTO } from '@/core/domain/dto/subject.dto';
+import {
+  FetchSubjectQuery,
+  FetchSubjectResponseDTO,
+} from '@/core/domain/dto/subject.dto';
 import { AccessType } from '@/features/account/types';
 import { useGlobalState } from '@/hooks/global';
 import { useQuery } from '@tanstack/react-query';
 
-const fetchSubjects = async (): Promise<FetchSubjectResponseDTO[]> => {
-  return await dependencies.subjectProvider.subjectRepository.fetchSubjects();
+const fetchSubjects = async (
+  data?: FetchSubjectQuery,
+): Promise<FetchSubjectResponseDTO[]> => {
+  return await dependencies.subjectProvider.subjectRepository.fetchSubjects(
+    data,
+  );
 };
 
-const useFetchSubjects = () => {
+const useFetchSubjects = (data?: FetchSubjectQuery) => {
   const {
     useAuth: { accessType },
   } = useGlobalState();
 
   const query = useQuery({
     queryKey: ['fetchSubjects'],
-    queryFn: fetchSubjects,
+    queryFn: () => fetchSubjects(data),
     enabled: accessType !== AccessType.Student,
   });
 

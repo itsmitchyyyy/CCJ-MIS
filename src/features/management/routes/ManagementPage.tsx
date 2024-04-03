@@ -15,7 +15,9 @@ const ManagementPage = () => {
     FetchSubjectResponseDTO[]
   >([]);
 
-  const { data: subjects = [], isLoading } = useFetchSubjects();
+  const { data: subjects = [], isLoading } = useFetchSubjects(
+    accessType === AccessType.Teacher ? { teacher_id: id } : {},
+  );
 
   const {
     data: studentSubjectsData = [],

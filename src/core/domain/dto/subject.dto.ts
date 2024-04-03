@@ -43,3 +43,7 @@ export type FetchStudentSubjectResponseDTO = {
   student: User;
   grade: Grade;
 };
+
+export type FetchSubjectQuery = {
+  teacher_id?: string;
+};
