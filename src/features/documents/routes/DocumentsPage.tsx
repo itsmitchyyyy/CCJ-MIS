@@ -3,7 +3,7 @@ import Documents from '../components/Documents';
 import { useUploadDocuments } from '../api/uploadDocuments';
 import { useFetchDocuments } from '../api/fetchDocuments';
 import { Loader } from '@/components/Elements/Loader';
-import { useUpdateDocument } from '../api/updateDocument';
+import { useAddRequestToDocument } from '../api/addRequestToDocument';
 
 const DocumentsPage = () => {
   const {
@@ -15,16 +15,20 @@ const DocumentsPage = () => {
   const { data: documents = [], isLoading: isFetchingDocuments } =
     useFetchDocuments();
 
-  const { mutate: updateDocument, isPending: isUpdatingDocument } =
-    useUpdateDocument();
+  const {
+    mutate: addRequestToDocument,
+    isPending: isRequestingDocument,
+    isSuccess: isRequestingDocumentSuccess,
+  } = useAddRequestToDocument();
 
   return isFetchingDocuments ? (
     <Loader />
   ) : (
     <AdminLayout>
       <Documents
-        isUpdatingDocument={isUpdatingDocument}
-        onUpdateDocument={updateDocument}
+        isRequestingDocumentSuccess={isRequestingDocumentSuccess}
+        isRequestingDocument={isRequestingDocument}
+        onAddRequestToDocument={addRequestToDocument}
         documents={documents}
         onUploadDocuments={uploadDocuments}
         isLoading={isPending}

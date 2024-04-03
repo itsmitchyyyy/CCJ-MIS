@@ -13,6 +13,7 @@ import { useEffect, useState } from 'react';
 import { InboxOutlined, LockOutlined } from '@ant-design/icons';
 import { RcFile, UploadFile } from 'antd/es/upload';
 import {
+  AddRequestToDocumentDTO,
   FetchDocumentsResponseDTO,
   UploadDocumentRequestDTO,
 } from '@/core/domain/dto/document.dto';
@@ -31,6 +32,9 @@ type Props = {
   onUploadDocuments: (data: UploadDocumentRequestDTO) => void;
   isLoading?: boolean;
   isSuccessful?: boolean;
+  isRequestingDocument?: boolean;
+  isRequestingDocumentSuccess?: boolean;
+  onAddRequestToDocument: (data: AddRequestToDocumentDTO) => void;
 };
 
 const OfficeDocuments = ({
@@ -38,6 +42,9 @@ const OfficeDocuments = ({
   isLoading,
   isSuccessful,
   documents,
+  isRequestingDocument,
+  isRequestingDocumentSuccess,
+  onAddRequestToDocument,
 }: Props) => {
   const {
     useAuth: { accessType, id },
@@ -81,6 +88,13 @@ const OfficeDocuments = ({
     },
     resolver: yupResolver(validationSchema),
   });
+
+  const { handleSubmit: onHandleSubmitRequest, control: controlRequest } =
+    useForm({
+      defaultValues: {
+        reason: '',
+      },
+    });
 
   const handleUploadFile = (request: { is_private: boolean }) => {
     if (documentFiles.length === 0) {
@@ -139,12 +153,30 @@ const OfficeDocuments = ({
     setDocumentFiles(newDocumentFiles);
   };
 
+  const handleSubmitRequestDocument = (values: { reason?: string }) => {
+    if (selectedDocument) {
+      const data: AddRequestToDocumentDTO = {
+        document_id: selectedDocument.id,
+        user_id: id,
+        reason: values.reason,
+      };
+
+      onAddRequestToDocument(data);
+    }
+  };
+
   useEffect(() => {
     if (isSuccessful) {
       setOpenUploadDocumentsModal(false);
       setDocumentFiles([]);
     }
   }, [isSuccessful]);
+
+  useEffect(() => {
+    if (isRequestingDocumentSuccess) {
+      setOpenRequestModal(false);
+    }
+  }, [isRequestingDocumentSuccess]);
 
   useEffect(() => {
     if (documents.length > 0) {
@@ -259,14 +291,21 @@ const OfficeDocuments = ({
       </div>
 
       <Modal
+        isLoading={isRequestingDocument}
         open={openRequestModal}
-        onSubmit={() => {}}
+        onSubmit={onHandleSubmitRequest(handleSubmitRequestDocument)}
         onCancel={() => setOpenRequestModal(false)}
         title="Request Document Access">
         <Form layout="vertical">
-          <Form.Item label="Reason">
-            <StyledTextArea rows={4} />
-          </Form.Item>
+          <Controller
+            control={controlRequest}
+            name="reason"
+            render={({ field: { onChange, value } }) => (
+              <Form.Item label="Reason">
+                <StyledTextArea onChange={onChange} value={value} rows={4} />
+              </Form.Item>
+            )}
+          />
         </Form>
       </Modal>
 
