@@ -14,6 +14,8 @@ import { useSearchParams } from 'react-router-dom';
 import moment from 'moment';
 import { User } from '@/core/domain/entities/user.entity';
 import dayjs from 'dayjs';
+import { useGlobalState } from '@/hooks/global';
+import { AccessType } from '@/features/account/types';
 
 const _AttendanceOptions = [
   {
@@ -30,6 +32,10 @@ type Props = {
 };
 
 export const AttendanceRecord = ({ data, student, isLoading }: Props) => {
+  const {
+    useAuth: { accessType },
+  } = useGlobalState();
+
   const [searchParams, setSearchParams] = useSearchParams();
 
   const TableColumnData: TableProps<Attendance>['columns'] = [
@@ -74,7 +80,10 @@ export const AttendanceRecord = ({ data, student, isLoading }: Props) => {
     <AttendanceListWrapper>
       <AttendanceListHeader>
         <h1>
-          {student.first_name} {student.last_name}'s Attendance Record
+          {accessType !== AccessType.Student
+            ? `${student.first_name} ${student.last_name}`
+            : 'My'}{' '}
+          Attendance Record
         </h1>
       </AttendanceListHeader>
       <AttendanceListContainer>

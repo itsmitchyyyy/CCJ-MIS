@@ -28,7 +28,7 @@ type Props = {
 
 const ManagementList = ({ subjects, isLoading }: Props) => {
   const {
-    useAuth: { accessType },
+    useAuth: { accessType, id },
   } = useGlobalState();
   const navigate = useNavigate();
 
@@ -75,6 +75,14 @@ const ManagementList = ({ subjects, isLoading }: Props) => {
                                 )
                               }
                               key="assignments"
+                            />,
+                            <ClockCircleOutlined
+                              onClick={() =>
+                                navigate(
+                                  `/management/subject/${subject.id}/attendance/${id}`,
+                                )
+                              }
+                              key="attendance"
                             />,
                           ]
                         : [
