@@ -7,8 +7,14 @@ import { useAddRequestToDocument } from '../api/addRequestToDocument';
 import { useFetchDocumentRequests } from '../api/fetchDocumentRequests';
 import { useUpdateDocumentRequest } from '../api/updateDocumentRequest';
 import { DocumentRequestStatus } from '../types';
+import { useGlobalState } from '@/hooks/global';
+import { AccessType } from '@/features/account/types';
 
 const DocumentsPage = () => {
+  const {
+    useAuth: { id, accessType },
+  } = useGlobalState();
+
   const {
     mutate: uploadDocuments,
     isPending,
@@ -27,7 +33,13 @@ const DocumentsPage = () => {
   const {
     data: documentRequests = [],
     isLoading: isFetchingDocumentsRequests,
-  } = useFetchDocumentRequests({ status: DocumentRequestStatus.Pending });
+  } = useFetchDocumentRequests({
+    status:
+      accessType !== AccessType.Admin
+        ? DocumentRequestStatus.Approved
+        : DocumentRequestStatus.Pending,
+    user_id: accessType !== AccessType.Admin ? id : undefined,
+  });
 
   const {
     mutate: updateDocumentRequest,

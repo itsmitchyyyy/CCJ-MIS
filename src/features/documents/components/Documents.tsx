@@ -32,7 +32,7 @@ import {
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { validationSchema } from './validation';
-import { DocumentStatus, DocumentType } from '../types';
+import { DocumentRequestStatus, DocumentStatus, DocumentType } from '../types';
 import { BACKEND_URL } from '@/config';
 import { ErrorMessage } from '@hookform/error-message';
 
@@ -289,31 +289,45 @@ const OfficeDocuments = ({
           return document.user_id === id && isValid;
         });
 
-        origin[0].children = office.map((doc, index) => ({
-          title:
-            doc.is_private && accessType !== AccessType.Admin ? (
-              <a
-                onClick={() => {
-                  setSelectedDocument(doc);
-                  setOpenRequestModal(true);
-                }}>
-                {doc.name}
-              </a>
-            ) : (
-              <a
-                href={`${BACKEND_URL}/${doc.file_path}`}
-                download
-                target="_blank">
-                {doc.name}
-              </a>
-            ),
-          key: `0-0-${index}`,
-          icon:
-            doc.is_private && accessType !== AccessType.Admin ? (
-              <LockOutlined />
-            ) : undefined,
-          isLeaf: true,
-        }));
+        origin[0].children = office.map((doc, index) => {
+          const approvedRequest =
+            documentRequests.findIndex(
+              (element) =>
+                element.document_id === doc.id &&
+                element.user_id === id &&
+                element.status === DocumentRequestStatus.Approved,
+            ) !== -1;
+
+          return {
+            title:
+              doc.is_private &&
+              accessType !== AccessType.Admin &&
+              !approvedRequest ? (
+                <a
+                  onClick={() => {
+                    setSelectedDocument(doc);
+                    setOpenRequestModal(true);
+                  }}>
+                  {doc.name}
+                </a>
+              ) : (
+                <a
+                  href={`${BACKEND_URL}/${doc.file_path}`}
+                  download
+                  target="_blank">
+                  {doc.name}
+                </a>
+              ),
+            key: `0-0-${index}`,
+            icon:
+              doc.is_private &&
+              accessType !== AccessType.Admin &&
+              !approvedRequest ? (
+                <LockOutlined />
+              ) : undefined,
+            isLeaf: true,
+          };
+        });
 
         origin[1].children = studentOrTeacherDocs.map((doc, index) => ({
           title: (
@@ -344,7 +358,7 @@ const OfficeDocuments = ({
         return origin;
       });
     }
-  }, [documents]);
+  }, [documents, documentRequests]);
 
   return (
     <DocumentsWrapper>

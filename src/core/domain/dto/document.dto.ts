@@ -51,4 +51,5 @@ export type FetchDocumentRequestsResponseDTO = {
 
 export type FetchDocumentRequestsQueryParams = {
   status?: DocumentRequestStatus;
+  user_id?: string;
 };
