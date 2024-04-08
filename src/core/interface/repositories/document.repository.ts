@@ -1,6 +1,8 @@
 import urls from '@/constants/urls';
 import {
   AddRequestToDocumentDTO,
+  FetchDocumentRequestsQueryParams,
+  FetchDocumentRequestsResponseDTO,
   FetchDocumentsResponseDTO,
   UpdateDocumentRequestDTO,
   UploadDocumentRequestDTO,
@@ -52,5 +54,24 @@ export default class DocumentRepository implements DocumentRepositoryInterface {
     data: AddRequestToDocumentDTO,
   ): Promise<void> => {
     return await this.httpAdapter.post(urls.documents.requests, data, {});
+  };
+
+  fetchDocumentRequests = async (
+    query?: FetchDocumentRequestsQueryParams,
+  ): Promise<FetchDocumentRequestsResponseDTO[]> => {
+    return await this.httpAdapter.get(urls.documents.requests, {
+      params: query,
+    });
+  };
+
+  updateDocumentRequest = async (
+    id: string,
+    data: UpdateDocumentRequestDTO,
+  ): Promise<void> => {
+    return await this.httpAdapter.put(
+      `${urls.documents.requests}/${id}`,
+      data,
+      {},
+    );
   };
 }

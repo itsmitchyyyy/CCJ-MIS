@@ -4,6 +4,7 @@ import {
   DocumentType,
 } from '@/features/documents/types';
 import { UploadFile } from 'antd';
+import { User } from '../entities/user.entity';
 
 export type UploadDocumentRequestDTO = {
   type: DocumentType;
@@ -33,5 +34,21 @@ export type AddRequestToDocumentDTO = {
   user_id: string;
   document_id: string;
   reason?: string;
+  status?: DocumentRequestStatus;
+};
+
+export type FetchDocumentRequestsResponseDTO = {
+  id: string;
+  user_id: string;
+  user: User;
+  document_id: string;
+  document: FetchDocumentsResponseDTO;
+  status: DocumentRequestStatus;
+  expires_at: Date;
+  created_at?: Date;
+  updated_at?: Date;
+};
+
+export type FetchDocumentRequestsQueryParams = {
   status?: DocumentRequestStatus;
 };

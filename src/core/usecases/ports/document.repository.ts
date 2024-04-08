@@ -1,5 +1,7 @@
 import {
   AddRequestToDocumentDTO,
+  FetchDocumentRequestsQueryParams,
+  FetchDocumentRequestsResponseDTO,
   FetchDocumentsResponseDTO,
   UpdateDocumentRequestDTO,
   UploadDocumentRequestDTO,
@@ -10,4 +12,11 @@ export default interface DocumentRepositoryInterface {
   fetchDocuments(): Promise<FetchDocumentsResponseDTO[]>;
   updateDocument(id: string, data: UpdateDocumentRequestDTO): Promise<void>;
   addRequestToDocument(data: AddRequestToDocumentDTO): Promise<void>;
+  fetchDocumentRequests(
+    query?: FetchDocumentRequestsQueryParams,
+  ): Promise<FetchDocumentRequestsResponseDTO[]>;
+  updateDocumentRequest(
+    id: string,
+    data: UpdateDocumentRequestDTO,
+  ): Promise<void>;
 }

@@ -1,8 +1,18 @@
-import { Form, Radio, Tree, TreeDataNode, Upload, message } from 'antd';
+import {
+  Form,
+  Radio,
+  Space,
+  TableProps,
+  Tree,
+  TreeDataNode,
+  Upload,
+  message,
+} from 'antd';
 import {
   DocumentsHeader,
   DocumentsWrapper,
   ErrorWrapper,
+  StyledTable,
   StyledTextArea,
   UploadButton,
 } from './elements';
@@ -14,7 +24,9 @@ import { InboxOutlined, LockOutlined } from '@ant-design/icons';
 import { RcFile, UploadFile } from 'antd/es/upload';
 import {
   AddRequestToDocumentDTO,
+  FetchDocumentRequestsResponseDTO,
   FetchDocumentsResponseDTO,
+  UpdateDocumentRequestDTO,
   UploadDocumentRequestDTO,
 } from '@/core/domain/dto/document.dto';
 import { Controller, useForm } from 'react-hook-form';
@@ -35,6 +47,13 @@ type Props = {
   isRequestingDocument?: boolean;
   isRequestingDocumentSuccess?: boolean;
   onAddRequestToDocument: (data: AddRequestToDocumentDTO) => void;
+  isFetchingDocumentRequests?: boolean;
+  documentRequests: FetchDocumentRequestsResponseDTO[];
+  isUpdatingDocumentRequest?: boolean;
+  onUpdateDocumentRequest: (data: {
+    id: string;
+    params: UpdateDocumentRequestDTO;
+  }) => void;
 };
 
 const OfficeDocuments = ({
@@ -45,6 +64,10 @@ const OfficeDocuments = ({
   isRequestingDocument,
   isRequestingDocumentSuccess,
   onAddRequestToDocument,
+  isFetchingDocumentRequests,
+  documentRequests,
+  isUpdatingDocumentRequest,
+  onUpdateDocumentRequest,
 }: Props) => {
   const {
     useAuth: { accessType, id },
@@ -95,6 +118,61 @@ const OfficeDocuments = ({
         reason: '',
       },
     });
+
+  const TableColumnData: TableProps<FetchDocumentRequestsResponseDTO>['columns'] =
+    [
+      {
+        title: 'ID',
+        dataIndex: 'id',
+        key: 'id',
+      },
+      {
+        title: 'Requestor',
+        key: 'requestor',
+        render: (_, record) =>
+          `${record.user.first_name} ${record.user.last_name}`,
+      },
+      {
+        title: 'File',
+        key: 'file',
+        render: (_, record) => (
+          <a
+            href={`${BACKEND_URL}/${record.document.file_path}`}
+            download
+            target="_blank">
+            {record.document.name}
+          </a>
+        ),
+      },
+      {
+        title: 'Action',
+        key: 'action',
+        render: (_, record) => (
+          <Space size="middle">
+            <a
+              onClick={() =>
+                onUpdateDocumentRequest({
+                  id: record.id,
+                  params: { status: DocumentStatus.Approved },
+                })
+              }>
+              Approve
+            </a>
+            <a
+              onClick={() =>
+                onUpdateDocumentRequest({
+                  id: record.id,
+                  params: {
+                    status: DocumentStatus.Rejected,
+                  },
+                })
+              }>
+              Reject
+            </a>
+          </Space>
+        ),
+      },
+    ];
 
   const handleUploadFile = (request: { is_private: boolean }) => {
     if (documentFiles.length === 0) {
@@ -289,6 +367,18 @@ const OfficeDocuments = ({
           treeData={treeData}
         />
       </div>
+
+      {accessType === AccessType.Admin && (
+        <div>
+          <h2>Documents Request</h2>
+          <StyledTable
+            columns={TableColumnData}
+            rowKey="id"
+            loading={isFetchingDocumentRequests || isUpdatingDocumentRequest}
+            dataSource={documentRequests}
+          />
+        </div>
+      )}
 
       <Modal
         isLoading={isRequestingDocument}
