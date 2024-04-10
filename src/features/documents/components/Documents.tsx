@@ -92,6 +92,10 @@ const OfficeDocuments = ({
     },
   ];
 
+  if (accessType === AccessType.Student) {
+    initTreeData.splice(1, 1);
+  }
+
   const [openUploadDocumentsModal, setOpenUploadDocumentsModal] =
     useState<boolean>(false);
   const [documentFiles, setDocumentFiles] = useState<UploadFile[]>([]);
@@ -329,31 +333,42 @@ const OfficeDocuments = ({
           };
         });
 
-        origin[1].children = studentOrTeacherDocs.map((doc, index) => ({
-          title: (
-            <a
-              href={`${BACKEND_URL}/${doc.file_path}`}
-              download
-              target="_blank">
-              {doc.name}
-            </a>
-          ),
-          key: `0-1-${index}`,
-          isLeaf: true,
-        }));
+        if (accessType !== AccessType.Student) {
+          origin[1].children = studentOrTeacherDocs.map((doc, index) => ({
+            title: (
+              <a
+                href={`${BACKEND_URL}/${doc.file_path}`}
+                download
+                target="_blank">
+                {doc.name}
+              </a>
+            ),
+            key: `0-1-${index}`,
+            isLeaf: true,
+          }));
+        }
 
-        origin[2].children = myDocuments.map((doc, index) => ({
-          title: (
-            <a
-              href={`${BACKEND_URL}/${doc.file_path}`}
-              download
-              target="_blank">
-              {doc.name}
-            </a>
-          ),
-          key: `0-2-${index}`,
-          isLeaf: true,
-        }));
+        origin[accessType === AccessType.Student ? 1 : 2].children =
+          myDocuments.map((doc, index) => ({
+            title: (
+              <a
+                href={`${BACKEND_URL}/${doc.file_path}`}
+                download
+                target="_blank">
+                {doc.name}
+              </a>
+            ),
+            key: `0-2-${index}`,
+            isLeaf: true,
+          }));
+
+        // if (accessType === AccessType.Student) {
+        //   const newOrigin = origin;
+
+        //   newOrigin.splice(1, 1);
+
+        //   return newOrigin;
+        // }
 
         return origin;
       });
