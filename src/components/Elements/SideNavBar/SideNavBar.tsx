@@ -4,6 +4,7 @@ import { LogoWrapper } from './elements';
 import { Menu, MenuProps } from 'antd';
 import {
   AlertOutlined,
+  BookOutlined,
   DashboardOutlined,
   FileProtectOutlined,
   SettingOutlined,
@@ -14,12 +15,18 @@ import {
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useGlobalState } from '@/hooks/global';
 import { AccessType } from '@/features/account/types';
+import { useState } from 'react';
 
 type Props = {
   collapsed: boolean;
 };
 
 type MenuItem = Required<MenuProps>['items'][number];
+
+type LevelKeysProps = {
+  key?: string;
+  children?: LevelKeysProps[];
+};
 
 const getItem = (
   label: React.ReactNode,
@@ -36,9 +43,30 @@ const items: MenuItem[] = [
   getItem('Announcement', 'announcement', <AlertOutlined />),
   getItem('Documents', 'documents', <FileProtectOutlined />),
   getItem('Approval', 'approval', <SignatureOutlined />),
-  getItem('Manage', 'manage', <SettingOutlined />),
+  getItem('Manage', 'manage', <SettingOutlined />, [
+    getItem('Subjects', 'subjects', <BookOutlined />),
+    getItem('Teacher', 'teacher', <UserOutlined />),
+  ]),
   getItem('Account', 'account', <UserAddOutlined />),
 ];
+
+const getLevelKeys = (items1: LevelKeysProps[]) => {
+  const key: Record<string, number> = {};
+  const func = (items2: LevelKeysProps[], level = 1) => {
+    items2.forEach((item) => {
+      if (item.key) {
+        key[item.key] = level;
+      }
+      if (item.children) {
+        return func(item.children, level + 1);
+      }
+    });
+  };
+  func(items1);
+  return key;
+};
+
+const levelKeys = getLevelKeys(items as LevelKeysProps[]);
 
 const SideNavBar = ({ collapsed }: Props) => {
   const navigate = useNavigate();
@@ -46,6 +74,32 @@ const SideNavBar = ({ collapsed }: Props) => {
   const {
     useAuth: { accessType },
   } = useGlobalState();
+  const splitPathName = pathname.split('/');
+
+  const [stateOpenKeys, setStateOpenKeys] = useState<string[]>(['manage']);
+
+  const onOpenChange: MenuProps['onOpenChange'] = (openKeys) => {
+    const currentOpenKey = openKeys.find(
+      (key) => stateOpenKeys.indexOf(key) === -1,
+    );
+    // open
+    if (currentOpenKey !== undefined) {
+      const repeatIndex = openKeys
+        .filter((key) => key !== currentOpenKey)
+        .findIndex((key) => levelKeys[key] === levelKeys[currentOpenKey]);
+
+      setStateOpenKeys(
+        openKeys
+          // remove repeat key
+          .filter((_, index) => index !== repeatIndex)
+          // remove current level all child
+          .filter((key) => levelKeys[key] <= levelKeys[currentOpenKey]),
+      );
+    } else {
+      // close
+      setStateOpenKeys(openKeys);
+    }
+  };
 
   const handleMenuClick = ({ key }: { key: string }) => {
     switch (key) {
@@ -64,6 +118,9 @@ const SideNavBar = ({ collapsed }: Props) => {
       case 'documents':
         navigate('/documents');
         break;
+      case 'subjects':
+        navigate('/management/subjects');
+        break;
     }
   };
 
@@ -75,6 +132,10 @@ const SideNavBar = ({ collapsed }: Props) => {
     return item;
   });
 
+  const selectedKey = pathname.includes('management')
+    ? [splitPathName[2]]
+    : [splitPathName[1]];
+
   return (
     <Sider trigger={null} collapsible collapsed={collapsed}>
       <LogoWrapper>
@@ -83,8 +144,10 @@ const SideNavBar = ({ collapsed }: Props) => {
       <Menu
         theme="dark"
         mode="inline"
-        selectedKeys={[pathname.replace('/', '')]}
+        selectedKeys={selectedKey}
         items={filteredItem}
+        openKeys={stateOpenKeys}
+        onOpenChange={onOpenChange}
         onClick={handleMenuClick}
       />
     </Sider>

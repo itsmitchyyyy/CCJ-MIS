@@ -22,6 +22,10 @@ export const ManagementRoutes: RouteObject = {
       element: <ManagementPage />,
     },
     {
+      path: PATHS.MANAGEMENT.SUBJECTS,
+      element: <ManagementPage />,
+    },
+    {
       path: PATHS.MANAGEMENT.CREATE_SUBJECT,
       element: <AddSubjectPage />,
     },
