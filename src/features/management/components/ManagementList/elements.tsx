@@ -60,3 +60,9 @@ export const StyledTable = styled((props: TableProps) => <Table {...props} />)`
     color: ${colors.keyColors.black};
   }
 `;
+
+export const TeacherListContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+`;
