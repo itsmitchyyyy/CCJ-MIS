@@ -135,9 +135,11 @@ const SideNavBar = ({ collapsed }: Props) => {
     return item;
   });
 
-  const selectedKey = pathname.includes('management')
-    ? [splitPathName[2]]
-    : [splitPathName[1]];
+  const selectedKey = !pathname.includes('management')
+    ? [splitPathName[1]]
+    : splitPathName.length > 3
+    ? [`${splitPathName[2]}s`]
+    : [splitPathName[2]];
 
   return (
     <Sider trigger={null} collapsible collapsed={collapsed}>
