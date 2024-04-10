@@ -45,7 +45,7 @@ const items: MenuItem[] = [
   getItem('Approval', 'approval', <SignatureOutlined />),
   getItem('Manage', 'manage', <SettingOutlined />, [
     getItem('Subjects', 'subjects', <BookOutlined />),
-    getItem('Teacher', 'teacher', <UserOutlined />),
+    getItem('Teachers', 'teachers', <UserOutlined />),
   ]),
   getItem('Account', 'account', <UserAddOutlined />),
 ];
@@ -120,6 +120,9 @@ const SideNavBar = ({ collapsed }: Props) => {
         break;
       case 'subjects':
         navigate('/management/subjects');
+        break;
+      case 'teachers':
+        navigate('/management/teachers');
         break;
     }
   };
