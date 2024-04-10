@@ -7,18 +7,27 @@ import {
   TeacherListWrapper,
 } from './elements';
 import { useState } from 'react';
-import { User } from '@/core/domain/entities/user.entity';
+import { FetchTeachersResponseDTO } from '@/core/domain/dto/user.dto';
 
 type Props = {
+  isLoading?: boolean;
+  teachers: FetchTeachersResponseDTO[];
   onDelete: (teacherId: string) => void;
+  isDeleting?: boolean;
 };
 
-export const TeacherList = ({ onDelete }: Props) => {
+export const TeacherList = ({
+  isLoading,
+  teachers,
+  isDeleting,
+  onDelete,
+}: Props) => {
   const [openAttendanceModal, setOpenAttendanceModal] =
     useState<boolean>(false);
-  const [selectedTeacher, setSelectedTeacher] = useState<User | null>(null);
+  const [selectedTeacher, setSelectedTeacher] =
+    useState<FetchTeachersResponseDTO | null>(null);
 
-  const TableColumnData: TableProps<any>['columns'] = [
+  const TableColumnData: TableProps<FetchTeachersResponseDTO>['columns'] = [
     {
       title: 'ID',
       dataIndex: 'id',
@@ -28,13 +37,13 @@ export const TeacherList = ({ onDelete }: Props) => {
       title: 'First Name',
       dataIndex: 'student',
       key: 'first_name',
-      render: (record) => record.first_name,
+      render: (_, record) => record.first_name,
     },
     {
       title: 'Last Name',
       dataIndex: 'student',
       key: 'last_name',
-      render: (record) => record.last_name,
+      render: (_, record) => record.last_name,
     },
     {
       title: 'Action',
@@ -42,15 +51,13 @@ export const TeacherList = ({ onDelete }: Props) => {
       render: (_, record) => (
         <Space size="middle">
           <a onClick={() => onDelete(record.id)}>Delete</a>
-          <a onClick={() => onClickMarkAttendance(record.teacher)}>
-            Mark Attendance
-          </a>
+          <a onClick={() => onClickMarkAttendance(record)}>Mark Attendance</a>
         </Space>
       ),
     },
   ];
 
-  const onClickMarkAttendance = (teacher: User) => {
+  const onClickMarkAttendance = (teacher: FetchTeachersResponseDTO) => {
     setSelectedTeacher(teacher);
     setOpenAttendanceModal(true);
   };
@@ -64,7 +71,12 @@ export const TeacherList = ({ onDelete }: Props) => {
         </TeacherListHeader>
 
         <TeacherListContainer>
-          <StyledTable rowKey="id" columns={TableColumnData} />
+          <StyledTable
+            rowKey="id"
+            columns={TableColumnData}
+            dataSource={teachers}
+            loading={isLoading || isDeleting}
+          />
         </TeacherListContainer>
       </TeacherListWrapper>
     </>

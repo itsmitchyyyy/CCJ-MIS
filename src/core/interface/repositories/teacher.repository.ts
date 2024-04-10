@@ -22,4 +22,8 @@ export default class TeacherRepository implements TeacherRepositoryInterface {
       },
     });
   };
+
+  deleteTeacher = async (teacherId: string): Promise<void> => {
+    await this.httpAdapter.delete(`${urls.teachers.base}/${teacherId}`, {});
+  };
 }

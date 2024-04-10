@@ -114,13 +114,11 @@ export const StudentList = ({
         title: 'First Name',
         dataIndex: 'student',
         key: 'first_name',
-        render: (record) => record.first_name,
       },
       {
         title: 'Last Name',
         dataIndex: 'student',
         key: 'last_name',
-        render: (record) => record.last_name,
       },
       {
         title: 'Grade',
