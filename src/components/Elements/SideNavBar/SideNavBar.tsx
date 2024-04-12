@@ -28,46 +28,6 @@ type LevelKeysProps = {
   children?: LevelKeysProps[];
 };
 
-const getItem = (
-  label: React.ReactNode,
-  key: React.Key,
-  icon?: React.ReactNode,
-  children?: MenuItem[],
-): MenuItem => {
-  return { key, label, icon, children };
-};
-
-const items: MenuItem[] = [
-  getItem('Home', 'dashboard', <DashboardOutlined />),
-  getItem('Profile', 'profile', <UserOutlined />),
-  getItem('Announcement', 'announcement', <AlertOutlined />),
-  getItem('Documents', 'documents', <FileProtectOutlined />),
-  getItem('Approval', 'approval', <SignatureOutlined />),
-  getItem('Manage', 'manage', <SettingOutlined />, [
-    getItem('Subjects', 'subjects', <BookOutlined />),
-    getItem('Teachers', 'teachers', <UserOutlined />),
-  ]),
-  getItem('Account', 'account', <UserAddOutlined />),
-];
-
-const getLevelKeys = (items1: LevelKeysProps[]) => {
-  const key: Record<string, number> = {};
-  const func = (items2: LevelKeysProps[], level = 1) => {
-    items2.forEach((item) => {
-      if (item.key) {
-        key[item.key] = level;
-      }
-      if (item.children) {
-        return func(item.children, level + 1);
-      }
-    });
-  };
-  func(items1);
-  return key;
-};
-
-const levelKeys = getLevelKeys(items as LevelKeysProps[]);
-
 const SideNavBar = ({ collapsed }: Props) => {
   const navigate = useNavigate();
   const { pathname } = useLocation();
@@ -77,6 +37,48 @@ const SideNavBar = ({ collapsed }: Props) => {
   const splitPathName = pathname.split('/');
 
   const [stateOpenKeys, setStateOpenKeys] = useState<string[]>(['manage']);
+
+  const getItem = (
+    label: React.ReactNode,
+    key: React.Key,
+    icon?: React.ReactNode,
+    children?: MenuItem[],
+  ): MenuItem => {
+    return { key, label, icon, children };
+  };
+
+  const items: MenuItem[] = [
+    getItem('Home', 'dashboard', <DashboardOutlined />),
+    getItem('Profile', 'profile', <UserOutlined />),
+    getItem('Announcement', 'announcement', <AlertOutlined />),
+    getItem('Documents', 'documents', <FileProtectOutlined />),
+    getItem('Approval', 'approval', <SignatureOutlined />),
+    accessType === AccessType.Admin
+      ? getItem('Manage', 'manage', <SettingOutlined />, [
+          getItem('Subjects', 'subjects', <BookOutlined />),
+          getItem('Teachers', 'teachers', <UserOutlined />),
+        ])
+      : getItem('Manage', 'manage', <SettingOutlined />),
+    getItem('Account', 'account', <UserAddOutlined />),
+  ];
+
+  const getLevelKeys = (items1: LevelKeysProps[]) => {
+    const key: Record<string, number> = {};
+    const func = (items2: LevelKeysProps[], level = 1) => {
+      items2.forEach((item) => {
+        if (item.key) {
+          key[item.key] = level;
+        }
+        if (item.children) {
+          return func(item.children, level + 1);
+        }
+      });
+    };
+    func(items1);
+    return key;
+  };
+
+  const levelKeys = getLevelKeys(items as LevelKeysProps[]);
 
   const onOpenChange: MenuProps['onOpenChange'] = (openKeys) => {
     const currentOpenKey = openKeys.find(

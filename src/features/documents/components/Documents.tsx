@@ -92,7 +92,7 @@ const OfficeDocuments = ({
     },
   ];
 
-  if (accessType === AccessType.Student) {
+  if (accessType !== AccessType.Admin) {
     initTreeData.splice(1, 1);
   }
 
@@ -116,12 +116,15 @@ const OfficeDocuments = ({
     resolver: yupResolver(validationSchema),
   });
 
-  const { handleSubmit: onHandleSubmitRequest, control: controlRequest } =
-    useForm({
-      defaultValues: {
-        reason: '',
-      },
-    });
+  const {
+    handleSubmit: onHandleSubmitRequest,
+    control: controlRequest,
+    reset: resetRequest,
+  } = useForm({
+    defaultValues: {
+      reason: '',
+    },
+  });
 
   const TableColumnData: TableProps<FetchDocumentRequestsResponseDTO>['columns'] =
     [
@@ -147,6 +150,11 @@ const OfficeDocuments = ({
             {record.document.name}
           </a>
         ),
+      },
+      {
+        title: 'Reason',
+        dataIndex: 'reason',
+        key: 'reason',
       },
       {
         title: 'Action',
@@ -244,6 +252,7 @@ const OfficeDocuments = ({
       };
 
       onAddRequestToDocument(data);
+      resetRequest();
     }
   };
 
@@ -305,7 +314,7 @@ const OfficeDocuments = ({
           return {
             title:
               doc.is_private &&
-              accessType !== AccessType.Admin &&
+              accessType === AccessType.Student &&
               !approvedRequest ? (
                 <a
                   onClick={() => {
@@ -325,7 +334,7 @@ const OfficeDocuments = ({
             key: `0-0-${index}`,
             icon:
               doc.is_private &&
-              accessType !== AccessType.Admin &&
+              accessType === AccessType.Student &&
               !approvedRequest ? (
                 <LockOutlined />
               ) : undefined,
@@ -333,7 +342,7 @@ const OfficeDocuments = ({
           };
         });
 
-        if (accessType !== AccessType.Student) {
+        if (accessType === AccessType.Admin) {
           origin[1].children = studentOrTeacherDocs.map((doc, index) => ({
             title: (
               <a
@@ -348,7 +357,7 @@ const OfficeDocuments = ({
           }));
         }
 
-        origin[accessType === AccessType.Student ? 1 : 2].children =
+        origin[accessType !== AccessType.Admin ? 1 : 2].children =
           myDocuments.map((doc, index) => ({
             title: (
               <a
