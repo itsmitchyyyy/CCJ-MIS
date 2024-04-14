@@ -4,6 +4,8 @@ import {
   CreateTeacherAttendanceRequestDTO,
   FetchAttendanceBySubjectIdAndStudentIdRequestDTO,
   FetchAttendanceBySubjectIdAndStudentIdResponseDTO,
+  FetchTeacherAttendanceQueryParams,
+  FetchTeacherAttendanceResponseDTO,
 } from '@/core/domain/dto/attendance.dto';
 
 export default interface AttendanceRepositoryInterface {
@@ -16,4 +18,7 @@ export default interface AttendanceRepositoryInterface {
   createTeacherAttendance(
     data: CreateTeacherAttendanceRequestDTO,
   ): Promise<void>;
+  fetchTeacherAttendance(
+    data?: FetchTeacherAttendanceQueryParams,
+  ): Promise<FetchTeacherAttendanceResponseDTO[]>;
 }

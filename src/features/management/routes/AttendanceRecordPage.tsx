@@ -28,7 +28,7 @@ const AttendanceRecordPage = () => {
   ) : (
     <AdminLayout>
       <AttendanceRecord
-        student={student as User}
+        user={student as User}
         data={attendances}
         isLoading={isLoading}
       />

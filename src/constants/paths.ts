@@ -20,6 +20,7 @@ export const PATHS = {
     SUBJECTS: '/management/subjects',
     TEACHERS: '/management/teachers',
     TEACHER_SUBJECTS: '/management/teacher/:id/subjects',
+    TEACHER_ATTENDANCE_RECORD: '/management/teacher/:id/attendance',
     CREATE_SUBJECT: '/management/create-subject',
     STUDENT_LIST: '/management/subject/:id/student-list',
     ATTENDANCE: '/management/subject/:id/attendance',

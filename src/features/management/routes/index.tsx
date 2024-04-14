@@ -10,6 +10,7 @@ import AssignmentsPage from './AssignmentsPage';
 import SubmissionsPage from './SubmissionsPage';
 import TeacherListPage from './TeacherListPage';
 import TeacherSubjectsPage from './TeacherSubjectsPage';
+import TeacherAttendanceRecordPage from './TeacherAttendanceRecordPage';
 
 export const ManagementRoutes: RouteObject = {
   path: PATHS.MANAGEMENT.BASE,
@@ -34,6 +35,10 @@ export const ManagementRoutes: RouteObject = {
     {
       path: PATHS.MANAGEMENT.TEACHER_SUBJECTS,
       element: <TeacherSubjectsPage />,
+    },
+    {
+      path: PATHS.MANAGEMENT.TEACHER_ATTENDANCE_RECORD,
+      element: <TeacherAttendanceRecordPage />,
     },
     {
       path: PATHS.MANAGEMENT.CREATE_SUBJECT,

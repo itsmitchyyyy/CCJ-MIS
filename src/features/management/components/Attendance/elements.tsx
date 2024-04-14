@@ -1,6 +1,6 @@
 import { colors } from '@/constants/themes';
 import { AttendanceStatus } from '@/core/domain/dto/attendance.dto';
-import { Select, Table, TableProps } from 'antd';
+import { Button, DatePicker, Select, Table, TableProps } from 'antd';
 import styled from 'styled-components';
 
 export const AttendanceListWrapper = styled.div``;
@@ -44,4 +44,19 @@ export const FilterWrapper = styled.div`
   display: flex;
   flex-direction: row;
   gap: 1em;
+`;
+
+export const MarkAttendanceButton = styled(Button)`
+  display: flex;
+  justify-content: end;
+`;
+
+export const AttendanceSelectContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 1em;
+`;
+
+export const StyledDatePicker = styled(DatePicker)`
+  width: 100%;
 `;

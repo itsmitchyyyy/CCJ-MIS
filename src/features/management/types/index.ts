@@ -44,6 +44,14 @@ export type Attendance = {
   status: AttendanceStatus;
 };
 
+export type TeacherAttendance = {
+  user_id: string;
+  date: Date;
+  status: AttendanceStatus;
+  created_at?: Date;
+  updated_at?: Date;
+};
+
 export type Assignment = {
   id: string;
   title: string;

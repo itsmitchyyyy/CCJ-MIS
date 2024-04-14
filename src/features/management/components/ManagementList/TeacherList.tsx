@@ -74,6 +74,17 @@ export const TeacherList = ({
             }>
             Subjects
           </a>
+          <a
+            onClick={() =>
+              navigate(
+                PATHS.MANAGEMENT.TEACHER_ATTENDANCE_RECORD.replace(
+                  ':id',
+                  record.id,
+                ),
+              )
+            }>
+            Attendance Records
+          </a>
           <a onClick={() => onClickMarkAttendance(record)}>Mark Attendance</a>
         </Space>
       ),

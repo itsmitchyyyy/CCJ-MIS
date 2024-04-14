@@ -4,6 +4,8 @@ import {
   CreateAttendanceResponseDTO,
   FetchAttendanceBySubjectIdAndStudentIdRequestDTO,
   FetchAttendanceBySubjectIdAndStudentIdResponseDTO,
+  FetchTeacherAttendanceQueryParams,
+  FetchTeacherAttendanceResponseDTO,
 } from '@/core/domain/dto/attendance.dto';
 import AttendanceRepositoryInterface from '@/core/usecases/ports/attendance.repository.interface';
 
@@ -47,5 +49,15 @@ export default class AttendanceRepository
     };
 
     return await this.httpAdapter.post(urls.attendances.teacher, formattedData);
+  };
+
+  fetchTeacherAttendance = async (
+    data?: FetchTeacherAttendanceQueryParams,
+  ): Promise<FetchTeacherAttendanceResponseDTO[]> => {
+    return await this.httpAdapter.get(urls.attendances.teacher, {
+      params: {
+        ...data,
+      },
+    });
   };
 }

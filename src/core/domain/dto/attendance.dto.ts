@@ -44,3 +44,18 @@ export type CreateTeacherAttendanceRequestDTO = {
   date: Date;
   status: AttendanceStatus;
 };
+
+export type FetchTeacherAttendanceQueryParams = {
+  user_id?: string;
+  date?: string;
+  status?: AttendanceStatus;
+};
+
+export type FetchTeacherAttendanceResponseDTO = {
+  user_id: string;
+  user: User;
+  date: Date;
+  status: AttendanceStatus;
+  created_at?: Date;
+  updated_at?: Date;
+};

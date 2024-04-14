@@ -3,6 +3,7 @@ import {
   FetchTeacherQueryParams,
   FetchTeachersResponseDTO,
 } from '@/core/domain/dto/user.dto';
+import { User } from '@/core/domain/entities/user.entity';
 import { HttpAdapter } from '@/core/usecases/ports/httpAdapter.interface';
 import TeacherRepositoryInterface from '@/core/usecases/ports/teacher.repository.interface';
 
@@ -25,5 +26,9 @@ export default class TeacherRepository implements TeacherRepositoryInterface {
 
   deleteTeacher = async (teacherId: string): Promise<void> => {
     await this.httpAdapter.delete(`${urls.teachers.base}/${teacherId}`, {});
+  };
+
+  fetchTeacher = async (teacherId: string): Promise<User> => {
+    return await this.httpAdapter.get(`${urls.teachers.base}/${teacherId}`, {});
   };
 }

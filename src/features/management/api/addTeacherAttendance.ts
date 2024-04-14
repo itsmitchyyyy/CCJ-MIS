@@ -1,6 +1,6 @@
 import dependencies from '@/core/dependencies';
 import { CreateTeacherAttendanceRequestDTO } from '@/core/domain/dto/attendance.dto';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
 
 const createTeacherAttendance = async (
@@ -12,10 +12,13 @@ const createTeacherAttendance = async (
 };
 
 const useCreateTeacherAttendance = () => {
+  const queryClient = useQueryClient();
+
   const mutation = useMutation({
     mutationKey: ['createTeacherAttendance'],
     mutationFn: createTeacherAttendance,
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['fetchTeacherAttendances'] });
       toast.success('Attendance created');
     },
   });
