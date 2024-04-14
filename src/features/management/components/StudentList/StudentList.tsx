@@ -351,6 +351,7 @@ export const StudentList = ({
             setSelectedStudent(null);
             setOpenAttendanceModal(false);
           }}
+          title="Mark Attendance"
           onSubmit={onHandleSubmitAttendance(onSubmitAttendance)}>
           <Form layout="vertical">
             <Controller
