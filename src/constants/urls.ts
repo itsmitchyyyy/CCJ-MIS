@@ -31,6 +31,7 @@ export default {
     base: '/attendances',
     get: (id: string | number) => `/attendances/${id}`,
     update: (id: string | number) => `/attendances/${id}`,
+    teacher: '/teacher-attendances',
   },
   documents: {
     base: '/documents',

@@ -38,3 +38,9 @@ export type FetchAttendanceBySubjectIdAndStudentIdResponseDTO = {
   date: Date;
   status: AttendanceStatus;
 };
+
+export type CreateTeacherAttendanceRequestDTO = {
+  user_id: string;
+  date: Date;
+  status: AttendanceStatus;
+};

@@ -8,24 +8,35 @@ import {
   TeacherListWrapper,
   TeacherSelectContainer,
 } from './elements';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FetchTeachersResponseDTO } from '@/core/domain/dto/user.dto';
 import { useNavigate } from 'react-router-dom';
 import { PATHS } from '@/constants/paths';
 import { Modal } from '@/components/Elements/Modal';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller, set, useForm } from 'react-hook-form';
 import { AttendanceOptions } from '@/constants/data';
 import dayjs from 'dayjs';
-import { AttendanceStatus } from '@/core/domain/dto/attendance.dto';
+import {
+  AttendanceStatus,
+  CreateTeacherAttendanceRequestDTO,
+} from '@/core/domain/dto/attendance.dto';
 import { RangePickerProps } from 'antd/es/date-picker';
 
 type Props = {
   isLoading?: boolean;
   teachers: FetchTeachersResponseDTO[];
-  isSubmitting?: boolean;
+  isPendingAttendance?: boolean;
+  isSuccessAttendance?: boolean;
+  onCreateTeacherAttendance: (data: CreateTeacherAttendanceRequestDTO) => void;
 };
 
-export const TeacherList = ({ isLoading, teachers, isSubmitting }: Props) => {
+export const TeacherList = ({
+  isLoading,
+  teachers,
+  isPendingAttendance,
+  isSuccessAttendance,
+  onCreateTeacherAttendance,
+}: Props) => {
   const navigate = useNavigate();
   const [openAttendanceModal, setOpenAttendanceModal] =
     useState<boolean>(false);
@@ -74,7 +85,11 @@ export const TeacherList = ({ isLoading, teachers, isSubmitting }: Props) => {
     return current && current > dayjs().endOf('day');
   };
 
-  const { handleSubmit: onHandleSubmitAttendance, control } = useForm({
+  const {
+    handleSubmit: onHandleSubmitAttendance,
+    control,
+    reset,
+  } = useForm({
     defaultValues: {
       date: new Date(),
       status: AttendanceOptions[0].value as AttendanceStatus,
@@ -94,7 +109,17 @@ export const TeacherList = ({ isLoading, teachers, isSubmitting }: Props) => {
       ...data,
       user_id: selectedTeacher?.id || '',
     };
+
+    onCreateTeacherAttendance(newData);
   };
+
+  useEffect(() => {
+    if (isSuccessAttendance) {
+      setSelectedTeacher(null);
+      setOpenAttendanceModal(false);
+      reset();
+    }
+  }, [isSuccessAttendance]);
 
   return (
     <>
@@ -114,7 +139,7 @@ export const TeacherList = ({ isLoading, teachers, isSubmitting }: Props) => {
         </TeacherListContainer>
 
         <Modal
-          isLoading={isSubmitting}
+          isLoading={isPendingAttendance}
           open={openAttendanceModal}
           onCancel={() => {
             setSelectedTeacher(null);

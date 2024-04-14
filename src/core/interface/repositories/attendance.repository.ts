@@ -39,4 +39,13 @@ export default class AttendanceRepository
       },
     });
   };
+
+  createTeacherAttendance = async (data: CreateAttendanceRequestDTO) => {
+    const formattedData = {
+      ...data,
+      date: dayjs(data.date).format('YYYY-MM-DD'),
+    };
+
+    return await this.httpAdapter.post(urls.attendances.teacher, formattedData);
+  };
 }
