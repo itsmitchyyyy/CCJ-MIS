@@ -19,6 +19,7 @@ export const PATHS = {
     BASE: '/management',
     SUBJECTS: '/management/subjects',
     TEACHERS: '/management/teachers',
+    TEACHER_SUBJECTS: '/management/teacher/:id/subjects',
     CREATE_SUBJECT: '/management/create-subject',
     STUDENT_LIST: '/management/subject/:id/student-list',
     ATTENDANCE: '/management/subject/:id/attendance',

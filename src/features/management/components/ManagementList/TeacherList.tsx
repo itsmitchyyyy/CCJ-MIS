@@ -8,20 +8,16 @@ import {
 } from './elements';
 import { useState } from 'react';
 import { FetchTeachersResponseDTO } from '@/core/domain/dto/user.dto';
+import { useNavigate } from 'react-router-dom';
+import { PATHS } from '@/constants/paths';
 
 type Props = {
   isLoading?: boolean;
   teachers: FetchTeachersResponseDTO[];
-  onDelete: (teacherId: string) => void;
-  isDeleting?: boolean;
 };
 
-export const TeacherList = ({
-  isLoading,
-  teachers,
-  isDeleting,
-  onDelete,
-}: Props) => {
+export const TeacherList = ({ isLoading, teachers }: Props) => {
+  const navigate = useNavigate();
   const [openAttendanceModal, setOpenAttendanceModal] =
     useState<boolean>(false);
   const [selectedTeacher, setSelectedTeacher] =
@@ -50,7 +46,14 @@ export const TeacherList = ({
       key: 'action',
       render: (_, record) => (
         <Space size="middle">
-          <a onClick={() => onDelete(record.id)}>Delete</a>
+          <a
+            onClick={() =>
+              navigate(
+                PATHS.MANAGEMENT.TEACHER_SUBJECTS.replace(':id', record.id),
+              )
+            }>
+            Subjects
+          </a>
           <a onClick={() => onClickMarkAttendance(record)}>Mark Attendance</a>
         </Space>
       ),
@@ -75,7 +78,7 @@ export const TeacherList = ({
             rowKey="id"
             columns={TableColumnData}
             dataSource={teachers}
-            loading={isLoading || isDeleting}
+            loading={isLoading}
           />
         </TeacherListContainer>
       </TeacherListWrapper>
