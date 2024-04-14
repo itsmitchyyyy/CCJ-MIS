@@ -3,6 +3,7 @@ import {
   FetchStudentSubjectResponseDTO,
   FetchSubjectQuery,
   FetchSubjectResponseDTO,
+  UpdateGradeRequest,
 } from '@/core/domain/dto/subject.dto';
 
 export default interface SubjectRepositoryInterface {
@@ -13,4 +14,5 @@ export default interface SubjectRepositoryInterface {
     subjectId: string,
   ): Promise<FetchStudentSubjectResponseDTO[]>;
   removeStudentFromSubject(subjectId: string, studentId: string): Promise<void>;
+  updateGrade(data: UpdateGradeRequest): Promise<void>;
 }

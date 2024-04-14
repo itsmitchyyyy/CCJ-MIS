@@ -29,10 +29,10 @@ export type FetchSubjectResponseDTO = {
 };
 
 export type Grade = {
-  first_quarter: string;
-  second_quarter: string;
-  third_quarter: string;
-  fourth_quarter: string;
+  prelim: string;
+  midterm: string;
+  semifinal: string;
+  final: string;
 };
 
 export type FetchStudentSubjectResponseDTO = {
@@ -46,4 +46,17 @@ export type FetchStudentSubjectResponseDTO = {
 
 export type FetchSubjectQuery = {
   teacher_id?: string;
+};
+
+export enum GradeEnum {
+  PRELIM = 'prelim',
+  MIDTERM = 'midterm',
+  SEMIFINAL = 'semifinal',
+  FINAL = 'final',
+}
+
+export type UpdateGradeRequest = {
+  subjectId: string;
+  studentId: string;
+  grade: { term: GradeEnum; value: string }[];
 };

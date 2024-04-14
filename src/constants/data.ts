@@ -5,8 +5,8 @@ export const AttendanceOptions = [
 ];
 
 export const GradeOptions = [
-  { label: 'First Semester', value: 'first_quarter' },
-  { label: 'Second Semester', value: 'second_quarter' },
-  { label: 'Third Semester', value: 'third_quarter' },
-  { label: 'Fourth Semester', value: 'fourth_quarter' },
+  { label: 'Prelim', value: 'prelim' },
+  { label: 'Midterm', value: 'midterm' },
+  { label: 'Semifinal', value: 'semifinal' },
+  { label: 'Final', value: 'final' },
 ];

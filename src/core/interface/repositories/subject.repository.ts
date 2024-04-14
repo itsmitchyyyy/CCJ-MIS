@@ -4,6 +4,7 @@ import {
   FetchStudentSubjectResponseDTO,
   FetchSubjectQuery,
   FetchSubjectResponseDTO,
+  UpdateGradeRequest,
 } from '@/core/domain/dto/subject.dto';
 import { HttpAdapter } from '@/core/usecases/ports/httpAdapter.interface';
 import SubjectRepositoryInterface from '@/core/usecases/ports/subject.repository.interface';
@@ -56,6 +57,14 @@ export default class SubjectRepository implements SubjectRepositoryInterface {
     return await this.httpAdapter.delete(
       urls.subjects.deleteStudent(subjectId, studentId),
       {},
+    );
+  };
+
+  updateGrade = async (data: UpdateGradeRequest): Promise<void> => {
+    const { studentId, subjectId, ...params } = data;
+    return await this.httpAdapter.post(
+      urls.subjects.grades(subjectId, studentId),
+      params,
     );
   };
 }

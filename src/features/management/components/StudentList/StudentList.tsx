@@ -14,7 +14,11 @@ import React, { useEffect, useState } from 'react';
 import { Button, Form, Input, Select, Space, TableProps } from 'antd';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import { User } from '@/core/domain/entities/user.entity';
-import { FetchStudentSubjectResponseDTO } from '@/core/domain/dto/subject.dto';
+import {
+  FetchStudentSubjectResponseDTO,
+  Grade,
+  GradeEnum,
+} from '@/core/domain/dto/subject.dto';
 import { RangePickerProps } from 'antd/es/date-picker';
 import dayjs from 'dayjs';
 import { AttendanceOptions, GradeOptions } from '@/constants/data';
@@ -26,7 +30,7 @@ import {
 } from '@/core/domain/dto/attendance.dto';
 import { useParams } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { validationSchema } from './validation';
+import { gradeValidationSchema, validationSchema } from './validation';
 import { ErrorMessage } from '@hookform/error-message';
 import { Modal } from '@/components/Elements/Modal';
 
@@ -50,6 +54,12 @@ type Props = {
   }) => void;
   isAdded?: boolean;
   onCreateAttendance: (data: CreateAttendanceRequestDTO) => void;
+  onUpdateGrade: (data: {
+    studentId: string;
+    grade: { [key in GradeEnum]: string };
+  }) => void;
+  isUpdatingGrade?: boolean;
+  isSuccessUpdatingGrade?: boolean;
 };
 
 export const StudentList = ({
@@ -61,6 +71,9 @@ export const StudentList = ({
   onDelete,
   isAdded,
   onCreateAttendance,
+  onUpdateGrade,
+  isUpdatingGrade,
+  isSuccessUpdatingGrade,
 }: Props) => {
   const {
     useAuth: { accessType },
@@ -90,13 +103,28 @@ export const StudentList = ({
       },
     });
 
+  const {
+    handleSubmit: onHandleSubmitGrade,
+    control: gradeControl,
+    formState: { errors: gradeErrors },
+    reset: resetGrade,
+  } = useForm({
+    resolver: yupResolver(gradeValidationSchema),
+    defaultValues: {
+      period: GradeEnum.PRELIM,
+      grade: '',
+    },
+  });
+
   const { fields, append, remove } = useFieldArray({
     control,
     name: 'user_id',
   });
 
   const [students, setStudents] = useState<StudentListProps[]>([]);
-  const [selectedStudent, setSelectedStudent] = useState<User | null>(null);
+  const [selectedStudent, setSelectedStudent] = useState<
+    (User & { grade?: Grade }) | null
+  >(null);
 
   const onHandleSubmit = (data: { user_id: { value: string }[] }) => {
     const newData = data.user_id.map((user) => user.value.toString());
@@ -125,11 +153,16 @@ export const StudentList = ({
         key: 'grade',
         render: (_, record) => (
           <Space size="small" direction="vertical">
-            {Object.entries(record.grade).map(([key, value]) => (
-              <span key={`grade-${key}`}>{`${key
-                .replace('_quarter', ' Semester')
-                .toLocaleUpperCase()}: ${value === null ? 'N/A' : ''}`}</span>
-            ))}
+            {Object.entries(record.grade).map(([key, value]) => {
+              if (
+                [GradeEnum.MIDTERM, GradeEnum.FINAL].includes(key as GradeEnum)
+              ) {
+                return (
+                  <span
+                    key={`grade-${key}`}>{`${key.toLocaleUpperCase()}: ${value}`}</span>
+                );
+              }
+            })}
           </Space>
         ),
       },
@@ -153,7 +186,12 @@ export const StudentList = ({
               Mark Attendance
             </a>
             {accessType === AccessType.Teacher && (
-              <a onClick={() => onClickAddGrade(record.student)}>Add Grade</a>
+              <a
+                onClick={() =>
+                  onClickAddGrade({ ...record.student, grade: record.grade })
+                }>
+                Add Grade
+              </a>
             )}
           </Space>
         ),
@@ -198,7 +236,7 @@ export const StudentList = ({
     setOpenAttendanceModal(true);
   };
 
-  const onClickAddGrade = (student: User) => {
+  const onClickAddGrade = (student: User & { grade?: Grade }) => {
     setSelectedStudent(student);
     setOpenGradeModal(true);
   };
@@ -226,6 +264,33 @@ export const StudentList = ({
     setStudents((prev) => [...prev, student]);
   };
 
+  const onSubmitGrade = (data: { period: GradeEnum; grade: string }) => {
+    const { period, grade } = data;
+    let grades: Grade = {
+      prelim: 'NG',
+      midterm: 'NG',
+      semifinal: 'NG',
+      final: 'NG',
+    };
+
+    Object.entries(selectedStudent?.grade || {}).map(([key, value]) => {
+      if (key === data.period) {
+        grades[period] = grade;
+      } else {
+        grades[key as GradeEnum] = value;
+      }
+    });
+
+    onUpdateGrade({ studentId: selectedStudent?.id || '', grade: grades });
+  };
+
+  useEffect(() => {
+    if (isSuccessUpdatingGrade) {
+      setOpenGradeModal(false);
+      resetGrade();
+    }
+  }, [isSuccessUpdatingGrade]);
+
   return (
     <>
       <GlobalStyle />
@@ -250,17 +315,49 @@ export const StudentList = ({
         </StudentListContainer>
 
         <Modal
-          onSubmit={() => {}}
+          onSubmit={onHandleSubmitGrade(onSubmitGrade)}
           open={openGradeModal}
-          onCancel={() => setOpenGradeModal(false)}
+          isLoading={isUpdatingGrade}
+          onCancel={() => {
+            setSelectedStudent(null);
+            setOpenGradeModal(false);
+          }}
           title="Add Grade">
           <Form layout="vertical">
-            <Form.Item label="Semester">
-              <Select size="large" options={GradeOptions} />
-            </Form.Item>
-            <Form.Item label="Grade">
-              <Input size="large" />
-            </Form.Item>
+            <ErrorMessage
+              name="period"
+              errors={gradeErrors}
+              render={({ message }) => <ErrorWrapper>{message}</ErrorWrapper>}
+            />
+            <Controller
+              name="period"
+              control={gradeControl}
+              render={({ field: { value, onChange } }) => (
+                <Form.Item label="Period" required>
+                  <Select
+                    onChange={onChange}
+                    value={value}
+                    size="large"
+                    options={GradeOptions}
+                  />
+                </Form.Item>
+              )}
+            />
+
+            <ErrorMessage
+              name="grade"
+              errors={gradeErrors}
+              render={({ message }) => <ErrorWrapper>{message}</ErrorWrapper>}
+            />
+            <Controller
+              name="grade"
+              control={gradeControl}
+              render={({ field: { value, onChange } }) => (
+                <Form.Item label="Grade" required>
+                  <Input onChange={onChange} value={value} size="large" />
+                </Form.Item>
+              )}
+            />
           </Form>
         </Modal>
 

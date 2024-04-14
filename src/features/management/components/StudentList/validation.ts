@@ -1,3 +1,4 @@
+import { GradeEnum } from '@/core/domain/dto/subject.dto';
 import * as yup from 'yup';
 
 export const validationSchema = yup
@@ -14,3 +15,8 @@ export const validationSchema = yup
       .required('Student is required'),
   })
   .required();
+
+export const gradeValidationSchema = yup.object({
+  period: yup.mixed<GradeEnum>().oneOf(Object.values(GradeEnum)).required(),
+  grade: yup.string().required('Grade is required'),
+});
