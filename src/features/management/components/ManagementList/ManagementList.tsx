@@ -43,7 +43,7 @@ const ManagementList = ({ subjects, isLoading, grades }: Props) => {
     {
       title: 'Period',
       key: 'period',
-      render: (record: { period: string }) => record.period.toLocaleUpperCase(),
+      render: (record: { period: string }) => record.period,
     },
     {
       title: 'Grade',
@@ -51,6 +51,18 @@ const ManagementList = ({ subjects, isLoading, grades }: Props) => {
       render: (record: { grade: string }) => record.grade,
     },
   ];
+
+  const getGrade = () => {
+    if (selectedGrade) {
+      const { midterm, final } = selectedGrade;
+      return [
+        { period: 'Midterm', grade: midterm },
+        { period: 'Final', grade: final },
+      ];
+    }
+
+    return [];
+  };
 
   return (
     <ManagementWrapper>
@@ -199,14 +211,7 @@ const ManagementList = ({ subjects, isLoading, grades }: Props) => {
             rowKey="period"
             pagination={false}
             columns={TableColumnData}
-            dataSource={
-              selectedGrade
-                ? Object.entries(selectedGrade).map(([key, value]) => ({
-                    period: key,
-                    grade: value,
-                  }))
-                : []
-            }
+            dataSource={selectedGrade ? getGrade() : []}
           />
         </div>
       </Modal>
