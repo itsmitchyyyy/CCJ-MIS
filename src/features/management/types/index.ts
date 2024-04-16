@@ -66,7 +66,7 @@ export type Assignment = {
 export type AssignmentRequest = Omit<
   Assignment,
   'subject' | 'subject_id' | 'created_at' | 'updated_at' | 'id'
->;
+> & { due_time: Date };
 
 export type StudentAssignment = {
   id: string;

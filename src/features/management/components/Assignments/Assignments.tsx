@@ -14,6 +14,8 @@ import {
   ErrorWrapper,
   StyledDatePicker,
   StyledTextArea,
+  StyledTimePicker,
+  TimePickerContainerFormItem,
   Wrapper,
 } from './elements';
 import { useGlobalState } from '@/hooks/global';
@@ -36,6 +38,7 @@ import {
 import { useNavigate, useParams } from 'react-router-dom';
 import { RcFile, UploadFile } from 'antd/es/upload';
 import { InboxOutlined } from '@ant-design/icons';
+import moment from 'moment';
 
 const { Dragger } = Upload;
 
@@ -63,6 +66,7 @@ export const Assignments = ({
     useAuth: { accessType, id: userId },
   } = useGlobalState();
 
+  const [selectedDueDate, setSelectedDueDate] = useState(dayjs().toDate());
   const [openCreateAssignmentModal, setOpenCreateAssignmentModal] =
     useState<boolean>(false);
   const [openStartAssignmentModal, setOpenStartAssignmentModal] =
@@ -76,9 +80,11 @@ export const Assignments = ({
     control,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm({
     defaultValues: {
       due_date: new Date(),
+      due_time: dayjs().hour(dayjs().hour()).minute(30).toDate(),
       title: '',
       description: '',
     },
@@ -89,6 +95,7 @@ export const Assignments = ({
     control: studentAssignmentControl,
     handleSubmit: handleSubmitStudentAssignment,
     formState: { errors: studentAssignmentErrors },
+    reset: resetAssignmentForm,
   } = useForm({
     defaultValues: {
       comments: '',
@@ -98,6 +105,35 @@ export const Assignments = ({
 
   const disabledDate: RangePickerProps['disabledDate'] = (current) => {
     return current && current < dayjs().startOf('day');
+  };
+
+  const disabledHours = () => {
+    const hours = [];
+    const currentHour = dayjs().hour();
+
+    if (selectedDueDate.getDate() === dayjs().date()) {
+      for (let i = 0; i < currentHour; i++) {
+        hours.push(i);
+      }
+    }
+
+    return hours;
+  };
+
+  const disabledMinutes = (selectedHour: number) => {
+    const minutes = [];
+    const currentMinute = dayjs().minute();
+
+    if (
+      selectedDueDate.getDate() === dayjs().date() &&
+      selectedHour === dayjs().hour()
+    ) {
+      for (let i = 0; i < currentMinute; i++) {
+        minutes.push(i);
+      }
+    }
+
+    return minutes;
   };
 
   const onHandleSubmit = (data: AssignmentRequest) => {
@@ -138,6 +174,8 @@ export const Assignments = ({
     if (isSuccessful) {
       setOpenCreateAssignmentModal(false);
       setOpenStartAssignmentModal(false);
+      resetAssignmentForm();
+      reset();
     }
   }, [isSuccessful]);
 
@@ -299,15 +337,47 @@ export const Assignments = ({
                 <AssignmentsDateContainer>
                   <StyledDatePicker
                     value={dayjs(value)}
-                    onChange={(date: unknown, _: string | string[]) =>
-                      onChange(date)
-                    }
+                    onChange={(date: unknown, _: string | string[]) => {
+                      onChange(date);
+                      setSelectedDueDate(dayjs(date as Date).toDate());
+                    }}
                     size="large"
                     disabledDate={disabledDate}
                   />
                 </AssignmentsDateContainer>
               </Form.Item>
             )}
+          />
+
+          <ErrorMessage
+            name="due_time"
+            errors={errors}
+            render={({ message }) => <ErrorWrapper>{message}</ErrorWrapper>}
+          />
+          <Controller
+            control={control}
+            name="due_time"
+            render={({ field: { value, onChange } }) => {
+              return (
+                <TimePickerContainerFormItem label="Due Time">
+                  <StyledTimePicker
+                    value={dayjs(value)}
+                    onChange={(date: unknown, _: string | string[]) =>
+                      onChange(date)
+                    }
+                    size="large"
+                    use12Hours
+                    format="h:mm a"
+                    needConfirm={false}
+                    minuteStep={30}
+                    disabledTime={() => ({
+                      disabledHours: disabledHours,
+                      disabledMinutes: (hour) => disabledMinutes(hour),
+                    })}
+                  />
+                </TimePickerContainerFormItem>
+              );
+            }}
           />
 
           <ErrorMessage

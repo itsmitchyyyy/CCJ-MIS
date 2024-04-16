@@ -5,6 +5,7 @@ export type AssignmentRequestDTO = {
   title: string;
   description: string;
   due_date: Date;
+  due_time: Date;
   subject_id: string;
 };
 

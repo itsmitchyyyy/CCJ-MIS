@@ -2,10 +2,12 @@ import { colors } from '@/constants/themes';
 import {
   Button,
   DatePicker,
+  Form,
   Input,
   InputNumber,
   Table,
   TableProps,
+  TimePicker,
 } from 'antd';
 import styled from 'styled-components';
 
@@ -57,4 +59,21 @@ export const StyledTable = styled((props: TableProps) => <Table {...props} />)`
 
 export const StyledInputNumber = styled(InputNumber)`
   width: 100%;
+`;
+
+export const StyledTimePicker = styled(TimePicker)`
+  width: 100%;
+
+  .anticon {
+    color: ${colors.keyColors.blackAlpha};
+
+    &:hover {
+      color: ${colors.keyColors.black};
+    }
+  }
+`;
+
+export const TimePickerContainerFormItem = styled(Form.Item)`
+  width: 100%;
+  margin-bottom: 5px;
 `;
