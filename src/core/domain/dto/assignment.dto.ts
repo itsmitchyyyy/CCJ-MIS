@@ -14,9 +14,13 @@ export type FetchAssignmentRequestDTO = {
   student_id?: string;
 };
 
-export type FetchAssignmentResponseDTO = AssignmentRequestDTO & {
+export type FetchAssignmentResponseDTO = Omit<
+  AssignmentRequestDTO,
+  'due_time'
+> & {
   id: string;
   subject: Subject;
+  due_time: string;
   student_assignments?: StudentAssignments[];
   created_at?: Date;
   updated_at?: Date;

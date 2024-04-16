@@ -38,7 +38,7 @@ import {
 import { useNavigate, useParams } from 'react-router-dom';
 import { RcFile, UploadFile } from 'antd/es/upload';
 import { InboxOutlined } from '@ant-design/icons';
-import moment from 'moment';
+import { formatStringDate } from '@/utils/format';
 
 const { Dragger } = Upload;
 
@@ -244,7 +244,10 @@ export const Assignments = ({
                 style={{ whiteSpace: 'pre' }}
                 title={<a>{item.title}</a>}
                 description={
-                  <p>Due on {dayjs(item.due_date).format('MMMM DD, YYYY')}</p>
+                  <p>
+                    Due on {dayjs(item.due_date).format('MMMM DD, YYYY')}{' '}
+                    {formatStringDate(item.due_time, 'hh:mm A')}
+                  </p>
                 }
               />
               <div dangerouslySetInnerHTML={{ __html: item.description }} />
