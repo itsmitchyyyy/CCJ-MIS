@@ -1,4 +1,4 @@
-import { Card, Col, Row } from 'antd';
+import { Card, Col, Row, Table } from 'antd';
 import {
   CreateSubjectButton,
   ManagementHeader,
@@ -9,6 +9,7 @@ import {
   Wrapper,
 } from './elements';
 import {
+  AuditOutlined,
   ClockCircleOutlined,
   ReadOutlined,
   UserOutlined,
@@ -16,21 +17,40 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { PATHS } from '@/constants/paths';
 import Meta from 'antd/es/card/Meta';
-import { FetchSubjectResponseDTO } from '@/core/domain/dto/subject.dto';
+import { FetchSubjectResponseDTO, Grade } from '@/core/domain/dto/subject.dto';
 import { formatStringDate } from '@/utils/format';
 import { useGlobalState } from '@/hooks/global';
 import { AccessType } from '@/features/account/types';
+import { Modal } from '@/components/Elements/Modal';
+import { useState } from 'react';
 
 type Props = {
   isLoading?: boolean;
   subjects: FetchSubjectResponseDTO[];
+  grades?: { user_id: string; subject_id: string; grade: Grade }[];
 };
 
-const ManagementList = ({ subjects, isLoading }: Props) => {
+const ManagementList = ({ subjects, isLoading, grades }: Props) => {
   const {
     useAuth: { accessType, id },
   } = useGlobalState();
   const navigate = useNavigate();
+
+  const [openGrade, setOpenGrade] = useState<boolean>(false);
+  const [selectedGrade, setSelectedGrade] = useState<Grade | null>(null);
+
+  const TableColumnData = [
+    {
+      title: 'Period',
+      key: 'period',
+      render: (record: { period: string }) => record.period.toLocaleUpperCase(),
+    },
+    {
+      title: 'Grade',
+      key: 'grade',
+      render: (record: { grade: string }) => record.grade,
+    },
+  ];
 
   return (
     <ManagementWrapper>
@@ -83,6 +103,18 @@ const ManagementList = ({ subjects, isLoading }: Props) => {
                                 )
                               }
                               key="attendance"
+                            />,
+                            <AuditOutlined
+                              onClick={() => {
+                                grades?.map((grade) => {
+                                  if (grade.subject_id === subject.id) {
+                                    setSelectedGrade(grade.grade);
+                                  }
+                                });
+
+                                setOpenGrade(true);
+                              }}
+                              key="grade"
                             />,
                           ]
                         : [
@@ -152,6 +184,32 @@ const ManagementList = ({ subjects, isLoading }: Props) => {
           )}
         </Row>
       </Wrapper>
+
+      <Modal
+        title="Grade"
+        onSubmit={() => {}}
+        open={openGrade}
+        onCancel={() => {
+          setOpenGrade(false);
+          setSelectedGrade(null);
+        }}
+        footer={null}>
+        <div>
+          <Table
+            rowKey="period"
+            pagination={false}
+            columns={TableColumnData}
+            dataSource={
+              selectedGrade
+                ? Object.entries(selectedGrade).map(([key, value]) => ({
+                    period: key,
+                    grade: value,
+                  }))
+                : []
+            }
+          />
+        </div>
+      </Modal>
     </ManagementWrapper>
   );
 };

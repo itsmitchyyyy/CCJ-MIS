@@ -1,4 +1,5 @@
 import { Modal as AntModal } from 'antd';
+import { ModalFooterRender } from 'antd/es/modal/interface';
 import React from 'react';
 
 type Props = {
@@ -8,6 +9,7 @@ type Props = {
   isLoading?: boolean;
   onSubmit: () => void;
   onCancel?: () => void;
+  footer?: ModalFooterRender | React.ReactNode;
 };
 
 const Modal = ({
@@ -17,6 +19,7 @@ const Modal = ({
   isLoading,
   onSubmit,
   onCancel,
+  footer,
 }: Props) => {
   return (
     <AntModal
@@ -25,7 +28,8 @@ const Modal = ({
       open={open}
       onOk={onSubmit}
       onCancel={onCancel}
-      confirmLoading={isLoading}>
+      confirmLoading={isLoading}
+      footer={footer}>
       {children}
     </AntModal>
   );

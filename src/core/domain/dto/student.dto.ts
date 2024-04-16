@@ -1,5 +1,6 @@
 import { Subject } from '@/features/management/types';
 import { User, UserStatus } from '../entities/user.entity';
+import { Grade } from './subject.dto';
 
 export type FetchStudentsResponseDTO = User;
 
@@ -22,6 +23,7 @@ export type FetchStudentSubjectsResponseDTO = {
   subject: SubjectResource;
   student_id: string;
   student: User;
+  grade: Grade;
   created_at?: Date;
   updated_at?: Date;
 };
