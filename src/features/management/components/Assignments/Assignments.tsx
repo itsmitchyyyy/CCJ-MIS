@@ -39,6 +39,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { RcFile, UploadFile } from 'antd/es/upload';
 import { InboxOutlined } from '@ant-design/icons';
 import { formatStringDate } from '@/utils/format';
+import moment from 'moment';
 
 const { Dragger } = Upload;
 
@@ -145,6 +146,15 @@ export const Assignments = ({
   };
 
   const onHandleSubmitStudentAssignment = (data: { comments?: string }) => {
+    if (
+      moment(
+        `${selectedAssignment?.due_date} ${selectedAssignment?.due_time}`,
+      ).isBefore(moment())
+    ) {
+      messageApi.error('Assignment is closed');
+      return;
+    }
+
     if (documentFiles.length === 0) {
       messageApi.error('Please select a file to upload');
       return;
@@ -207,13 +217,17 @@ export const Assignments = ({
                           student_assignment.assignment_id === item.id,
                       ) ? (
                         <small>Already submitted</small>
+                      ) : moment(`${item.due_date} ${item.due_time}`).isBefore(
+                          moment(),
+                        ) ? (
+                        <span>Assignment is closed</span>
                       ) : (
                         <a
                           onClick={() => {
                             setSelectedAssignment(item);
                             setOpenStartAssignmentModal(true);
                           }}>
-                          Start Assignment{' '}
+                          Start Assignment
                         </a>
                       ),
                     ]
