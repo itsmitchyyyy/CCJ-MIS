@@ -32,4 +32,7 @@ export const PATHS = {
   DOCUMENTS: {
     BASE: '/documents',
   },
+  FACILITIES: {
+    BASE: '/facilities',
+  },
 };

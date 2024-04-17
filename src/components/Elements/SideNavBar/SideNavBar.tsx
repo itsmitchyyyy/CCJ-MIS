@@ -4,6 +4,7 @@ import { LogoWrapper } from './elements';
 import { Menu, MenuProps } from 'antd';
 import {
   AlertOutlined,
+  BankOutlined,
   BookOutlined,
   DashboardOutlined,
   FileProtectOutlined,
@@ -52,7 +53,7 @@ const SideNavBar = ({ collapsed }: Props) => {
     getItem('Profile', 'profile', <UserOutlined />),
     getItem('Announcement', 'announcement', <AlertOutlined />),
     getItem('Documents', 'documents', <FileProtectOutlined />),
-    getItem('Approval', 'approval', <SignatureOutlined />),
+    getItem('Facilities', 'facilities', <BankOutlined />),
     accessType === AccessType.Admin
       ? getItem('Manage', 'manage', <SettingOutlined />, [
           getItem('Subjects', 'subjects', <BookOutlined />),
@@ -126,12 +127,19 @@ const SideNavBar = ({ collapsed }: Props) => {
       case 'teachers':
         navigate('/management/teachers');
         break;
+      case 'facilities':
+        navigate('/facilities');
+        break;
     }
   };
 
   const filteredItem = items.filter((item) => {
     if (accessType !== AccessType.Admin) {
-      return item?.key !== 'account' && item?.key !== 'approval';
+      return (
+        item?.key !== 'account' &&
+        item?.key !== 'approval' &&
+        item?.key !== 'facilities'
+      );
     }
 
     return item;

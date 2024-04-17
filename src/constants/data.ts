@@ -10,3 +10,10 @@ export const GradeOptions = [
   { label: 'Semifinal', value: 'semifinal' },
   { label: 'Final', value: 'final' },
 ];
+
+export const TabItemOptions = [
+  { label: 'Regular Room', key: 'regular' },
+  { label: 'AVR', key: 'avr' },
+  { label: 'Laboratories', key: 'laboratories' },
+  { label: 'Equipment', key: 'equipment' },
+];
