@@ -37,7 +37,20 @@ const SideNavBar = ({ collapsed }: Props) => {
   } = useGlobalState();
   const splitPathName = pathname.split('/');
 
-  const [stateOpenKeys, setStateOpenKeys] = useState<string[]>(['manage']);
+  const selectedKey = !pathname.includes('management')
+    ? [splitPathName[1]]
+    : splitPathName.length > 3
+    ? [`${splitPathName[2]}s`]
+    : [splitPathName[2]];
+
+  const defaultOpenKeys =
+    splitPathName[1] === 'management'
+      ? ['manage']
+      : splitPathName[1] === 'facilities'
+      ? ['facility']
+      : [];
+
+  const [stateOpenKeys, setStateOpenKeys] = useState<string[]>(defaultOpenKeys);
 
   const getItem = (
     label: React.ReactNode,
@@ -53,7 +66,12 @@ const SideNavBar = ({ collapsed }: Props) => {
     getItem('Profile', 'profile', <UserOutlined />),
     getItem('Announcement', 'announcement', <AlertOutlined />),
     getItem('Documents', 'documents', <FileProtectOutlined />),
-    getItem('Facilities', 'facilities', <BankOutlined />),
+    accessType === AccessType.Admin
+      ? getItem('Facility', 'facility', <BankOutlined />, [
+          getItem('List', 'facilities', <SignatureOutlined />),
+          getItem('Request', 'facility_request', <BookOutlined />),
+        ])
+      : getItem('Facilities', 'facilities', <BankOutlined />),
     accessType === AccessType.Admin
       ? getItem('Manage', 'manage', <SettingOutlined />, [
           getItem('Subjects', 'subjects', <BookOutlined />),
@@ -145,12 +163,6 @@ const SideNavBar = ({ collapsed }: Props) => {
         return item;
     }
   });
-
-  const selectedKey = !pathname.includes('management')
-    ? [splitPathName[1]]
-    : splitPathName.length > 3
-    ? [`${splitPathName[2]}s`]
-    : [splitPathName[2]];
 
   return (
     <Sider trigger={null} collapsible collapsed={collapsed}>
