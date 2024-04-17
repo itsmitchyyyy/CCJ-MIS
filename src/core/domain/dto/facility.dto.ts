@@ -7,6 +7,11 @@ export type StoreFacilityDTO = {
   room_number?: string;
 };
 
+export type FacilityQuery = {
+  type?: FacilityType;
+  status?: FacilityStatus;
+};
+
 export type FacilityDTO = {
   id: string;
   type: FacilityType;
