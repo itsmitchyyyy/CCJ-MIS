@@ -28,7 +28,6 @@ type FacilityProps = {
   isSubmitting?: boolean;
   isCreateFacilitySuccess?: boolean;
   isFetching?: boolean;
-  isDeleteFacilitySuccess?: boolean;
   isDeleting?: boolean;
 };
 
@@ -39,7 +38,6 @@ const Facilities = ({
   isSubmitting,
   isCreateFacilitySuccess,
   isFetching,
-  isDeleteFacilitySuccess,
   isDeleting,
 }: FacilityProps) => {
   const {

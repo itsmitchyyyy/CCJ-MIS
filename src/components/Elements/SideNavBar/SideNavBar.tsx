@@ -39,9 +39,15 @@ const SideNavBar = ({ collapsed }: Props) => {
   const splitPathName = pathname.split('/');
 
   const selectedKey = !pathname.includes('management')
-    ? [splitPathName[1]]
+    ? splitPathName[1] === 'facilities' &&
+      splitPathName.length > 2 &&
+      splitPathName[2] === 'requests'
+      ? ['facility_request']
+      : [splitPathName[1]]
     : splitPathName.length > 3
     ? [`${splitPathName[2]}s`]
+    : splitPathName[2] === 'requests'
+    ? ['facility_request']
     : [splitPathName[2]];
 
   const defaultOpenKeys =
@@ -148,6 +154,9 @@ const SideNavBar = ({ collapsed }: Props) => {
         break;
       case 'facilities':
         navigate('/facilities');
+        break;
+      case 'facility_request':
+        navigate('/facilities/requests');
         break;
     }
   };

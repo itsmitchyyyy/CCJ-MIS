@@ -18,11 +18,7 @@ const FacilitiesPage = () => {
     status,
     type,
   });
-  const {
-    mutate: deleteFacility,
-    isPending: isDeleting,
-    isSuccess: isDeletingSuccess,
-  } = useDeleteFacility();
+  const { mutate: deleteFacility, isPending: isDeleting } = useDeleteFacility();
 
   return (
     <AdminLayout>
@@ -31,7 +27,6 @@ const FacilitiesPage = () => {
         isFetching={isLoading}
         isCreateFacilitySuccess={isSuccess}
         isSubmitting={isPending}
-        isDeleteFacilitySuccess={isDeletingSuccess}
         isDeleting={isDeleting}
         onCreateFacility={createFacility}
         onDeleteFacility={deleteFacility}
