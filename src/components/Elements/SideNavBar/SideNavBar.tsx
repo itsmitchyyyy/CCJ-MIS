@@ -8,6 +8,7 @@ import {
   BookOutlined,
   DashboardOutlined,
   FileProtectOutlined,
+  OrderedListOutlined,
   SettingOutlined,
   SignatureOutlined,
   UserAddOutlined,
@@ -68,7 +69,7 @@ const SideNavBar = ({ collapsed }: Props) => {
     getItem('Documents', 'documents', <FileProtectOutlined />),
     accessType === AccessType.Admin
       ? getItem('Facility', 'facility', <BankOutlined />, [
-          getItem('List', 'facilities', <SignatureOutlined />),
+          getItem('List', 'facilities', <OrderedListOutlined />),
           getItem('Request', 'facility_request', <BookOutlined />),
         ])
       : getItem('Facilities', 'facilities', <BankOutlined />),
