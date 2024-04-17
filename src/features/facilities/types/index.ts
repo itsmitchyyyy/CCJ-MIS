@@ -8,5 +8,5 @@ export enum FacilityType {
   Regular = 'regular',
   AVR = 'avr',
   LAB = 'laboratories',
-  Equipment = 'equpment',
+  Equipment = 'equipment',
 }
