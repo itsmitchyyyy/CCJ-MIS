@@ -49,5 +49,6 @@ export default {
   },
   facilities: {
     base: '/facilities',
+    requests: '/facility-requests',
   },
 };

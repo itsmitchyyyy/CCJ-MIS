@@ -1,10 +1,22 @@
-import { FacilityStatus, FacilityType } from '@/features/facilities/types';
+import {
+  FacilityStatus,
+  FacilityType,
+  RequestFacilityStatus,
+} from '@/features/facilities/types';
 
 export type StoreFacilityDTO = {
   type: FacilityType;
   name: string;
   description?: string;
   room_number?: string;
+};
+
+export type StoreRequestFacilityDTO = {
+  reservation_date: Date;
+  user_id: string;
+  approved_by?: string;
+  approved_date?: Date;
+  status?: RequestFacilityStatus;
 };
 
 export type FacilityQuery = {

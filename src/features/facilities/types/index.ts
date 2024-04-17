@@ -15,3 +15,9 @@ export enum FacilityStatus {
   Booked = 'booked',
   Available = 'available',
 }
+
+export enum RequestFacilityStatus {
+  Pending = 'pending',
+  Approved = 'approved',
+  Rejected = 'rejected',
+}
