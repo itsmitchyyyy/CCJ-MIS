@@ -134,15 +134,16 @@ const SideNavBar = ({ collapsed }: Props) => {
   };
 
   const filteredItem = items.filter((item) => {
-    if (accessType !== AccessType.Admin) {
-      return (
-        item?.key !== 'account' &&
-        item?.key !== 'approval' &&
-        item?.key !== 'facilities'
-      );
+    switch (accessType) {
+      case AccessType.Admin:
+        return item;
+      case AccessType.Teacher:
+        return item?.key !== 'account';
+      case AccessType.Student:
+        return item?.key !== 'account' && item?.key !== 'facilities';
+      default:
+        return item;
     }
-
-    return item;
   });
 
   const selectedKey = !pathname.includes('management')
