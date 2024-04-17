@@ -12,22 +12,39 @@ import { Form, Input, Select, Tabs } from 'antd';
 import { FacilityType, Tab } from '../types';
 import { TabItemOptions } from '@/constants/data';
 import { Modal } from '@/components/Elements/Modal';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useGlobalState } from '@/hooks/global';
 import { AccessType } from '@/features/account/types';
 import { validationSchema } from './validation';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { ErrorMessage } from '@hookform/error-message';
+import { StoreFacilityDTO } from '@/core/domain/dto/facility.dto';
 
-const Facilities = () => {
+type FacilityProps = {
+  onCreateFacility: (data: StoreFacilityDTO) => void;
+  isSubmitting?: boolean;
+  isCreateFacilitySuccess?: boolean;
+};
+
+const Facilities = ({
+  onCreateFacility,
+  isSubmitting,
+  isCreateFacilitySuccess,
+}: FacilityProps) => {
   const {
     useAuth: { accessType },
   } = useGlobalState();
 
   const [openFacility, setOpenFacility] = useState<boolean>(false);
+  const [type, setType] = useState<FacilityType>(
+    TabItemOptions[0].key as FacilityType,
+  );
+
   const {
     handleSubmit,
+    reset,
+    watch,
     control,
     formState: { errors },
   } = useForm({
@@ -36,6 +53,7 @@ const Facilities = () => {
       type: TabItemOptions[0].key as FacilityType,
       name: '',
       description: '',
+      room_number: '',
     },
   });
 
@@ -53,9 +71,19 @@ const Facilities = () => {
     };
   });
 
-  const onSubmit = (data: any) => {
-    console.log(data);
-  };
+  useEffect(() => {
+    const subscription = watch(({ type }) => {
+      setType(type as FacilityType);
+    });
+    return () => subscription.unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    if (isCreateFacilitySuccess) {
+      setOpenFacility(false);
+      reset();
+    }
+  }, [isCreateFacilitySuccess]);
 
   return (
     <FacilitiesWrapper>
@@ -79,7 +107,8 @@ const Facilities = () => {
         title="Add Facility or Equipment"
         open={openFacility}
         onCancel={() => setOpenFacility(false)}
-        onSubmit={handleSubmit(onSubmit)}>
+        onSubmit={handleSubmit(onCreateFacility)}
+        isLoading={isSubmitting}>
         <Form layout="vertical">
           <ErrorMessage
             name="type"
@@ -138,6 +167,25 @@ const Facilities = () => {
               </Form.Item>
             )}
           />
+
+          {type !== FacilityType.Equipment && (
+            <>
+              <ErrorMessage
+                name="room_number"
+                errors={errors}
+                render={({ message }) => <ErrorWrapper>{message}</ErrorWrapper>}
+              />
+              <Controller
+                control={control}
+                name="room_number"
+                render={({ field: { value, onChange } }) => (
+                  <Form.Item label="Room Number" required>
+                    <Input value={value} onChange={onChange} size="large" />
+                  </Form.Item>
+                )}
+              />
+            </>
+          )}
         </Form>
       </Modal>
     </FacilitiesWrapper>

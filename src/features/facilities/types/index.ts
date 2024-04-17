@@ -10,3 +10,8 @@ export enum FacilityType {
   LAB = 'laboratories',
   Equipment = 'equipment',
 }
+
+export enum FacilityStatus {
+  Booked = 'booked',
+  Available = 'available',
+}

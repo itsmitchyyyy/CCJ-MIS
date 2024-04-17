@@ -16,6 +16,8 @@ import DocumentRepository from '../interface/repositories/document.repository';
 import documentProvider from './providers/document.provider';
 import AssignmentRepository from '../interface/repositories/assignment.repository';
 import assignmentProvider from './providers/assignment.provider';
+import FacilityRepository from '../interface/repositories/facility.repository';
+import facilityProvider from './providers/facility.provider';
 
 const httpAdapter = new HttpAxiosAdapter(axiosInstance);
 
@@ -27,6 +29,7 @@ const studentRepository = new StudentRepository(httpAdapter);
 const attendanceRepository = new AttendanceRepository(httpAdapter);
 const documentRepository = new DocumentRepository(httpAdapter);
 const assignmentRepository = new AssignmentRepository(httpAdapter);
+const facilityRepository = new FacilityRepository(httpAdapter);
 
 export default {
   authProvider: authProvider({ authRepository }),
@@ -37,4 +40,5 @@ export default {
   attendanceProvider: attendanceProvider({ attendanceRepository }),
   documentProvider: documentProvider({ documentRepository }),
   assignmentProvider: assignmentProvider({ assignmentRepository }),
+  facilityProvider: facilityProvider({ facilityRepository }),
 };

@@ -47,4 +47,7 @@ export default {
       assignmentId: string | number,
     ) => `/student-assignments/${studentId}/${assignmentId}/exists`,
   },
+  facilities: {
+    base: '/facilities',
+  },
 };

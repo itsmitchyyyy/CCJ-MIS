@@ -1,10 +1,17 @@
 import { AdminLayout } from '@/components/Layout';
 import Facilities from '../components/Facilities';
+import useCreateFacility from '../api/createFacility';
 
 const FacilitiesPage = () => {
+  const { mutate: createFacility, isPending, isSuccess } = useCreateFacility();
+
   return (
     <AdminLayout>
-      <Facilities />
+      <Facilities
+        isCreateFacilitySuccess={isSuccess}
+        isSubmitting={isPending}
+        onCreateFacility={createFacility}
+      />
     </AdminLayout>
   );
 };
