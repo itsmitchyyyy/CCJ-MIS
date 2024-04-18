@@ -63,3 +63,8 @@ export type FetchFacilityRequestQuery = {
   borrowed_date?: Date;
   returned_date?: Date;
 };
+
+export type UpdateFacilityRequestDTO = {
+  status: RequestFacilityStatus;
+  returned_date?: Date;
+};

@@ -61,3 +61,9 @@ export const FacilitiesDateContainer = styled.div`
 export const StyledDatePicker = styled(DatePicker)`
   width: 100%;
 `;
+
+export const StyledButton = styled(Button)`
+  &&:disabled {
+    color: gray;
+  }
+`;
