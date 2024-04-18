@@ -3,7 +3,6 @@ import {
   Assignment,
   AssignmentRequest,
   AssignmentWithStudentAssignments,
-  StudentAssignment,
   StudentAssignments,
 } from '../../types';
 import {

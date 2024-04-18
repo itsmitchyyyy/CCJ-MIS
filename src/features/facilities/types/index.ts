@@ -21,3 +21,17 @@ export enum RequestFacilityStatus {
   Approved = 'approved',
   Rejected = 'rejected',
 }
+
+export type RequestFacility = {
+  facility_id: string;
+  user_id: string;
+  reservation_date: Date;
+  reason?: string;
+};
+
+export type BorrowRequestFacility = {
+  facility_id: string;
+  user_id: string;
+  borrowed_date: Date;
+  reason?: string;
+};

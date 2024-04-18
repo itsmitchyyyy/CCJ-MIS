@@ -15,3 +15,13 @@ export const validationSchema = yup
     }), // 👈
   })
   .required();
+
+export const bookingValidationSchema = yup.object({
+  reservation_date: yup.date().required('Reservation date is required'),
+  reason: yup.string(),
+});
+
+export const borrowValidationSchema = yup.object({
+  borrowed_date: yup.date().required('Reservation date is required'),
+  reason: yup.string(),
+});

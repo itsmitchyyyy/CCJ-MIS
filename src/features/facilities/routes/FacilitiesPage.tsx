@@ -5,6 +5,7 @@ import { useFetchFacilities } from '../api/fetchFacilities';
 import { useSearchParams } from 'react-router-dom';
 import { FacilityStatus, FacilityType } from '../types';
 import { useDeleteFacility } from '../api/deleteFacility';
+import { useCreateRequest } from '../api/createRequest';
 
 const FacilitiesPage = () => {
   const [searchParams, _] = useSearchParams();
@@ -19,6 +20,11 @@ const FacilitiesPage = () => {
     type,
   });
   const { mutate: deleteFacility, isPending: isDeleting } = useDeleteFacility();
+  const {
+    mutate: createRequest,
+    isPending: isCreatingRequest,
+    isSuccess: isRequestSuccess,
+  } = useCreateRequest();
 
   return (
     <AdminLayout>
@@ -28,8 +34,11 @@ const FacilitiesPage = () => {
         isCreateFacilitySuccess={isSuccess}
         isSubmitting={isPending}
         isDeleting={isDeleting}
+        isRequesting={isCreatingRequest}
+        isRequestSuccess={isRequestSuccess}
         onCreateFacility={createFacility}
         onDeleteFacility={deleteFacility}
+        onRequestFacility={createRequest}
       />
     </AdminLayout>
   );

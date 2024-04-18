@@ -12,11 +12,13 @@ export type StoreFacilityDTO = {
 };
 
 export type StoreRequestFacilityDTO = {
-  reservation_date: Date;
+  reservation_date?: Date;
   user_id: string;
   approved_by?: string;
   approved_date?: Date;
   status?: RequestFacilityStatus;
+  reason?: string;
+  borrowed_date?: Date;
 };
 
 export type FacilityQuery = {

@@ -1,5 +1,5 @@
 import { colors } from '@/constants/themes';
-import { Button, Input, Select, Table, TableProps } from 'antd';
+import { Button, DatePicker, Input, Select, Table, TableProps } from 'antd';
 import styled from 'styled-components';
 
 export const FacilitiesWrapper = styled.div`
@@ -50,4 +50,14 @@ export const StyledTextArea = styled(Input.TextArea)`
 export const ErrorWrapper = styled.p`
   color: ${colors.sysLight.error};
   margin: 0;
+`;
+
+export const FacilitiesDateContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 1em;
+`;
+
+export const StyledDatePicker = styled(DatePicker)`
+  width: 100%;
 `;
