@@ -1,6 +1,8 @@
 import {
   FacilityDTO,
   FacilityQuery,
+  FacilityRequestDTO,
+  FetchFacilityRequestQuery,
   StoreFacilityDTO,
   StoreRequestFacilityDTO,
 } from '@/core/domain/dto/facility.dto';
@@ -13,4 +15,7 @@ export default interface FacilityRepositoryInterface {
     facilityId: string,
     data: StoreRequestFacilityDTO,
   ): Promise<void>;
+  fetchRequests(
+    query?: FetchFacilityRequestQuery,
+  ): Promise<FacilityRequestDTO[]>;
 }

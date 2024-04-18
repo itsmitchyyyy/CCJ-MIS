@@ -2,6 +2,8 @@ import urls from '@/constants/urls';
 import {
   FacilityDTO,
   FacilityQuery,
+  FacilityRequestDTO,
+  FetchFacilityRequestQuery,
   StoreFacilityDTO,
   StoreRequestFacilityDTO,
 } from '@/core/domain/dto/facility.dto';
@@ -37,5 +39,13 @@ export default class FacilityRepository implements FacilityRepositoryInterface {
       `${urls.facilities.requests}/${facilityId}`,
       data,
     );
+  };
+
+  fetchRequests = async (
+    query?: FetchFacilityRequestQuery,
+  ): Promise<FacilityRequestDTO[]> => {
+    return await this.httpAdapter.get(urls.facilities.requests, {
+      params: query,
+    });
   };
 }
