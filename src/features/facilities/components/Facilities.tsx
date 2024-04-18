@@ -5,6 +5,7 @@ import {
   FacilitiesHeader,
   FacilitiesListContainer,
   FacilitiesWrapper,
+  StyledButton,
   StyledDatePicker,
   StyledTable,
   StyledTextArea,
@@ -12,6 +13,7 @@ import {
 import { Form, Input, Popconfirm, Select, Space, TableProps, Tabs } from 'antd';
 import {
   BorrowRequestFacility,
+  FacilityStatus,
   FacilityType,
   RequestFacility,
   Tab,
@@ -127,21 +129,29 @@ const Facilities = ({
           {accessType === AccessType.Teacher && (
             <>
               {record.type === FacilityType.Equipment ? (
-                <a
+                <StyledButton
+                  disabled={
+                    record.status.toLocaleLowerCase() === FacilityStatus.Booked
+                  }
+                  type="link"
                   onClick={() => {
                     setOpenBorrowEquipment(true);
                     setSelectedFacility(record);
                   }}>
-                  Borrow Equipment
-                </a>
+                  Borrow Equipment{' '}
+                </StyledButton>
               ) : (
-                <a
+                <StyledButton
+                  disabled={
+                    record.status.toLocaleLowerCase() === FacilityStatus.Booked
+                  }
+                  type="link"
                   onClick={() => {
                     setOpenBookARoom(true);
                     setSelectedFacility(record);
                   }}>
                   Reserve Room
-                </a>
+                </StyledButton>
               )}
             </>
           )}
