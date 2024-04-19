@@ -20,6 +20,7 @@ const useUpdateRequest = () => {
     mutationFn: updateRequest,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['fetchFacilityRequests'] });
+      queryClient.invalidateQueries({ queryKey: ['facilities'] });
       toast.success('Request updated successfully');
     },
   });

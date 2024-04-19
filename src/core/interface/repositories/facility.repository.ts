@@ -22,7 +22,9 @@ export default class FacilityRepository implements FacilityRepositoryInterface {
     await this.httpAdapter.post(urls.facilities.base, data);
   };
 
-  fetchFacilities = async (query?: FacilityQuery): Promise<FacilityDTO[]> => {
+  fetchFacilities = async (
+    query?: FacilityQuery,
+  ): Promise<FacilityDTO[] | FacilityRequestDTO[]> => {
     return await this.httpAdapter.get(urls.facilities.base, {
       params: query,
     });

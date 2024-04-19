@@ -10,7 +10,9 @@ import {
 
 export default interface FacilityRepositoryInterface {
   createFacility(data: StoreFacilityDTO): Promise<void>;
-  fetchFacilities(query?: FacilityQuery): Promise<FacilityDTO[]>;
+  fetchFacilities(
+    query?: FacilityQuery,
+  ): Promise<FacilityDTO[] | FacilityRequestDTO[]>;
   deleteFacility(id: number): Promise<void>;
   createRequest(
     facilityId: string,

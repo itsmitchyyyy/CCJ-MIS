@@ -16,6 +16,7 @@ import {
   FacilityStatus,
   FacilityType,
   RequestFacility,
+  RequestFacilityStatus,
   Tab,
 } from '../types';
 import { TabItemOptions } from '@/constants/data';
@@ -31,28 +32,40 @@ import {
 } from './validation';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { ErrorMessage } from '@hookform/error-message';
-import { FacilityDTO, StoreFacilityDTO } from '@/core/domain/dto/facility.dto';
+import {
+  FacilityDTO,
+  FacilityRequestDTO,
+  StoreFacilityDTO,
+  UpdateFacilityRequestDTO,
+} from '@/core/domain/dto/facility.dto';
 import { useSearchParams } from 'react-router-dom';
 import { RangePickerProps } from 'antd/es/date-picker';
 import dayjs from 'dayjs';
+import { capitalizeString } from '@/utils/string';
 
 type FacilityProps = {
   onCreateFacility: (data: StoreFacilityDTO) => void;
   onDeleteFacility: (id: number) => void;
   onRequestFacility: (data: RequestFacility | BorrowRequestFacility) => void;
-  facilities: FacilityDTO[];
+  onUpdateRequest: (params: {
+    requestId: string;
+    data: UpdateFacilityRequestDTO;
+  }) => void;
+  facilities: FacilityDTO[] | FacilityRequestDTO[];
   isSubmitting?: boolean;
   isCreateFacilitySuccess?: boolean;
   isFetching?: boolean;
   isDeleting?: boolean;
   isRequesting?: boolean;
   isRequestSuccess?: boolean;
+  isPendingUpdate?: boolean;
 };
 
 const Facilities = ({
   onCreateFacility,
   onDeleteFacility,
   onRequestFacility,
+  onUpdateRequest,
   facilities,
   isSubmitting,
   isCreateFacilitySuccess,
@@ -60,6 +73,7 @@ const Facilities = ({
   isDeleting,
   isRequesting,
   isRequestSuccess,
+  isPendingUpdate,
 }: FacilityProps) => {
   const {
     useAuth: { accessType, id },
@@ -81,7 +95,9 @@ const Facilities = ({
   const filterFacilityType =
     (searchParams.get('type') as FacilityType) || FacilityType.Regular;
 
-  const tableColumnData: TableProps<FacilityDTO>['columns'] = [
+  const tableColumnData: TableProps<
+    FacilityDTO | FacilityRequestDTO
+  >['columns'] = [
     {
       title: 'ID',
       dataIndex: 'id',
@@ -89,74 +105,185 @@ const Facilities = ({
     },
     {
       title: 'Name',
-      dataIndex: 'name',
       key: 'name',
+      render: (_, data) => {
+        const record = data as FacilityDTO;
+        const requestRecord = data as FacilityRequestDTO;
+
+        return (
+          <>
+            {filterFacilityType === FacilityType.MyRequest ? (
+              <span>{requestRecord.facility.name}</span>
+            ) : (
+              <span>{record.name}</span>
+            )}
+          </>
+        );
+      },
+    },
+    {
+      title: 'Type',
+      key: 'type',
+      render: (_, record) =>
+        capitalizeString((record as FacilityRequestDTO).facility.type),
+      hidden: filterFacilityType !== FacilityType.MyRequest,
     },
     {
       title: 'Room Number',
-      dataIndex: 'room_number',
       key: 'room_number',
+      render: (_, data) => {
+        const record = data as FacilityDTO;
+        const requestRecord = data as FacilityRequestDTO;
+
+        return (
+          <>
+            {filterFacilityType === FacilityType.MyRequest ? (
+              <span>{requestRecord.facility.room_number}</span>
+            ) : (
+              <span>{record.room_number}</span>
+            )}
+          </>
+        );
+      },
       hidden: filterFacilityType === FacilityType.Equipment,
     },
     {
       title: 'Description',
-      dataIndex: 'description',
+      render: (_, data) => {
+        const record = data as FacilityDTO;
+        const requestRecord = data as FacilityRequestDTO;
+
+        return (
+          <>
+            {filterFacilityType === FacilityType.MyRequest ? (
+              <span>{requestRecord.facility.description}</span>
+            ) : (
+              <span>{record.description}</span>
+            )}
+          </>
+        );
+      },
       key: 'description',
     },
     {
       title: 'Status',
-      dataIndex: 'status',
+
       key: 'status',
+      render: (_, record) => capitalizeString(record.status),
     },
     {
       title: 'Action',
       key: 'action',
-      render: (_, record) => (
-        <Space size="middle">
-          {accessType === AccessType.Admin && (
-            <Popconfirm
-              placement="topRight"
-              title="Delete the task"
-              description="Are you sure you want delete this task?"
-              onConfirm={() => onDeleteFacility(Number(record.id))}
-              okText="Yes"
-              cancelText="No"
-              okButtonProps={{ loading: isDeleting }}
-              cancelButtonProps={{ loading: isDeleting }}>
-              <a>Delete</a>
-            </Popconfirm>
-          )}
-          {accessType === AccessType.Teacher && (
+      render: (_, data) => {
+        const record = data as FacilityDTO;
+        const requestRecord = data as FacilityRequestDTO;
+
+        return (
+          <Space size="middle">
             <>
-              {record.type === FacilityType.Equipment ? (
-                <StyledButton
-                  disabled={
-                    record.status.toLocaleLowerCase() === FacilityStatus.Booked
-                  }
-                  type="link"
-                  onClick={() => {
-                    setOpenBorrowEquipment(true);
-                    setSelectedFacility(record);
-                  }}>
-                  Borrow Equipment{' '}
-                </StyledButton>
+              {filterFacilityType === FacilityType.MyRequest ? (
+                <>
+                  {requestRecord.status === RequestFacilityStatus.Approved && (
+                    <Popconfirm
+                      disabled={!!requestRecord.returned_date}
+                      placement="topRight"
+                      title={
+                        requestRecord.facility.type === FacilityType.Equipment
+                          ? 'Return equipment'
+                          : 'Cancel Reservation'
+                      }
+                      description={`Are you sure you want ${
+                        requestRecord.facility.type === FacilityType.Equipment
+                          ? 'return'
+                          : 'cancel'
+                      } this ${
+                        requestRecord.facility.type === FacilityType.Equipment
+                          ? 'equipment'
+                          : 'reservation'
+                      }?`}
+                      onConfirm={() =>
+                        onUpdateRequest({
+                          requestId: requestRecord.id,
+                          data: {
+                            status:
+                              requestRecord.facility.type ===
+                              FacilityType.Equipment
+                                ? RequestFacilityStatus.Approved
+                                : RequestFacilityStatus.Cancelled,
+                            returned_date:
+                              requestRecord.facility.type ===
+                              FacilityType.Equipment
+                                ? new Date()
+                                : undefined,
+                          },
+                        })
+                      }
+                      okText="Yes"
+                      cancelText="No"
+                      okButtonProps={{ loading: isPendingUpdate }}
+                      cancelButtonProps={{ loading: isPendingUpdate }}>
+                      <StyledButton
+                        type="link"
+                        disabled={!!requestRecord.returned_date}>
+                        {requestRecord.facility.type === FacilityType.Equipment
+                          ? 'Return equipment'
+                          : 'Cancel Reservation'}
+                      </StyledButton>
+                    </Popconfirm>
+                  )}
+                </>
               ) : (
-                <StyledButton
-                  disabled={
-                    record.status.toLocaleLowerCase() === FacilityStatus.Booked
-                  }
-                  type="link"
-                  onClick={() => {
-                    setOpenBookARoom(true);
-                    setSelectedFacility(record);
-                  }}>
-                  Reserve Room
-                </StyledButton>
+                <>
+                  {accessType === AccessType.Admin && (
+                    <Popconfirm
+                      placement="topRight"
+                      title="Delete the task"
+                      description="Are you sure you want delete this task?"
+                      onConfirm={() => onDeleteFacility(Number(record.id))}
+                      okText="Yes"
+                      cancelText="No"
+                      okButtonProps={{ loading: isDeleting }}
+                      cancelButtonProps={{ loading: isDeleting }}>
+                      <a>Delete</a>
+                    </Popconfirm>
+                  )}
+                  {accessType === AccessType.Teacher && (
+                    <>
+                      {record.type === FacilityType.Equipment ? (
+                        <StyledButton
+                          disabled={
+                            record.status.toLocaleLowerCase() ===
+                            FacilityStatus.Booked
+                          }
+                          type="link"
+                          onClick={() => {
+                            setOpenBorrowEquipment(true);
+                            setSelectedFacility(record);
+                          }}>
+                          Borrow Equipment{' '}
+                        </StyledButton>
+                      ) : (
+                        <StyledButton
+                          disabled={
+                            record.status.toLocaleLowerCase() ===
+                            FacilityStatus.Booked
+                          }
+                          type="link"
+                          onClick={() => {
+                            setOpenBookARoom(true);
+                            setSelectedFacility(record);
+                          }}>
+                          Reserve Room
+                        </StyledButton>
+                      )}
+                    </>
+                  )}
+                </>
               )}
             </>
-          )}
-        </Space>
-      ),
+          </Space>
+        );
+      },
     },
   ];
 
@@ -268,6 +395,7 @@ const Facilities = ({
       setOpenBookARoom(false);
       setOpenBorrowEquipment(false);
       resetBookARoom();
+      resetBorrowEquipment();
     }
   }, [isRequestSuccess]);
 
@@ -290,7 +418,25 @@ const Facilities = ({
           activeKey={filterFacilityType}
           onChange={onTabChange}
           tabPosition="left"
-          items={tabItems}
+          items={
+            accessType === AccessType.Teacher
+              ? [
+                  ...tabItems,
+                  {
+                    label: 'My Request',
+                    key: 'my-request',
+                    children: (
+                      <StyledTable
+                        loading={isFetching}
+                        columns={tableColumnData}
+                        dataSource={facilities}
+                        rowKey="id"
+                      />
+                    ),
+                  },
+                ]
+              : tabItems
+          }
         />
       </FacilitiesListContainer>
 

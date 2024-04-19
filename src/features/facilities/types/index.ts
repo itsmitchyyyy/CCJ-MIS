@@ -9,6 +9,7 @@ export enum FacilityType {
   AVR = 'avr',
   LAB = 'laboratories',
   Equipment = 'equipment',
+  MyRequest = 'my-request',
 }
 
 export enum FacilityStatus {
@@ -20,6 +21,7 @@ export enum RequestFacilityStatus {
   Pending = 'pending',
   Approved = 'approved',
   Rejected = 'rejected',
+  Cancelled = 'cancelled',
 }
 
 export type RequestFacility = {

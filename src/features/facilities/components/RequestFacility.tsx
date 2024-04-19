@@ -101,6 +101,7 @@ const RequestFacility = ({
             disabled={[
               RequestFacilityStatus.Approved,
               RequestFacilityStatus.Rejected,
+              RequestFacilityStatus.Cancelled,
             ].includes(record.status)}
             onConfirm={() =>
               onUpdateRequest({
@@ -114,6 +115,7 @@ const RequestFacility = ({
               disabled={[
                 RequestFacilityStatus.Approved,
                 RequestFacilityStatus.Rejected,
+                RequestFacilityStatus.Cancelled,
               ].includes(record.status)}
               type="link">
               Approve
@@ -128,6 +130,7 @@ const RequestFacility = ({
             disabled={[
               RequestFacilityStatus.Approved,
               RequestFacilityStatus.Rejected,
+              RequestFacilityStatus.Cancelled,
             ].includes(record.status)}
             onConfirm={() =>
               onUpdateRequest({
@@ -141,6 +144,7 @@ const RequestFacility = ({
               disabled={[
                 RequestFacilityStatus.Approved,
                 RequestFacilityStatus.Rejected,
+                RequestFacilityStatus.Cancelled,
               ].includes(record.status)}
               type="text"
               danger>

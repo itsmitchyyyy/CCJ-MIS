@@ -25,6 +25,7 @@ export type StoreRequestFacilityDTO = {
 export type FacilityQuery = {
   type?: FacilityType;
   status?: FacilityStatus;
+  user_id?: string;
 };
 
 export type FacilityDTO = {
@@ -32,6 +33,7 @@ export type FacilityDTO = {
   type: FacilityType;
   name: string;
   description?: string;
+  room_number?: string;
   status: FacilityStatus;
   created_at?: Date;
   updated_at?: Date;

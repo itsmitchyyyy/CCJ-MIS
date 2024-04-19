@@ -10,7 +10,6 @@ import {
   FileProtectOutlined,
   OrderedListOutlined,
   SettingOutlined,
-  SignatureOutlined,
   UserAddOutlined,
   UserOutlined,
 } from '@ant-design/icons';
