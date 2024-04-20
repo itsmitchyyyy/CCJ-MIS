@@ -1,4 +1,5 @@
 import { AccountRoutes } from '@/features/account/routes';
+import { AnnouncementsRoutes } from '@/features/announcement/routes';
 import { PublicAuthRoutes } from '@/features/auth/routes';
 import { DashboardRoutes } from '@/features/dashboard/routes';
 import { DocumentsRoutes } from '@/features/documents/routes';
@@ -16,6 +17,7 @@ const routes = () =>
     ManagementRoutes,
     DocumentsRoutes,
     FacilitiesRoutes,
+    AnnouncementsRoutes,
   ]);
 
 export default routes;

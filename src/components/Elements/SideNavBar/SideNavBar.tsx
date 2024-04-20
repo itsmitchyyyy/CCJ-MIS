@@ -166,6 +166,9 @@ const SideNavBar = ({ collapsed }: Props) => {
       case 'facility_reports':
         navigate('/facilities/reports');
         break;
+      case 'announcement':
+        navigate('/announcements');
+        break;
     }
   };
 
