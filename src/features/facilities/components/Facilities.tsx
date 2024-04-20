@@ -9,6 +9,7 @@ import {
   StyledDatePicker,
   StyledTable,
   StyledTextArea,
+  StyledTimePicker,
 } from './elements';
 import { Form, Input, Popconfirm, Select, Space, TableProps, Tabs } from 'antd';
 import {
@@ -312,6 +313,7 @@ const Facilities = ({
     resolver: yupResolver(bookingValidationSchema),
     defaultValues: {
       reservation_date: new Date(),
+      reservation_time: dayjs().hour(24).minute(0).toDate(),
       reason: '',
     },
   });
@@ -352,6 +354,7 @@ const Facilities = ({
 
   const onHandleSubmitBookARoom = (data: {
     reservation_date: Date;
+    reservation_time: Date;
     reason?: string;
   }) => {
     const payload: RequestFacility = {
@@ -552,6 +555,32 @@ const Facilities = ({
                     onChange={onChange}
                     size="large"
                     disabledDate={disabledDate}
+                  />
+                </FacilitiesDateContainer>
+              </Form.Item>
+            )}
+          />
+
+          <ErrorMessage
+            name="reservation_time"
+            errors={errorsBookARoom}
+            render={({ message }) => <ErrorWrapper>{message}</ErrorWrapper>}
+          />
+          <Controller
+            control={controlBookARoom}
+            name="reservation_time"
+            render={({ field: { value, onChange } }) => (
+              <Form.Item label="Reservation Time">
+                <FacilitiesDateContainer>
+                  <StyledTimePicker
+                    status={errorsBookARoom.reservation_time && 'error'}
+                    size="large"
+                    value={dayjs(new Date(value))}
+                    use12Hours
+                    format="h:mm a"
+                    onChange={onChange}
+                    needConfirm={false}
+                    minuteStep={30}
                   />
                 </FacilitiesDateContainer>
               </Form.Item>

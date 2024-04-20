@@ -28,6 +28,7 @@ export type RequestFacility = {
   facility_id: string;
   user_id: string;
   reservation_date: Date;
+  reservation_time: Date;
   reason?: string;
 };
 

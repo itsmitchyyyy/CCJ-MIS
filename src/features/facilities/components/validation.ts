@@ -18,6 +18,7 @@ export const validationSchema = yup
 
 export const bookingValidationSchema = yup.object({
   reservation_date: yup.date().required('Reservation date is required'),
+  reservation_time: yup.date().required('Start Time is required'),
   reason: yup.string(),
 });
 

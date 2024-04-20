@@ -21,6 +21,7 @@ export type UpdateFacilityQuery = {
 
 export type StoreRequestFacilityDTO = {
   reservation_date?: Date;
+  reservation_time?: Date;
   user_id: string;
   approved_by?: string;
   approved_date?: Date;
@@ -55,6 +56,7 @@ export type FacilityRequestDTO = {
   approved_by?: string;
   approved_by_user?: User;
   reservation_date?: string;
+  reservation_time?: string;
   approved_date?: string;
   borrowed_date?: string;
   returned_date?: string;

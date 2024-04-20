@@ -91,7 +91,10 @@ const RequestFacility = ({
       render: (_, record) =>
         record.facility.type === FacilityType.Equipment
           ? formatDate(record.borrowed_date || '', 'MMM DD, YYYY')
-          : formatDate(record.reservation_date || '', 'MMM DD, YYYY'),
+          : formatDate(
+              `${record.reservation_date} ${record.reservation_time}` || '',
+              'MMM DD, YYYY hh:mm A',
+            ),
     },
     {
       title: 'Date Returned',

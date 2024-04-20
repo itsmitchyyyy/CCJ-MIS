@@ -1,5 +1,13 @@
 import { colors } from '@/constants/themes';
-import { Button, DatePicker, Input, Select, Table, TableProps } from 'antd';
+import {
+  Button,
+  DatePicker,
+  Input,
+  Select,
+  Table,
+  TableProps,
+  TimePicker,
+} from 'antd';
 import styled from 'styled-components';
 
 export const FacilitiesWrapper = styled.div`
@@ -65,5 +73,17 @@ export const StyledDatePicker = styled(DatePicker)`
 export const StyledButton = styled(Button)`
   &&:disabled {
     color: gray;
+  }
+`;
+
+export const StyledTimePicker = styled(TimePicker)`
+  width: 100%;
+
+  .anticon {
+    color: ${colors.keyColors.blackAlpha};
+
+    &:hover {
+      color: ${colors.keyColors.black};
+    }
   }
 `;
