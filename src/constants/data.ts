@@ -24,3 +24,9 @@ export const EquipmentStatusOptions = [
   { label: 'Damaged', value: 'damage' },
   { label: 'Badly Damaged', value: 'badly damaged' },
 ];
+
+export const FacilityReportOptions = [
+  { label: 'Damaged', value: 'damage' },
+  { label: 'Borrow', value: 'borrow' },
+  { label: 'Return', value: 'return' },
+];

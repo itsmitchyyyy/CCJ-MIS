@@ -72,6 +72,7 @@ export type FetchFacilityRequestQuery = {
   reservation_date?: Date;
   borrowed_date?: Date;
   returned_date?: Date;
+  type?: FacilityType;
 };
 
 export type UpdateFacilityRequestDTO = {

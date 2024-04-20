@@ -8,6 +8,7 @@ import {
   BookOutlined,
   DashboardOutlined,
   FileProtectOutlined,
+  FundOutlined,
   OrderedListOutlined,
   SettingOutlined,
   UserAddOutlined,
@@ -42,6 +43,10 @@ const SideNavBar = ({ collapsed }: Props) => {
       splitPathName.length > 2 &&
       splitPathName[2] === 'requests'
       ? ['facility_request']
+      : splitPathName[1] === 'facilities' &&
+        splitPathName.length > 2 &&
+        splitPathName[2] === 'reports'
+      ? ['facility_reports']
       : [splitPathName[1]]
     : splitPathName.length > 3
     ? [`${splitPathName[2]}s`]
@@ -76,6 +81,7 @@ const SideNavBar = ({ collapsed }: Props) => {
       ? getItem('Facility', 'facility', <BankOutlined />, [
           getItem('List', 'facilities', <OrderedListOutlined />),
           getItem('Request', 'facility_request', <BookOutlined />),
+          getItem('Reports', 'facility_reports', <FundOutlined />),
         ])
       : getItem('Facilities', 'facilities', <BankOutlined />),
     accessType === AccessType.Admin
@@ -156,6 +162,9 @@ const SideNavBar = ({ collapsed }: Props) => {
         break;
       case 'facility_request':
         navigate('/facilities/requests');
+        break;
+      case 'facility_reports':
+        navigate('/facilities/reports');
         break;
     }
   };

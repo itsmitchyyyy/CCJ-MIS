@@ -37,10 +37,12 @@ export const ToggleSidebar = styled(Button)`
 
 export const StyledContent = styled(Content)`
   min-height: calc(100vh - 112px);
+  max-height: calc(100vh - 112px);
   background: ${colors.sysLight.surface};
   padding: 24px;
   margin: 24px 16px;
   border-radius: 8px;
+  overflow: auto;
 `;
 
 export const AdminContentLayoutContainer = styled(Layout)``;

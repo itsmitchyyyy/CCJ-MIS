@@ -35,5 +35,6 @@ export const PATHS = {
   FACILITIES: {
     BASE: '/facilities',
     REQUESTS: '/facilities/requests',
+    REPORTS: '/facilities/reports',
   },
 };
