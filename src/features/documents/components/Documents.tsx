@@ -314,7 +314,7 @@ const OfficeDocuments = ({
           return {
             title:
               doc.is_private &&
-              accessType === AccessType.Student &&
+              accessType !== AccessType.Admin &&
               !approvedRequest ? (
                 <a
                   onClick={() => {
@@ -334,7 +334,7 @@ const OfficeDocuments = ({
             key: `0-0-${index}`,
             icon:
               doc.is_private &&
-              accessType === AccessType.Student &&
+              accessType !== AccessType.Admin &&
               !approvedRequest ? (
                 <LockOutlined />
               ) : undefined,
@@ -370,14 +370,6 @@ const OfficeDocuments = ({
             key: `0-2-${index}`,
             isLeaf: true,
           }));
-
-        // if (accessType === AccessType.Student) {
-        //   const newOrigin = origin;
-
-        //   newOrigin.splice(1, 1);
-
-        //   return newOrigin;
-        // }
 
         return origin;
       });

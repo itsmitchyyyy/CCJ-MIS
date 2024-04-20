@@ -111,7 +111,7 @@ export const StudentList = ({
   } = useForm({
     resolver: yupResolver(gradeValidationSchema),
     defaultValues: {
-      period: GradeEnum.PRELIM,
+      period: GradeEnum.MIDTERM,
       grade: '',
     },
   });
@@ -140,13 +140,13 @@ export const StudentList = ({
       },
       {
         title: 'First Name',
-        dataIndex: 'student',
         key: 'first_name',
+        render: (_, record) => record.student.first_name,
       },
       {
         title: 'Last Name',
-        dataIndex: 'student',
         key: 'last_name',
+        render: (_, record) => record.student.last_name,
       },
       {
         title: 'Grade',
@@ -338,7 +338,11 @@ export const StudentList = ({
                     onChange={onChange}
                     value={value}
                     size="large"
-                    options={GradeOptions}
+                    options={GradeOptions.filter(
+                      (option) =>
+                        option.value !== 'prelim' &&
+                        option.value !== 'semifinal',
+                    )}
                   />
                 </Form.Item>
               )}
