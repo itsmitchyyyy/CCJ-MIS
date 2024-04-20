@@ -6,6 +6,7 @@ import {
   FetchFacilityRequestQuery,
   StoreFacilityDTO,
   StoreRequestFacilityDTO,
+  UpdateFacilityQuery,
   UpdateFacilityRequestDTO,
 } from '@/core/domain/dto/facility.dto';
 import FacilityRepositoryInterface from '@/core/usecases/ports/facility.repository.interface';
@@ -32,6 +33,13 @@ export default class FacilityRepository implements FacilityRepositoryInterface {
 
   deleteFacility = async (id: number): Promise<void> => {
     await this.httpAdapter.delete(`${urls.facilities.base}/${id}`, {});
+  };
+
+  updateFacility = async (
+    id: number,
+    query: UpdateFacilityQuery,
+  ): Promise<void> => {
+    await this.httpAdapter.put(`${urls.facilities.base}/${id}`, query);
   };
 
   createRequest = async (

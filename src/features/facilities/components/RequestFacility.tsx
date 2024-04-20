@@ -1,27 +1,46 @@
 import {
+  ErrorWrapper,
   FacilitiesHeader,
   FacilitiesListContainer,
   FacilitiesWrapper,
   StyledButton,
   StyledTable,
 } from './elements';
-import { Popconfirm, Space, TableProps } from 'antd';
+import { Form, Popconfirm, Select, Space, TableProps } from 'antd';
 import {
   FacilityRequestDTO,
+  UpdateFacilityQuery,
   UpdateFacilityRequestDTO,
 } from '@/core/domain/dto/facility.dto';
-import { FacilityType, RequestFacilityStatus } from '../types';
-import { formatStringDate } from '@/utils/format';
+import {
+  EquipmentStatus,
+  FacilityStatus,
+  FacilityType,
+  RequestFacilityStatus,
+} from '../types';
+import { formatDate } from '@/utils/format';
 import { CheckCircleOutlined, QuestionCircleOutlined } from '@ant-design/icons';
-import { TabItemOptions } from '@/constants/data';
+import { EquipmentStatusOptions, TabItemOptions } from '@/constants/data';
+import { Modal } from '@/components/Elements/Modal';
+import { useEffect, useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import { equipmentValidationSchema } from './validation';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { ErrorMessage } from '@hookform/error-message';
 
 type RequestFacilityProps = {
   isPendingUpdate?: boolean;
   isFetching?: boolean;
   facilityRequests?: FacilityRequestDTO[];
+  isPendingUpdateFacility?: boolean;
+  isSuccessfulUpdateFacility?: boolean;
   onUpdateRequest: (params: {
     requestId: string;
     data: UpdateFacilityRequestDTO;
+  }) => void;
+  onUpdateFacility: (params: {
+    id: number;
+    query: UpdateFacilityQuery;
   }) => void;
 };
 
@@ -29,8 +48,15 @@ const RequestFacility = ({
   isPendingUpdate,
   isFetching,
   facilityRequests,
+  isPendingUpdateFacility,
+  isSuccessfulUpdateFacility,
   onUpdateRequest,
+  onUpdateFacility,
 }: RequestFacilityProps) => {
+  const [selectedRequest, setSelectedRequest] =
+    useState<FacilityRequestDTO | null>(null);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
   const tableColumnData: TableProps<FacilityRequestDTO>['columns'] = [
     {
       title: 'ID',
@@ -64,15 +90,15 @@ const RequestFacility = ({
       key: 'date_requested',
       render: (_, record) =>
         record.facility.type === FacilityType.Equipment
-          ? formatStringDate(record.borrowed_date || '', 'MMM DD, YYYY')
-          : formatStringDate(record.reservation_date || '', 'MMM DD, YYYY'),
+          ? formatDate(record.borrowed_date || '', 'MMM DD, YYYY')
+          : formatDate(record.reservation_date || '', 'MMM DD, YYYY'),
     },
     {
       title: 'Date Returned',
       key: 'date_returned',
       render: (_, record) =>
         record.returned_date
-          ? formatStringDate(record.returned_date, 'MMM DD, YYYY')
+          ? formatDate(record.returned_date, 'MMM DD, YYYY')
           : record.facility.type === FacilityType.Equipment
           ? 'TBD'
           : 'N/A',
@@ -151,10 +177,62 @@ const RequestFacility = ({
               Reject
             </StyledButton>
           </Popconfirm>
+          {record.returned_date && (
+            <StyledButton
+              onClick={() => {
+                setSelectedRequest(record);
+                setIsModalVisible(true);
+              }}
+              disabled={!!record.equipmentStatus}
+              type="text">
+              {record.equipmentStatus
+                ? `Returned as ${
+                    EquipmentStatusOptions.filter(
+                      (option) => option.value === record.equipmentStatus,
+                    ).at(0)?.label
+                  }`
+                : 'Mark as Returned'}
+            </StyledButton>
+          )}
         </Space>
       ),
     },
   ];
+
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm({
+    resolver: yupResolver(equipmentValidationSchema),
+    defaultValues: {
+      equipmentStatus: EquipmentStatus.Perfect,
+    },
+  });
+
+  const onHandleSubmitEquipmentStatus = (data: {
+    equipmentStatus: EquipmentStatus;
+  }) => {
+    const payload: UpdateFacilityQuery = {
+      ...data,
+      request_id: selectedRequest?.id,
+      status: FacilityStatus.Available,
+    };
+
+    onUpdateFacility({
+      id: Number(selectedRequest?.facility.id),
+      query: payload,
+    });
+  };
+
+  useEffect(() => {
+    if (isSuccessfulUpdateFacility) {
+      setSelectedRequest(null);
+      setIsModalVisible(false);
+      reset();
+    }
+  }, [isSuccessfulUpdateFacility]);
 
   return (
     <FacilitiesWrapper>
@@ -170,6 +248,39 @@ const RequestFacility = ({
           rowKey="id"
         />
       </FacilitiesListContainer>
+
+      <Modal
+        isLoading={isPendingUpdateFacility}
+        open={isModalVisible}
+        title="Mark as Returned"
+        onCancel={() => {
+          setSelectedRequest(null);
+          setIsModalVisible(false);
+        }}
+        onSubmit={handleSubmit(onHandleSubmitEquipmentStatus)}>
+        <Form layout="vertical">
+          <ErrorMessage
+            name="equipmentStatus"
+            errors={errors}
+            render={({ message }) => <ErrorWrapper>{message}</ErrorWrapper>}
+          />
+          <Controller
+            control={control}
+            name="equipmentStatus"
+            render={({ field: { value, onChange } }) => (
+              <Form.Item label="Equipment Status">
+                <Select
+                  size="large"
+                  value={value}
+                  onChange={onChange}
+                  options={EquipmentStatusOptions}
+                  status={errors.equipmentStatus && 'error'}
+                />
+              </Form.Item>
+            )}
+          />
+        </Form>
+      </Modal>
     </FacilitiesWrapper>
   );
 };

@@ -17,3 +17,10 @@ export const TabItemOptions = [
   { label: 'Laboratories', key: 'laboratories' },
   { label: 'Equipment', key: 'equipment' },
 ];
+
+export const EquipmentStatusOptions = [
+  { label: 'Perfect Shape', value: 'perfect' },
+  { label: 'Slightly Damaged', value: 'slightly damaged' },
+  { label: 'Damaged', value: 'damage' },
+  { label: 'Badly Damaged', value: 'badly damaged' },
+];

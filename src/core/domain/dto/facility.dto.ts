@@ -1,4 +1,5 @@
 import {
+  EquipmentStatus,
   FacilityStatus,
   FacilityType,
   RequestFacilityStatus,
@@ -10,6 +11,12 @@ export type StoreFacilityDTO = {
   name: string;
   description?: string;
   room_number?: string;
+};
+
+export type UpdateFacilityQuery = {
+  status?: FacilityStatus;
+  request_id?: string;
+  equipmentStatus?: EquipmentStatus;
 };
 
 export type StoreRequestFacilityDTO = {
@@ -52,6 +59,7 @@ export type FacilityRequestDTO = {
   borrowed_date?: string;
   returned_date?: string;
   status: RequestFacilityStatus;
+  equipmentStatus?: EquipmentStatus;
   reason?: string;
   created_at?: Date;
   updated_at?: Date;

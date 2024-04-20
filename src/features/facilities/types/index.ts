@@ -37,3 +37,10 @@ export type BorrowRequestFacility = {
   borrowed_date: Date;
   reason?: string;
 };
+
+export enum EquipmentStatus {
+  Perfect = 'perfect',
+  SlightlyDamaged = 'slightly damaged',
+  Damaged = 'damaged',
+  BadlyDamaged = 'badly damaged',
+}

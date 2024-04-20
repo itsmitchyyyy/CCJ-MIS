@@ -1,5 +1,5 @@
 import * as yup from 'yup';
-import { FacilityType } from '../types';
+import { EquipmentStatus, FacilityType } from '../types';
 
 export const validationSchema = yup
   .object({
@@ -24,4 +24,11 @@ export const bookingValidationSchema = yup.object({
 export const borrowValidationSchema = yup.object({
   borrowed_date: yup.date().required('Reservation date is required'),
   reason: yup.string(),
+});
+
+export const equipmentValidationSchema = yup.object({
+  equipmentStatus: yup
+    .mixed<EquipmentStatus>()
+    .oneOf(Object.values(EquipmentStatus))
+    .required('Equipment status is required'),
 });
