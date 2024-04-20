@@ -73,6 +73,7 @@ export type FetchFacilityRequestQuery = {
   borrowed_date?: Date;
   returned_date?: Date;
   type?: FacilityType;
+  isDamage?: boolean;
 };
 
 export type UpdateFacilityRequestDTO = {

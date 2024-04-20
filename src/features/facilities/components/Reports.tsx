@@ -13,18 +13,24 @@ import { FacilityRequestDTO } from '@/core/domain/dto/facility.dto';
 import { formatDate } from '@/utils/format';
 import { capitalizeStringWithSpace } from '@/utils/string';
 import { FacilityType } from '../types';
+import Statistic, { StatisticProps } from 'antd/es/statistic/Statistic';
+import CountUp from 'react-countup';
 
 type ReportProps = {
   isFetching?: boolean;
   isFetchingEquipments?: boolean;
+  isFetchingDamagedEquipments?: boolean;
   facilityRequests: FacilityRequestDTO[];
+  damagedEquipmentRequest: FacilityRequestDTO[];
   equipmentRequests: FacilityRequestDTO[];
 };
 
 const Reports = ({
   isFetching,
   isFetchingEquipments,
+  isFetchingDamagedEquipments,
   facilityRequests,
+  damagedEquipmentRequest,
   equipmentRequests,
 }: ReportProps) => {
   const _FacilityReportOptions = [
@@ -130,6 +136,10 @@ const Reports = ({
     },
   ];
 
+  const formatter: StatisticProps['formatter'] = (value) => (
+    <CountUp end={value as number} separator="," />
+  );
+
   const [searchParams, setSearchParams] = useSearchParams();
 
   const handleChangeType = (value: any, _: any) => {
@@ -162,10 +172,15 @@ const Reports = ({
           ) && (
             <>
               <h4>Damaged</h4>
+              <Statistic
+                title="Total Damaged"
+                value={damagedEquipmentRequest.length}
+                formatter={formatter}
+              />
               <StyledTable
-                loading={isFetchingEquipments}
+                loading={isFetchingDamagedEquipments}
                 columns={tableDamagedColumns}
-                dataSource={equipmentRequests}
+                dataSource={damagedEquipmentRequest}
                 rowKey="id"
               />
             </>
@@ -176,6 +191,11 @@ const Reports = ({
           ) && (
             <>
               <h4>Borrow</h4>
+              <Statistic
+                title="Total Borrows"
+                value={facilityRequests.length}
+                formatter={formatter}
+              />
               <StyledTable
                 loading={isFetching}
                 columns={tableBorrowColumns}
@@ -190,6 +210,11 @@ const Reports = ({
           ) && (
             <>
               <h4>Return</h4>
+              <Statistic
+                title="Total Returns"
+                value={equipmentRequests.length}
+                formatter={formatter}
+              />
               <StyledTable
                 loading={isFetchingEquipments}
                 columns={tableReturnColumns}

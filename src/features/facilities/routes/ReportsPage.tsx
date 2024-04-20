@@ -7,6 +7,14 @@ const ReportsPage = () => {
   const { data: facilityRequests = [], isLoading } = useFetchFacilityRequests({
     status: RequestFacilityStatus.Approved,
   });
+  const {
+    data: damagedEquipmentRequest = [],
+    isLoading: isFetchingDamagedEquipments,
+  } = useFetchFacilityRequests({
+    type: FacilityType.Equipment,
+    isDamage: true,
+  });
+
   const { data: equipmentRequests = [], isLoading: isFetchingEquipments } =
     useFetchFacilityRequests({ type: FacilityType.Equipment });
 
@@ -14,9 +22,11 @@ const ReportsPage = () => {
     <AdminLayout>
       <Reports
         facilityRequests={facilityRequests}
+        damagedEquipmentRequest={damagedEquipmentRequest}
         equipmentRequests={equipmentRequests}
         isFetching={isLoading}
         isFetchingEquipments={isFetchingEquipments}
+        isFetchingDamagedEquipments={isFetchingDamagedEquipments}
       />
     </AdminLayout>
   );
