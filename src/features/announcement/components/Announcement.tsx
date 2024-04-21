@@ -24,12 +24,7 @@ import { validationSchema } from './validation';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { ErrorMessage } from '@hookform/error-message';
 import { RcFile, UploadFile } from 'antd/es/upload';
-import {
-  DeleteOutlined,
-  EditOutlined,
-  InboxOutlined,
-  UserOutlined,
-} from '@ant-design/icons';
+import { DeleteOutlined, InboxOutlined, UserOutlined } from '@ant-design/icons';
 import { StoreAnnouncementDTO } from '@/core/domain/dto/announcement.dto';
 import { useGlobalState } from '@/hooks/global';
 import { Announcement as AnnouncementType } from '../types';

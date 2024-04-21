@@ -9,6 +9,12 @@ export const Wrapper = styled.div`
   gap: 5em;
 `;
 
+export const WrapperContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+`;
+
 export const StyledCard = styled(CardInfo)`
   && {
     box-shadow: -2px 3px 9px 0px ${colors.violet.main};
