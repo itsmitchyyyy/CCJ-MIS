@@ -15,6 +15,7 @@ interface UserInfo {
   contact_number: string;
   username: string;
   access_type: UserAccessType;
+  profile_picture?: string;
   status: UserStatus;
   email: string;
   created_at: Date;

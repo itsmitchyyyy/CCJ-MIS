@@ -1,4 +1,14 @@
-import { Avatar, Form, Input, List, Upload, message } from 'antd';
+import {
+  Avatar,
+  Button,
+  Form,
+  Image,
+  Input,
+  List,
+  Popconfirm,
+  Upload,
+  message,
+} from 'antd';
 import {
   AddAnnouncementButton,
   AnnouncementHeader,
@@ -14,22 +24,39 @@ import { validationSchema } from './validation';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { ErrorMessage } from '@hookform/error-message';
 import { RcFile, UploadFile } from 'antd/es/upload';
-import { InboxOutlined } from '@ant-design/icons';
+import {
+  DeleteOutlined,
+  EditOutlined,
+  InboxOutlined,
+  UserOutlined,
+} from '@ant-design/icons';
 import { StoreAnnouncementDTO } from '@/core/domain/dto/announcement.dto';
 import { useGlobalState } from '@/hooks/global';
+import { Announcement as AnnouncementType } from '../types';
+import { BACKEND_URL } from '@/config';
+import { formatDate } from '@/utils/format';
+import { colors } from '@/constants/themes';
 
 const { Dragger } = Upload;
 
 type AnnouncementProps = {
+  onDeleteAnnouncement: (id: string) => void;
   onCreateAnnouncement: (data: StoreAnnouncementDTO) => void;
   isCreatingAnnouncement?: boolean;
   isSuccessfullyCreated?: boolean;
+  isFetchingAnnouncements?: boolean;
+  isDeletingAnnouncement?: boolean;
+  announcements: AnnouncementType[];
 };
 
 const Announcement = ({
+  onDeleteAnnouncement,
   onCreateAnnouncement,
   isCreatingAnnouncement,
   isSuccessfullyCreated,
+  isFetchingAnnouncements,
+  isDeletingAnnouncement,
+  announcements,
 }: AnnouncementProps) => {
   const {
     useAuth: { id },
@@ -114,25 +141,71 @@ const Announcement = ({
 
       <AnnouncementListContainer>
         <List
+          loading={isFetchingAnnouncements}
           size="large"
+          dataSource={announcements}
           itemLayout="vertical"
           renderItem={(item) => (
             <List.Item
+              key={item.id}
+              actions={[
+                <Popconfirm
+                  placement="topRight"
+                  title="Delete announcement"
+                  description="Are you sure you want to delete this announcement?"
+                  okText="Yes"
+                  cancelText="No"
+                  icon={
+                    <DeleteOutlined
+                      style={{ color: colors.keyColors.danger }}
+                    />
+                  }
+                  okButtonProps={{ loading: isDeletingAnnouncement }}
+                  cancelButtonProps={{ loading: isDeletingAnnouncement }}
+                  onConfirm={() => onDeleteAnnouncement(item.id)}>
+                  <Button
+                    disabled={isDeletingAnnouncement}
+                    type="text"
+                    shape="default"
+                    danger
+                    icon={<DeleteOutlined />}
+                  />
+                </Popconfirm>,
+              ]}
               extra={
-                <img
-                  width={272}
-                  alt="logo"
-                  src="https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png"
-                />
+                item.images?.length ? (
+                  <Image.PreviewGroup
+                    items={announcements.reduce((acc: string[], curr) => {
+                      if (curr.images) {
+                        curr.images.forEach((image) => {
+                          acc.push(`${BACKEND_URL}/${image}`);
+                        });
+                      }
+                      return acc;
+                    }, [])}>
+                    <Image
+                      width={200}
+                      src={`${BACKEND_URL}/${item.images[0]}`}
+                    />
+                  </Image.PreviewGroup>
+                ) : null
               }>
               <List.Item.Meta
                 avatar={
-                  <Avatar src="https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png" />
+                  <Avatar
+                    icon={<UserOutlined />}
+                    src={`${BACKEND_URL}/${item.posted_by.profile_picture}`}
+                  />
                 }
-                title={<a href="#">Wew</a>}
-                description="wew"
+                title={<a href="#">{item.title}</a>}
+                description={`Posted by ${item.posted_by.first_name} ${
+                  item.posted_by.last_name
+                } - ${formatDate(
+                  item.posted_at.toString(),
+                  'MMMM DD, YYYY h:mm A',
+                )}`}
               />
-              Test
+              {item.description}
             </List.Item>
           )}
         />

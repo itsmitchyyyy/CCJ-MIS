@@ -2,6 +2,7 @@ import urls from '@/constants/urls';
 import { StoreAnnouncementDTO } from '@/core/domain/dto/announcement.dto';
 import AnnouncementRepositoryInterface from '@/core/usecases/ports/announcement.repository.interface';
 import { HttpAdapter } from '@/core/usecases/ports/httpAdapter.interface';
+import { Announcement } from '@/features/announcement/types';
 
 export default class AnnouncementRepository
   implements AnnouncementRepositoryInterface
@@ -32,5 +33,16 @@ export default class AnnouncementRepository
     return await this.httpAdapter.post(urls.announcements.base, formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     });
+  };
+
+  fetchAnnouncements = async (): Promise<Announcement[]> => {
+    return await this.httpAdapter.get(urls.announcements.base, {});
+  };
+
+  deleteAnnouncement = async (id: string): Promise<void> => {
+    return await this.httpAdapter.delete(
+      `${urls.announcements.base}/${id}`,
+      {},
+    );
   };
 }
