@@ -51,4 +51,8 @@ export default {
     base: '/facilities',
     requests: '/facility-requests',
   },
+  announcements: {
+    base: '/announcements',
+    store: '/announcements',
+  },
 };

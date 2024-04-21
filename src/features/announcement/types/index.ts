@@ -10,3 +10,8 @@ export type Announcement = {
   created_at?: Date;
   updated_at?: Date;
 };
+
+export enum AnnouncementStatus {
+  Active = 'active',
+  Inactive = 'inactive',
+}

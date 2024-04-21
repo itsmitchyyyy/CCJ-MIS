@@ -1,4 +1,5 @@
-import { Button } from 'antd';
+import { colors } from '@/constants/themes';
+import { Button, Input } from 'antd';
 import styled from 'styled-components';
 
 export const AnnouncementWrapper = styled.div`
@@ -22,4 +23,15 @@ export const AnnouncementListContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 1em;
+`;
+
+export const StyledTextArea = styled(Input.TextArea)`
+  && {
+    resize: none;
+  }
+`;
+
+export const ErrorWrapper = styled.p`
+  color: ${colors.sysLight.error};
+  margin: 0;
 `;

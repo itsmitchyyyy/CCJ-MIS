@@ -177,9 +177,13 @@ const SideNavBar = ({ collapsed }: Props) => {
       case AccessType.Admin:
         return item;
       case AccessType.Teacher:
-        return item?.key !== 'account';
+        return item?.key !== 'account' && item?.key !== 'announcement';
       case AccessType.Student:
-        return item?.key !== 'account' && item?.key !== 'facilities';
+        return (
+          item?.key !== 'account' &&
+          item?.key !== 'facilities' &&
+          item?.key !== 'announcement'
+        );
       default:
         return item;
     }
