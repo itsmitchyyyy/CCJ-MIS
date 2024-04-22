@@ -1,7 +1,7 @@
 import { breakpoints } from '@/constants/displays';
 import { colors } from '@/constants/themes';
 import { typography } from '@/constants/themes/typography';
-import Layout, { Header } from 'antd/es/layout/layout';
+import { Header } from 'antd/es/layout/layout';
 import styled from 'styled-components';
 
 export const HeaderWrapper = styled(Header)`
@@ -21,8 +21,12 @@ export const HeaderWrapper = styled(Header)`
 
 export const LogoWrapper = styled.div`
   display: flex;
-  height: 90px;
-  width: 90px;
+  height: 70px;
+  width: 70px;
+
+  img {
+    border-radius: 50%;
+  }
 
   &.anotherLogo {
     height: 100px;

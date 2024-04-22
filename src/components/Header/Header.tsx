@@ -1,5 +1,5 @@
 import { HeaderWrapper, LogoWrapper, TitleWrapper } from './elements';
-import logo from '@/assets/images/logo.png';
+import logo from '@/assets/images/logo_4.png';
 
 export type HeaderProps = {};
 
