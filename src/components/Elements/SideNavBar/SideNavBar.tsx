@@ -1,5 +1,5 @@
 import Sider from 'antd/es/layout/Sider';
-import DashboardLogo from '@/assets/images/logo_3.png';
+import DashboardLogo from '@/assets/images/logo_4.png';
 import { LogoWrapper } from './elements';
 import { Menu, MenuProps } from 'antd';
 import {
