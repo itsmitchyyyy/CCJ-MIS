@@ -1,5 +1,11 @@
 import { AnnouncementListContainer } from '@/features/announcement/components/elements';
-import { StyledCard, StyledText, Wrapper, WrapperContainer } from './elements';
+import {
+  StyledCard,
+  StyledList,
+  StyledText,
+  Wrapper,
+  WrapperContainer,
+} from './elements';
 import { Avatar, Image, List } from 'antd';
 import { BACKEND_URL } from '@/config';
 import { UserOutlined } from '@ant-design/icons';
@@ -30,7 +36,7 @@ const DashboardDetails = ({
 
       <AnnouncementListContainer>
         <h1>Announcements</h1>
-        <List
+        <StyledList
           loading={isFetchingAnnouncements}
           size="large"
           dataSource={announcements}

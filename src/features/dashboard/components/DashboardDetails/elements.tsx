@@ -1,5 +1,7 @@
 import { CardInfo } from '@/components/Elements/CardInfo';
 import { colors } from '@/constants/themes';
+import { Announcement } from '@/features/announcement/types';
+import { List, ListProps } from 'antd';
 import styled from 'styled-components';
 
 export const Wrapper = styled.div`
@@ -33,4 +35,10 @@ export const StyledCard = styled(CardInfo)`
 
 export const StyledText = styled.p`
   font-size: 16px;
+`;
+
+export const StyledList = styled((props: ListProps<Announcement>) => (
+  <List {...props} />
+))`
+  box-shadow: ${colors.keyColors.gainsboro} 10px 10px 10px 10px;
 `;

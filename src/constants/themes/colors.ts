@@ -10,6 +10,7 @@ export const colors = {
     black02: '#0000',
     blackAlpha: '#00000040',
     warning: '#faad14',
+    gainsboro: '#e1dede',
   },
   sysLight: {
     primary: '#269DB9',
