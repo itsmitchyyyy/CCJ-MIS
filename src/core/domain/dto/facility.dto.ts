@@ -76,6 +76,7 @@ export type FetchFacilityRequestQuery = {
   returned_date?: Date;
   type?: FacilityType;
   isDamage?: boolean;
+  isReturned?: boolean;
 };
 
 export type UpdateFacilityRequestDTO = {

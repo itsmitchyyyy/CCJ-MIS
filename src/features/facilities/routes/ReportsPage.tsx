@@ -16,7 +16,10 @@ const ReportsPage = () => {
   });
 
   const { data: equipmentRequests = [], isLoading: isFetchingEquipments } =
-    useFetchFacilityRequests({ type: FacilityType.Equipment });
+    useFetchFacilityRequests({
+      type: FacilityType.Equipment,
+      isReturned: true,
+    });
 
   return (
     <AdminLayout>
