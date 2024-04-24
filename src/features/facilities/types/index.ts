@@ -40,6 +40,7 @@ export type BorrowRequestFacility = {
 };
 
 export enum EquipmentStatus {
+  Lost = 'lost',
   Perfect = 'perfect',
   SlightlyDamaged = 'slightly damaged',
   Damaged = 'damaged',

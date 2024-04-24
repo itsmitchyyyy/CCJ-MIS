@@ -19,6 +19,7 @@ export const TabItemOptions = [
 ];
 
 export const EquipmentStatusOptions = [
+  { label: 'Lost', value: 'lost' },
   { label: 'Perfect Shape', value: 'perfect' },
   { label: 'Slightly Damaged', value: 'slightly damaged' },
   { label: 'Damaged', value: 'damage' },

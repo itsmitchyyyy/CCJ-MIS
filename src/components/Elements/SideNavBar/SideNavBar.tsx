@@ -9,6 +9,7 @@ import {
   DashboardOutlined,
   FileProtectOutlined,
   FundOutlined,
+  HomeOutlined,
   OrderedListOutlined,
   SettingOutlined,
   UserAddOutlined,
@@ -54,11 +55,15 @@ const SideNavBar = ({ collapsed }: Props) => {
     ? ['facility_request']
     : [splitPathName[2]];
 
+  console.log(selectedKey);
+
   const defaultOpenKeys =
     splitPathName[1] === 'management'
       ? ['manage']
       : splitPathName[1] === 'facilities'
       ? ['facility']
+      : splitPathName[1] === 'announcements' || splitPathName[1] === 'dashboard'
+      ? ['home']
       : [];
 
   const [stateOpenKeys, setStateOpenKeys] = useState<string[]>(defaultOpenKeys);
@@ -73,9 +78,13 @@ const SideNavBar = ({ collapsed }: Props) => {
   };
 
   const items: MenuItem[] = [
-    getItem('Home', 'dashboard', <DashboardOutlined />),
+    accessType === AccessType.Admin
+      ? getItem('Home', 'home', <HomeOutlined />, [
+          getItem('Home', 'dashboard', <DashboardOutlined />),
+          getItem('Announcement', 'announcements', <AlertOutlined />),
+        ])
+      : getItem('Home', 'dashboard', <DashboardOutlined />),
     getItem('Profile', 'profile', <UserOutlined />),
-    getItem('Announcement', 'announcement', <AlertOutlined />),
     getItem('Documents', 'documents', <FileProtectOutlined />),
     accessType === AccessType.Admin
       ? getItem('Facility', 'facility', <BankOutlined />, [
@@ -166,7 +175,7 @@ const SideNavBar = ({ collapsed }: Props) => {
       case 'facility_reports':
         navigate('/facilities/reports');
         break;
-      case 'announcement':
+      case 'announcements':
         navigate('/announcements');
         break;
     }
