@@ -21,16 +21,16 @@ export const HeaderWrapper = styled(Header)`
 
 export const LogoWrapper = styled.div`
   display: flex;
-  height: 70px;
-  width: 70px;
+  height: 100px;
+  width: 100px;
 
   img {
     border-radius: 50%;
   }
 
   &.anotherLogo {
-    height: 100px;
-    width: 100px;
+    height: 70px;
+    width: 70px;
   }
 `;
 
