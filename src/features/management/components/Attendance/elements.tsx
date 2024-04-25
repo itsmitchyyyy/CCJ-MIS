@@ -36,6 +36,8 @@ export const AttendanceWrapper = styled.span.withConfig({
       ? colors.keyColors.primary
       : status === AttendanceStatus.ABSENT
       ? colors.keyColors.danger
+      : status === AttendanceStatus.EXCUSE
+      ? colors.keyColors.seed
       : colors.keyColors.warning};
   font-weight: 600;
 `;
