@@ -1,4 +1,7 @@
-import { AnnouncementListContainer } from '@/features/announcement/components/elements';
+import {
+  AnnouncementListContainer,
+  StyledTextArea,
+} from '@/features/announcement/components/elements';
 import {
   StyledCard,
   StyledList,
@@ -6,31 +9,108 @@ import {
   Wrapper,
   WrapperContainer,
 } from './elements';
-import { Avatar, Image, List } from 'antd';
+import { Avatar, Form, Image, List, Row } from 'antd';
 import { BACKEND_URL } from '@/config';
-import { UserOutlined } from '@ant-design/icons';
+import { EditOutlined, UserOutlined } from '@ant-design/icons';
 import { formatDate } from '@/utils/format';
 import { Announcement } from '@/features/announcement/types';
+import { useEffect, useState } from 'react';
+import { Modal } from '@/components/Elements/Modal';
+import { Setting, SettingRequest } from '@/core/domain/dto/settings.dto';
+import { Controller, set, useForm } from 'react-hook-form';
 
 type DashboardDetailsProps = {
-  isFetchingAnnouncements: boolean;
+  isFetchingAnnouncements?: boolean;
   announcements: Announcement[];
+  setting: Setting;
+  isLoadingSetting?: boolean;
+  onSubmitSetting: (params: SettingRequest) => void;
+  isSubmittingSetting?: boolean;
+  isSuccessfullySubmittedSetting?: boolean;
 };
 
 const DashboardDetails = ({
   announcements,
   isFetchingAnnouncements,
+  setting,
+  isLoadingSetting,
+  onSubmitSetting,
+  isSubmittingSetting,
+  isSuccessfullySubmittedSetting,
 }: DashboardDetailsProps) => {
+  const [isEditVision, setIsEditVision] = useState(false);
+  const [isEditMission, setIsEditMission] = useState(false);
+
+  const {
+    control: controlVision,
+    handleSubmit: handleSubmitVision,
+    reset: resetVision,
+  } = useForm();
+
+  const {
+    control: controlMission,
+    handleSubmit: handleSubmitMission,
+    reset: resetMission,
+  } = useForm();
+
+  useEffect(() => {
+    if (setting) {
+      resetVision({ vision: setting.vision });
+      resetMission({ mission: setting.mission });
+    }
+  }, [setting]);
+
+  const handleSubmitSetting = (data: { vision?: string; mission?: string }) => {
+    const { vision, mission } = data;
+
+    const settingRequest: SettingRequest = {
+      vision: (vision || setting.vision) as string,
+      mission: (mission || setting.mission) as string,
+    };
+
+    onSubmitSetting(settingRequest);
+  };
+
+  useEffect(() => {
+    if (isSuccessfullySubmittedSetting) {
+      setIsEditVision(false);
+      setIsEditMission(false);
+      resetVision();
+      resetMission();
+    }
+  }, [isSuccessfullySubmittedSetting]);
+
   return (
     <WrapperContainer>
       <Wrapper>
-        <StyledCard title="Vision" bordered={false}>
-          <StyledText>
-            To provide our customers with the most convenient shoppingexperience
-          </StyledText>
+        <StyledCard
+          title="Vision"
+          bordered={false}
+          isLoading={isLoadingSetting}
+          actions={[
+            <EditOutlined
+              onClick={() => {
+                setIsEditVision(true);
+              }}
+              key="edit"
+            />,
+          ]}>
+          <StyledText>{setting.vision}</StyledText>
         </StyledCard>
-        <StyledCard title="Mission">
-          <StyledText>To be the world's leading online retailer.</StyledText>
+
+        <StyledCard
+          title="Mission"
+          bordered={false}
+          isLoading={isLoadingSetting}
+          actions={[
+            <EditOutlined
+              onClick={() => {
+                setIsEditMission(true);
+              }}
+              key="edit"
+            />,
+          ]}>
+          <StyledText>{setting.mission}</StyledText>
         </StyledCard>
       </Wrapper>
 
@@ -82,6 +162,56 @@ const DashboardDetails = ({
           )}
         />
       </AnnouncementListContainer>
+
+      <Modal
+        title={`Edit Vision`}
+        open={isEditVision}
+        isLoading={isSubmittingSetting}
+        onCancel={() => setIsEditVision(false)}
+        onSubmit={handleSubmitVision(handleSubmitSetting)}>
+        <Form layout="vertical">
+          <Controller
+            name="vision"
+            control={controlVision}
+            render={({ field: { value, onChange } }) => (
+              <Form.Item label="Vision">
+                <StyledTextArea
+                  rows={6}
+                  cols={5}
+                  value={value}
+                  onChange={onChange}
+                  placeholder={`Enter vision`}
+                />
+              </Form.Item>
+            )}
+          />
+        </Form>
+      </Modal>
+
+      <Modal
+        title={`Edit Mission`}
+        open={isEditMission}
+        isLoading={isSubmittingSetting}
+        onCancel={() => setIsEditMission(false)}
+        onSubmit={handleSubmitMission(handleSubmitSetting)}>
+        <Form layout="vertical">
+          <Controller
+            name="mission"
+            control={controlMission}
+            render={({ field: { value, onChange } }) => (
+              <Form.Item label="Mission">
+                <StyledTextArea
+                  rows={6}
+                  cols={5}
+                  value={value}
+                  onChange={onChange}
+                  placeholder={`Enter mission`}
+                />
+              </Form.Item>
+            )}
+          />
+        </Form>
+      </Modal>
     </WrapperContainer>
   );
 };

@@ -55,8 +55,6 @@ const SideNavBar = ({ collapsed }: Props) => {
     ? ['facility_request']
     : [splitPathName[2]];
 
-  console.log(selectedKey);
-
   const defaultOpenKeys =
     splitPathName[1] === 'management'
       ? ['manage']

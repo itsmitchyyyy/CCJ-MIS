@@ -20,7 +20,7 @@ export const WrapperContainer = styled.div`
 export const StyledCard = styled(CardInfo)`
   && {
     box-shadow: -2px 3px 9px 0px ${colors.violet.main};
-    height: 300px;
+    min-height: 300px;
     width: 500px;
     background: ${colors.violet.main};
     border: 1px solid ${colors.violet.main};
@@ -30,6 +30,15 @@ export const StyledCard = styled(CardInfo)`
     background: ${colors.violet.dark};
     color: ${colors.sysLight.onPrimary};
     border: 1px solid ${colors.violet.dark};
+  }
+
+  .ant-card-actions {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    background: ${colors.violet.main};
+    border: 1px solid ${colors.violet.main};
   }
 `;
 

@@ -55,4 +55,7 @@ export default {
     base: '/announcements',
     store: '/announcements',
   },
+  settings: {
+    base: '/settings',
+  },
 };
