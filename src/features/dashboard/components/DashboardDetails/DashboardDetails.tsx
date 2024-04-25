@@ -18,6 +18,8 @@ import { useEffect, useState } from 'react';
 import { Modal } from '@/components/Elements/Modal';
 import { Setting, SettingRequest } from '@/core/domain/dto/settings.dto';
 import { Controller, set, useForm } from 'react-hook-form';
+import { useGlobalState } from '@/hooks/global';
+import { AccessType } from '@/features/account/types';
 
 type DashboardDetailsProps = {
   isFetchingAnnouncements?: boolean;
@@ -38,6 +40,10 @@ const DashboardDetails = ({
   isSubmittingSetting,
   isSuccessfullySubmittedSetting,
 }: DashboardDetailsProps) => {
+  const {
+    useAuth: { accessType },
+  } = useGlobalState();
+
   const [isEditVision, setIsEditVision] = useState(false);
   const [isEditMission, setIsEditMission] = useState(false);
 
@@ -87,14 +93,18 @@ const DashboardDetails = ({
           title="Vision"
           bordered={false}
           isLoading={isLoadingSetting}
-          actions={[
-            <EditOutlined
-              onClick={() => {
-                setIsEditVision(true);
-              }}
-              key="edit"
-            />,
-          ]}>
+          actions={
+            accessType === AccessType.Admin
+              ? [
+                  <EditOutlined
+                    onClick={() => {
+                      setIsEditVision(true);
+                    }}
+                    key="edit"
+                  />,
+                ]
+              : []
+          }>
           <StyledText>{setting.vision}</StyledText>
         </StyledCard>
 
@@ -102,14 +112,18 @@ const DashboardDetails = ({
           title="Mission"
           bordered={false}
           isLoading={isLoadingSetting}
-          actions={[
-            <EditOutlined
-              onClick={() => {
-                setIsEditMission(true);
-              }}
-              key="edit"
-            />,
-          ]}>
+          actions={
+            accessType === AccessType.Admin
+              ? [
+                  <EditOutlined
+                    onClick={() => {
+                      setIsEditMission(true);
+                    }}
+                    key="edit"
+                  />,
+                ]
+              : []
+          }>
           <StyledText>{setting.mission}</StyledText>
         </StyledCard>
       </Wrapper>
