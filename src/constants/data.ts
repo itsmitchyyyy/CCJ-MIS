@@ -24,7 +24,7 @@ export const EquipmentStatusOptions = [
   { label: 'Perfect Shape', value: 'perfect' },
   { label: 'Slightly Damaged', value: 'slightly damaged' },
   { label: 'Damaged', value: 'damage' },
-  { label: 'Badly Damaged', value: 'badly damaged' },
+  { label: 'Badly Damaged', value: 'badly damage' },
 ];
 
 export const FacilityReportOptions = [

@@ -43,6 +43,6 @@ export enum EquipmentStatus {
   Lost = 'lost',
   Perfect = 'perfect',
   SlightlyDamaged = 'slightly damaged',
-  Damaged = 'damaged',
-  BadlyDamaged = 'badly damaged',
+  Damaged = 'damage',
+  BadlyDamaged = 'badly damage',
 }
