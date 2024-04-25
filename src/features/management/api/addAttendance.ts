@@ -3,7 +3,7 @@ import {
   CreateAttendanceRequestDTO,
   CreateAttendanceResponseDTO,
 } from '@/core/domain/dto/attendance.dto';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
 
 const createAttendance = async (
@@ -15,10 +15,15 @@ const createAttendance = async (
 };
 
 const useCreateAttendance = () => {
+  const queryClient = useQueryClient();
+
   const mutation = useMutation({
     mutationKey: ['createAttendance'],
     mutationFn: createAttendance,
     onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['fetchAttendanceBySubjectIdAndStudentId'],
+      });
       toast.success('Attendance created');
     },
   });

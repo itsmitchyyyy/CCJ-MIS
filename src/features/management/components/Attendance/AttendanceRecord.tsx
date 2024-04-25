@@ -13,7 +13,7 @@ import {
 } from './elements';
 import { Attendance, TeacherAttendance } from '../../types';
 import { DatePicker, Form, Select, TableProps } from 'antd';
-import { useSearchParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import moment from 'moment';
 import { User } from '@/core/domain/entities/user.entity';
 import dayjs from 'dayjs';
@@ -22,6 +22,7 @@ import { AccessType } from '@/features/account/types';
 import { Controller, useForm } from 'react-hook-form';
 import {
   AttendanceStatus,
+  CreateAttendanceRequestDTO,
   CreateTeacherAttendanceRequestDTO,
 } from '@/core/domain/dto/attendance.dto';
 import { useEffect, useState } from 'react';
@@ -41,6 +42,7 @@ type Props = {
   user: User;
   isLoading?: boolean;
   isPendingAttendance?: boolean;
+  onCreateAttendance?: (data: CreateAttendanceRequestDTO) => void;
   onCreateTeacherAttendance?: (data: CreateTeacherAttendanceRequestDTO) => void;
   isSuccessAttendance?: boolean;
 };
@@ -50,9 +52,11 @@ export const AttendanceRecord = ({
   user,
   isLoading,
   isPendingAttendance,
+  onCreateAttendance,
   onCreateTeacherAttendance,
   isSuccessAttendance,
 }: Props) => {
+  const { id } = useParams();
   const {
     useAuth: { accessType },
   } = useGlobalState();
@@ -126,6 +130,10 @@ export const AttendanceRecord = ({
 
     if (onCreateTeacherAttendance) {
       onCreateTeacherAttendance(newData);
+    }
+
+    if (onCreateAttendance) {
+      onCreateAttendance({ ...newData, subject_id: id || '' });
     }
   };
 

@@ -6,6 +6,7 @@ import { useFetchStudent } from '../api/fetchStudent';
 import { User } from '@/core/domain/entities/user.entity';
 import { AttendanceStatus } from '@/core/domain/dto/attendance.dto';
 import { Loader } from '@/components/Elements/Loader';
+import { useCreateAttendance } from '../api/addAttendance';
 
 const AttendanceRecordPage = () => {
   const { id, studentId } = useParams();
@@ -22,6 +23,11 @@ const AttendanceRecordPage = () => {
   const { data: student, isLoading: isFetchingStudent } = useFetchStudent(
     studentId || '',
   );
+  const {
+    mutate: createAttendance,
+    isPending: isPendingAttendance,
+    isSuccess: isCreateAttendanceSuccess,
+  } = useCreateAttendance();
 
   return isFetchingStudent ? (
     <Loader />
@@ -31,6 +37,9 @@ const AttendanceRecordPage = () => {
         user={student as User}
         data={attendances}
         isLoading={isLoading}
+        onCreateAttendance={createAttendance}
+        isPendingAttendance={isPendingAttendance}
+        isSuccessAttendance={isCreateAttendanceSuccess}
       />
     </AdminLayout>
   );

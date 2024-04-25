@@ -2,6 +2,7 @@ import { Subject } from '@/features/management/types';
 import { User } from '../entities/user.entity';
 
 export enum AttendanceStatus {
+  EXCUSE = 'excuse',
   PRESENT = 'present',
   ABSENT = 'absent',
   LATE = 'late',
