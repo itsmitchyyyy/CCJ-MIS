@@ -50,6 +50,7 @@ export type FetchStudentSubjectResponseDTO = {
 
 export type FetchSubjectQuery = {
   teacher_id?: string;
+  search?: string;
 };
 
 export enum GradeEnum {

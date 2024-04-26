@@ -1,6 +1,7 @@
-import { Card, Col, Row, Table } from 'antd';
+import { Card, Col, Input, Row, Table } from 'antd';
 import {
   CreateSubjectButton,
+  FilterWrapper,
   ManagementHeader,
   ManagementWrapper,
   StyledCardContent,
@@ -14,7 +15,7 @@ import {
   ReadOutlined,
   UserOutlined,
 } from '@ant-design/icons';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { PATHS } from '@/constants/paths';
 import Meta from 'antd/es/card/Meta';
 import { FetchSubjectResponseDTO, Grade } from '@/core/domain/dto/subject.dto';
@@ -22,7 +23,7 @@ import { formatStringDate } from '@/utils/format';
 import { useGlobalState } from '@/hooks/global';
 import { AccessType } from '@/features/account/types';
 import { Modal } from '@/components/Elements/Modal';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 type Props = {
   isLoading?: boolean;
@@ -38,6 +39,10 @@ const ManagementList = ({ subjects, isLoading, grades }: Props) => {
 
   const [openGrade, setOpenGrade] = useState<boolean>(false);
   const [selectedGrade, setSelectedGrade] = useState<Grade | null>(null);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const searchTimeoutRef = useRef<NodeJS.Timeout | undefined>();
+
+  const searchValue = searchParams.get('search') || '';
 
   const TableColumnData = [
     {
@@ -64,6 +69,29 @@ const ManagementList = ({ subjects, isLoading, grades }: Props) => {
     return [];
   };
 
+  const handleSearch = (keyword: string) => {
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+    }
+
+    searchTimeoutRef.current = setTimeout(() => {
+      performSearch(keyword);
+    }, 300);
+  };
+
+  const performSearch = (keyword: string) => {
+    setSearchParams({ search: keyword });
+  };
+
+  // Cleanup the search timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
+    };
+  }, []);
+
   return (
     <ManagementWrapper>
       <ManagementHeader>
@@ -77,6 +105,17 @@ const ManagementList = ({ subjects, isLoading, grades }: Props) => {
         )}
       </ManagementHeader>
       <Wrapper>
+        <FilterWrapper>
+          <Input
+            defaultValue={searchValue}
+            size="large"
+            placeholder="Search subjects..."
+            onChange={(e) => {
+              const { value } = e.target;
+              handleSearch(value);
+            }}
+          />
+        </FilterWrapper>
         <Row gutter={[16, 16]}>
           {isLoading ? (
             <>

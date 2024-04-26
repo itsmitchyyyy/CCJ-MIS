@@ -6,11 +6,16 @@ import { useFetchStudentSubjects } from '../api/fetchStudentSubjects';
 import { useGlobalState } from '@/hooks/global';
 import { FetchSubjectResponseDTO, Grade } from '@/core/domain/dto/subject.dto';
 import { AccessType } from '@/features/account/types';
+import { useSearchParams } from 'react-router-dom';
 
 const ManagementPage = () => {
   const {
     useAuth: { id, accessType },
   } = useGlobalState();
+
+  const [searchParams, _] = useSearchParams();
+  const search = searchParams.get('search') || undefined;
+
   const [studentSubjects, setStudentSubjects] = useState<
     FetchSubjectResponseDTO[]
   >([]);
@@ -19,7 +24,7 @@ const ManagementPage = () => {
   >([]);
 
   const { data: subjects = [], isLoading } = useFetchSubjects(
-    accessType === AccessType.Teacher ? { teacher_id: id } : {},
+    accessType === AccessType.Teacher ? { teacher_id: id, search } : { search },
   );
 
   const {

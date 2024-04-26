@@ -21,7 +21,7 @@ const useFetchSubjects = (data?: FetchSubjectQuery) => {
   } = useGlobalState();
 
   const query = useQuery({
-    queryKey: ['fetchSubjects'],
+    queryKey: ['fetchSubjects', data],
     queryFn: () => fetchSubjects(data),
     enabled: accessType !== AccessType.Student,
   });
