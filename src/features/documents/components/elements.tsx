@@ -40,6 +40,10 @@ export const FileWrapper = styled.div`
   display: flex;
   flex-direction: row;
   gap: 0.5em;
+
+  a.active {
+    color: ${colors.keyColors.danger};
+  }
 `;
 
 export const StyledDirectoryTree = styled(Tree.DirectoryTree)`
@@ -50,4 +54,12 @@ export const StyledDirectoryTree = styled(Tree.DirectoryTree)`
   .ant-tree-title {
     display: inline-flex;
   }
+`;
+
+export const FilterWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 1em;
+  width: 200px;
+  margin-bottom: 1em;
 `;

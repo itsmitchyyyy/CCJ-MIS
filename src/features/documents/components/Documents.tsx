@@ -1,6 +1,7 @@
 import {
   Button,
   Form,
+  Input,
   Popconfirm,
   Radio,
   Space,
@@ -14,6 +15,7 @@ import {
   DocumentsWrapper,
   ErrorWrapper,
   FileWrapper,
+  FilterWrapper,
   StyledDirectoryTree,
   StyledTable,
   StyledTextArea,
@@ -22,7 +24,7 @@ import {
 import { useGlobalState } from '@/hooks/global';
 import { AccessType } from '@/features/account/types';
 import { Modal } from '@/components/Elements/Modal';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { DeleteOutlined, InboxOutlined, LockOutlined } from '@ant-design/icons';
 import { RcFile, UploadFile } from 'antd/es/upload';
 import {
@@ -39,6 +41,7 @@ import { DocumentRequestStatus, DocumentStatus, DocumentType } from '../types';
 import { BACKEND_URL } from '@/config';
 import { ErrorMessage } from '@hookform/error-message';
 import { DataNode, TreeProps } from 'antd/es/tree';
+import { useSearchParams } from 'react-router-dom';
 
 const { Dragger } = Upload;
 
@@ -80,8 +83,12 @@ const OfficeDocuments = ({
     useAuth: { accessType, id },
   } = useGlobalState();
 
+  const [searchParams, setSearchParams] = useSearchParams();
   const [expandedKeys, setExpandedKeys] = useState<React.Key[]>([]);
   const [autoExpandParent, setAutoExpandParent] = useState<boolean>(true);
+  const searchTimeoutRef = useRef<NodeJS.Timeout | undefined>();
+
+  const searchValue = searchParams.get('search') || '';
 
   const initTreeData: TreeDataNode[] = [
     {
@@ -330,10 +337,9 @@ const OfficeDocuments = ({
           ) : (
             <FileWrapper>
               <a
-                onClick={() => {
-                  setSelectedDocument(doc);
-                  setOpenRequestModal(true);
-                }}>
+                href={`${BACKEND_URL}/${doc.file_path}`}
+                download
+                target="_blank">
                 {doc.name}
               </a>
               {accessType === AccessType.Admin && (
@@ -389,10 +395,9 @@ const OfficeDocuments = ({
         title: (
           <FileWrapper>
             <a
-              onClick={() => {
-                setSelectedDocument(doc);
-                setOpenRequestModal(true);
-              }}>
+              href={`${BACKEND_URL}/${doc.file_path}`}
+              download
+              target="_blank">
               {doc.name}
             </a>
             {accessType !== AccessType.Admin && (
@@ -419,9 +424,6 @@ const OfficeDocuments = ({
               </Popconfirm>
             )}
           </FileWrapper>
-          // <a href={`${BACKEND_URL}/${doc.file_path}`} download target="_blank">
-          //   {doc.name}
-          // </a>
         ),
         key: `0-2-${index}`,
         isLeaf: true,
@@ -429,6 +431,58 @@ const OfficeDocuments = ({
     );
 
     return origin;
+  };
+
+  const handleSearch = (keyword: string) => {
+    setSearchParams({ search: keyword });
+
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+    }
+
+    searchTimeoutRef.current = setTimeout(() => {
+      performSearch(keyword);
+    }, 300);
+  };
+
+  const performSearch = (keyword: string) => {
+    if (keyword === '') {
+      setExpandedKeys([]);
+      return;
+    }
+
+    const matchingKeys: any[] = [];
+    const traverseTree = (data: DataNode[], parentKeys: React.Key[] = []) => {
+      for (const node of data) {
+        const nodeKeys = [...parentKeys, node.key];
+
+        let matched = false;
+
+        if (typeof node.title === 'string') {
+          matched = node.title.toLowerCase().includes(keyword.toLowerCase());
+        }
+
+        if (typeof node.title === 'object') {
+          matched = (
+            node.title as React.ReactElement
+          ).props?.children[0].props?.children
+            .toLowerCase()
+            .includes(keyword.toLowerCase());
+        }
+
+        if (matched) {
+          matchingKeys.push(...nodeKeys);
+        }
+
+        if (node.children) {
+          traverseTree(node.children, nodeKeys);
+        }
+      }
+    };
+
+    traverseTree(treeData); // Assuming treeData is provided
+
+    setExpandedKeys(matchingKeys);
   };
 
   useEffect(() => {
@@ -450,6 +504,15 @@ const OfficeDocuments = ({
     }
   }, [documents, documentRequests]);
 
+  // Cleanup the search timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
+    };
+  }, []);
+
   return (
     <DocumentsWrapper>
       {contextHolder}
@@ -462,6 +525,18 @@ const OfficeDocuments = ({
           Upload Documents
         </UploadButton>
       </DocumentsHeader>
+
+      <FilterWrapper>
+        <Input
+          defaultValue={searchValue}
+          size="large"
+          placeholder="Search documents..."
+          onChange={(e) => {
+            const { value } = e.target;
+            handleSearch(value);
+          }}
+        />
+      </FilterWrapper>
 
       <div>
         <StyledDirectoryTree
