@@ -512,7 +512,7 @@ const OfficeDocuments = ({
     if (documents.length > 0) {
       setTreeData((origin) => updateTreeData(origin));
     }
-  }, [documents, documentRequests, searchValue]);
+  }, [documents, documentRequests, expandedKeys]);
 
   // Cleanup the search timeout on unmount
   useEffect(() => {
