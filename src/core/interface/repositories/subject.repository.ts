@@ -4,6 +4,7 @@ import {
   FetchStudentSubjectResponseDTO,
   FetchSubjectQuery,
   FetchSubjectResponseDTO,
+  FetchSubjectStudentQueryParams,
   UpdateGradeRequest,
 } from '@/core/domain/dto/subject.dto';
 import { HttpAdapter } from '@/core/usecases/ports/httpAdapter.interface';
@@ -46,8 +47,11 @@ export default class SubjectRepository implements SubjectRepositoryInterface {
 
   fetchStudentSubject = async (
     subjectId: string,
+    queryParams?: FetchSubjectStudentQueryParams,
   ): Promise<FetchStudentSubjectResponseDTO[]> => {
-    return await this.httpAdapter.get(urls.subjects.students(subjectId), {});
+    return await this.httpAdapter.get(urls.subjects.students(subjectId), {
+      params: queryParams,
+    });
   };
 
   removeStudentFromSubject = async (

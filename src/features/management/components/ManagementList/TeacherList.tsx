@@ -130,8 +130,6 @@ export const TeacherList = ({
   };
 
   const handleSearch = (keyword: string) => {
-    setSearchParams({ search: keyword });
-
     if (searchTimeoutRef.current) {
       clearTimeout(searchTimeoutRef.current);
     }
@@ -142,7 +140,7 @@ export const TeacherList = ({
   };
 
   const performSearch = (keyword: string) => {
-    // Perform search here
+    setSearchParams({ search: keyword });
   };
 
   useEffect(() => {

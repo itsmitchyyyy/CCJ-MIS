@@ -6,6 +6,7 @@ export type FetchStudentsResponseDTO = User;
 
 export type FetchStudentsQueryParams = {
   status?: UserStatus;
+  search?: string;
 };
 
 export type SubjectResource = Omit<Subject, 'time_start' | 'time_end'> & {

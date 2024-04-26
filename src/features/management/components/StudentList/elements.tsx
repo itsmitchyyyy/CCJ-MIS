@@ -50,3 +50,11 @@ export const ErrorWrapper = styled.p`
   color: ${colors.sysLight.error};
   margin: 0;
 `;
+
+export const FilterWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 1em;
+  width: 300px;
+  margin-bottom: 1em;
+`;

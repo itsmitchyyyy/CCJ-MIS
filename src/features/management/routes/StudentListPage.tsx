@@ -2,7 +2,7 @@ import { AdminLayout } from '@/components/Layout';
 import { StudentList } from '../components/StudentList/StudentList';
 import { useFetchStudents } from '../api/fetchStudents';
 import { useAddStudentToSubject } from '../api/addStudentToSubject';
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useFetchStudentSubject } from '../api/fetchStudentSubject';
 import { useDeleteStudentFromSubject } from '../api/deleteStudentFromSubject';
@@ -15,6 +15,9 @@ import {
 } from '@/core/domain/dto/subject.dto';
 
 const StudentListPage = () => {
+  const [searchParams, _] = useSearchParams();
+  const search = searchParams.get('search') || undefined;
+
   const { data: students = [], isLoading } = useFetchStudents();
   const {
     mutate: addStudentToSubject,
@@ -23,7 +26,7 @@ const StudentListPage = () => {
   } = useAddStudentToSubject();
   const { id } = useParams();
   const { data: subjectStudents = [], isLoading: isFetchingStudentSubject } =
-    useFetchStudentSubject(id || '');
+    useFetchStudentSubject(id || '', { search });
   const { mutate: deleteStudentFromSubject, isPending: isDeletingStudent } =
     useDeleteStudentFromSubject();
   const {

@@ -13,6 +13,10 @@ export type AddSubjectRequest = {
   days: string;
 };
 
+export type FetchSubjectStudentQueryParams = {
+  search?: string;
+};
+
 export type FetchSubjectResponseDTO = {
   id: string;
   user: User;

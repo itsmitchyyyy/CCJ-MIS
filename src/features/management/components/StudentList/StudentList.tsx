@@ -1,6 +1,7 @@
 import {
   AddStudentButton,
   ErrorWrapper,
+  FilterWrapper,
   GlobalStyle,
   StudentListContainer,
   StudentListHeader,
@@ -10,7 +11,7 @@ import {
   StyledTable,
 } from './elements';
 import { StudentModal } from './StudentModal';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Button, Form, Input, Select, Space, TableProps } from 'antd';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import { User } from '@/core/domain/entities/user.entity';
@@ -28,7 +29,7 @@ import {
   AttendanceStatus,
   CreateAttendanceRequestDTO,
 } from '@/core/domain/dto/attendance.dto';
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { gradeValidationSchema, validationSchema } from './validation';
 import { ErrorMessage } from '@hookform/error-message';
@@ -82,6 +83,10 @@ export const StudentList = ({
   const [openAttendanceModal, setOpenAttendanceModal] =
     useState<boolean>(false);
   const [openGradeModal, setOpenGradeModal] = useState<boolean>(false);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const searchTimeoutRef = useRef<NodeJS.Timeout | undefined>();
+
+  const searchValue = searchParams.get('search') || '';
 
   const { id } = useParams();
 
@@ -284,12 +289,35 @@ export const StudentList = ({
     onUpdateGrade({ studentId: selectedStudent?.id || '', grade: grades });
   };
 
+  const handleSearch = (keyword: string) => {
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+    }
+
+    searchTimeoutRef.current = setTimeout(() => {
+      performSearch(keyword);
+    }, 300);
+  };
+
+  const performSearch = (keyword: string) => {
+    setSearchParams({ search: keyword });
+  };
+
   useEffect(() => {
     if (isSuccessUpdatingGrade) {
       setOpenGradeModal(false);
       resetGrade();
     }
   }, [isSuccessUpdatingGrade]);
+
+  // Cleanup the search timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
+    };
+  }, []);
 
   return (
     <>
@@ -306,6 +334,18 @@ export const StudentList = ({
           )}
         </StudentListHeader>
         <StudentListContainer>
+          <FilterWrapper>
+            <Input
+              defaultValue={searchValue}
+              size="large"
+              placeholder="Search teacher..."
+              onChange={(e) => {
+                const { value } = e.target;
+                handleSearch(value);
+              }}
+            />
+          </FilterWrapper>
+
           <StyledTable
             loading={isLoading}
             columns={TableColumnData}
