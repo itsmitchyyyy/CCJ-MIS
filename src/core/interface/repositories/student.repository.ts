@@ -1,5 +1,6 @@
 import urls from '@/constants/urls';
 import {
+  FetchStudentSubjectsQuery,
   FetchStudentsQueryParams,
   FetchStudentsResponseDTO,
 } from '@/core/domain/dto/student.dto';
@@ -27,7 +28,12 @@ export default class StudentRepository implements StudentRepositoryInterface {
     return await this.httpAdapter.get(urls.students.get(id), {});
   };
 
-  fetchSubjects = async (studentId: string) => {
-    return await this.httpAdapter.get(urls.students.getSubjects(studentId), {});
+  fetchSubjects = async (
+    studentId: string,
+    queryParams?: FetchStudentSubjectsQuery,
+  ) => {
+    return await this.httpAdapter.get(urls.students.getSubjects(studentId), {
+      params: queryParams,
+    });
   };
 }

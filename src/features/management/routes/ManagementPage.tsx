@@ -31,7 +31,7 @@ const ManagementPage = () => {
     data: studentSubjectsData = [],
     isLoading: isFetchingStudentSubjects,
     isSuccess,
-  } = useFetchStudentSubjects(id);
+  } = useFetchStudentSubjects(id, { search });
 
   useEffect(() => {
     if (isSuccess) {

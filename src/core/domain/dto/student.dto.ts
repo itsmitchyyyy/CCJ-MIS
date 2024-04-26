@@ -28,3 +28,7 @@ export type FetchStudentSubjectsResponseDTO = {
   created_at?: Date;
   updated_at?: Date;
 };
+
+export type FetchStudentSubjectsQuery = {
+  search?: string;
+};

@@ -1,4 +1,5 @@
 import {
+  FetchStudentSubjectsQuery,
   FetchStudentSubjectsResponseDTO,
   FetchStudentsQueryParams,
   FetchStudentsResponseDTO,
@@ -9,5 +10,8 @@ export default interface StudentRepositoryInterface {
     queryParams?: FetchStudentsQueryParams,
   ): Promise<FetchStudentsResponseDTO[]>;
   fetchStudent(id: string): Promise<FetchStudentsResponseDTO>;
-  fetchSubjects(studentId: string): Promise<FetchStudentSubjectsResponseDTO[]>;
+  fetchSubjects(
+    studentId: string,
+    queryParams?: FetchStudentSubjectsQuery,
+  ): Promise<FetchStudentSubjectsResponseDTO[]>;
 }
