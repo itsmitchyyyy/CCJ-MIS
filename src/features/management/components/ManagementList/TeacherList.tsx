@@ -1,5 +1,6 @@
-import { Form, Select, Space, TableProps } from 'antd';
+import { Form, Input, Select, Space, TableProps } from 'antd';
 import {
+  FilterWrapper,
   GlobalStyle,
   StyledDatePicker,
   StyledTable,
@@ -8,9 +9,9 @@ import {
   TeacherListWrapper,
   TeacherSelectContainer,
 } from './elements';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { FetchTeachersResponseDTO } from '@/core/domain/dto/user.dto';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { PATHS } from '@/constants/paths';
 import { Modal } from '@/components/Elements/Modal';
 import { Controller, set, useForm } from 'react-hook-form';
@@ -42,6 +43,10 @@ export const TeacherList = ({
     useState<boolean>(false);
   const [selectedTeacher, setSelectedTeacher] =
     useState<FetchTeachersResponseDTO | null>(null);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const searchTimeoutRef = useRef<NodeJS.Timeout | undefined>();
+
+  const searchValue = searchParams.get('search') || '';
 
   const TableColumnData: TableProps<FetchTeachersResponseDTO>['columns'] = [
     {
@@ -124,6 +129,22 @@ export const TeacherList = ({
     onCreateTeacherAttendance(newData);
   };
 
+  const handleSearch = (keyword: string) => {
+    setSearchParams({ search: keyword });
+
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+    }
+
+    searchTimeoutRef.current = setTimeout(() => {
+      performSearch(keyword);
+    }, 300);
+  };
+
+  const performSearch = (keyword: string) => {
+    // Perform search here
+  };
+
   useEffect(() => {
     if (isSuccessAttendance) {
       setSelectedTeacher(null);
@@ -131,6 +152,15 @@ export const TeacherList = ({
       reset();
     }
   }, [isSuccessAttendance]);
+
+  // Cleanup the search timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
+    };
+  }, []);
 
   return (
     <>
@@ -141,6 +171,18 @@ export const TeacherList = ({
         </TeacherListHeader>
 
         <TeacherListContainer>
+          <FilterWrapper>
+            <Input
+              defaultValue={searchValue}
+              size="large"
+              placeholder="Search teacher..."
+              onChange={(e) => {
+                const { value } = e.target;
+                handleSearch(value);
+              }}
+            />
+          </FilterWrapper>
+
           <StyledTable
             rowKey="id"
             columns={TableColumnData}

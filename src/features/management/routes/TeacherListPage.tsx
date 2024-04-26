@@ -2,9 +2,13 @@ import { AdminLayout } from '@/components/Layout';
 import { TeacherList } from '../components/ManagementList/TeacherList';
 import { useFetchTeachers } from '../api/fetchTeachers';
 import { useCreateTeacherAttendance } from '../api/addTeacherAttendance';
+import { useSearchParams } from 'react-router-dom';
 
 const TeacherListPage = () => {
-  const { data: teachers = [], isLoading } = useFetchTeachers();
+  const [searchParams, _] = useSearchParams();
+  const search = searchParams.get('search') || undefined;
+
+  const { data: teachers = [], isLoading } = useFetchTeachers({ search });
   const {
     mutate: createTeacherAttendance,
     isPending,

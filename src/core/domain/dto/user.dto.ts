@@ -3,6 +3,7 @@ import { UserStatus } from '../entities/user.entity';
 
 export type FetchTeacherQueryParams = {
   status?: UserStatus;
+  search?: string;
 };
 
 export type FetchTeachersResponseDTO = {

@@ -15,7 +15,7 @@ const fetchTeachers = async (
 
 const useFetchTeachers = (queryParams?: FetchTeacherQueryParams) => {
   const query = useQuery({
-    queryKey: ['fetch-teachers'],
+    queryKey: ['fetch-teachers', queryParams],
     queryFn: () => fetchTeachers(queryParams),
   });
 

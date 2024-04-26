@@ -76,3 +76,11 @@ export const TeacherSelectContainer = styled.div`
 export const StyledDatePicker = styled(DatePicker)`
   width: 100%;
 `;
+
+export const FilterWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 1em;
+  width: 300px;
+  margin-bottom: 1em;
+`;
