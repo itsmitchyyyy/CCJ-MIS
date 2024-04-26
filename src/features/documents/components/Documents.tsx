@@ -281,6 +281,7 @@ const OfficeDocuments = ({
   };
 
   const updateTreeData = (origin: DataNode[]) => {
+    console.log(expandedKeys);
     const office = documents.filter(
       (document) =>
         document.type === DocumentType.Office &&
@@ -327,6 +328,9 @@ const OfficeDocuments = ({
           !approvedRequest ? (
             <FileWrapper>
               <a
+                className={
+                  expandedKeys.includes(`0-0-${index}`) ? 'active' : ''
+                }
                 onClick={() => {
                   setSelectedDocument(doc);
                   setOpenRequestModal(true);
@@ -337,6 +341,9 @@ const OfficeDocuments = ({
           ) : (
             <FileWrapper>
               <a
+                className={
+                  expandedKeys.includes(`0-0-${index}`) ? 'active' : ''
+                }
                 href={`${BACKEND_URL}/${doc.file_path}`}
                 download
                 target="_blank">
@@ -381,7 +388,11 @@ const OfficeDocuments = ({
     if (accessType === AccessType.Admin) {
       origin[1].children = studentOrTeacherDocs.map((doc, index) => ({
         title: (
-          <a href={`${BACKEND_URL}/${doc.file_path}`} download target="_blank">
+          <a
+            className={expandedKeys.includes(`0-1-${index}`) ? 'active' : ''}
+            href={`${BACKEND_URL}/${doc.file_path}`}
+            download
+            target="_blank">
             {doc.name}
           </a>
         ),
@@ -395,6 +406,7 @@ const OfficeDocuments = ({
         title: (
           <FileWrapper>
             <a
+              className={expandedKeys.includes(`0-2-${index}`) ? 'active' : ''}
               href={`${BACKEND_URL}/${doc.file_path}`}
               download
               target="_blank">
@@ -466,7 +478,7 @@ const OfficeDocuments = ({
           matched = (
             node.title as React.ReactElement
           ).props?.children[0].props?.children
-            .toLowerCase()
+            ?.toLowerCase()
             .includes(keyword.toLowerCase());
         }
 
@@ -481,7 +493,6 @@ const OfficeDocuments = ({
     };
 
     traverseTree(treeData); // Assuming treeData is provided
-
     setExpandedKeys(matchingKeys);
   };
 
@@ -502,7 +513,7 @@ const OfficeDocuments = ({
     if (documents.length > 0) {
       setTreeData((origin) => updateTreeData(origin));
     }
-  }, [documents, documentRequests]);
+  }, [documents, documentRequests, searchValue]);
 
   // Cleanup the search timeout on unmount
   useEffect(() => {
