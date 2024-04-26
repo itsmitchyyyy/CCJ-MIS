@@ -281,7 +281,6 @@ const OfficeDocuments = ({
   };
 
   const updateTreeData = (origin: DataNode[]) => {
-    console.log(expandedKeys);
     const office = documents.filter(
       (document) =>
         document.type === DocumentType.Office &&
