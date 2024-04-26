@@ -50,6 +50,10 @@ export default class DocumentRepository implements DocumentRepositoryInterface {
     return await this.httpAdapter.put(`${urls.documents.base}/${id}`, data, {});
   };
 
+  deleeteDocument = async (id: string): Promise<void> => {
+    return await this.httpAdapter.delete(`${urls.documents.base}/${id}`, {});
+  };
+
   addRequestToDocument = async (
     data: AddRequestToDocumentDTO,
   ): Promise<void> => {

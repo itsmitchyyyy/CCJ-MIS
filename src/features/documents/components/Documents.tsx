@@ -1,9 +1,10 @@
 import {
+  Button,
   Form,
+  Popconfirm,
   Radio,
   Space,
   TableProps,
-  Tree,
   TreeDataNode,
   Upload,
   message,
@@ -12,6 +13,8 @@ import {
   DocumentsHeader,
   DocumentsWrapper,
   ErrorWrapper,
+  FileWrapper,
+  StyledDirectoryTree,
   StyledTable,
   StyledTextArea,
   UploadButton,
@@ -20,7 +23,7 @@ import { useGlobalState } from '@/hooks/global';
 import { AccessType } from '@/features/account/types';
 import { Modal } from '@/components/Elements/Modal';
 import { useEffect, useState } from 'react';
-import { InboxOutlined, LockOutlined } from '@ant-design/icons';
+import { DeleteOutlined, InboxOutlined, LockOutlined } from '@ant-design/icons';
 import { RcFile, UploadFile } from 'antd/es/upload';
 import {
   AddRequestToDocumentDTO,
@@ -35,8 +38,8 @@ import { validationSchema } from './validation';
 import { DocumentRequestStatus, DocumentStatus, DocumentType } from '../types';
 import { BACKEND_URL } from '@/config';
 import { ErrorMessage } from '@hookform/error-message';
+import { DataNode, TreeProps } from 'antd/es/tree';
 
-const { DirectoryTree } = Tree;
 const { Dragger } = Upload;
 
 type Props = {
@@ -54,6 +57,8 @@ type Props = {
     id: string;
     params: UpdateDocumentRequestDTO;
   }) => void;
+  onDeleteDocument: (id: string) => void;
+  isDeletingDocument?: boolean;
 };
 
 const OfficeDocuments = ({
@@ -68,10 +73,15 @@ const OfficeDocuments = ({
   documentRequests,
   isUpdatingDocumentRequest,
   onUpdateDocumentRequest,
+  onDeleteDocument,
+  isDeletingDocument,
 }: Props) => {
   const {
     useAuth: { accessType, id },
   } = useGlobalState();
+
+  const [expandedKeys, setExpandedKeys] = useState<React.Key[]>([]);
+  const [autoExpandParent, setAutoExpandParent] = useState<boolean>(true);
 
   const initTreeData: TreeDataNode[] = [
     {
@@ -186,6 +196,11 @@ const OfficeDocuments = ({
       },
     ];
 
+  const onExpand: TreeProps['onExpand'] = (expandedKeysValue) => {
+    setExpandedKeys(expandedKeysValue);
+    setAutoExpandParent(false);
+  };
+
   const handleUploadFile = (request: { is_private: boolean }) => {
     if (documentFiles.length === 0) {
       messageApi.error('Please select a file to upload');
@@ -205,6 +220,8 @@ const OfficeDocuments = ({
       is_private: request.is_private,
     };
 
+    setExpandedKeys([]);
+    setAutoExpandParent(false);
     onUploadDocuments(data);
   };
 
@@ -256,6 +273,164 @@ const OfficeDocuments = ({
     }
   };
 
+  const updateTreeData = (origin: DataNode[]) => {
+    const office = documents.filter(
+      (document) =>
+        document.type === DocumentType.Office &&
+        document.status === DocumentStatus.Approved,
+    );
+
+    const studentOrTeacherDocs = documents.filter(
+      (document) =>
+        document.type ===
+          (accessType !== AccessType.Teacher
+            ? DocumentType.Teacher
+            : DocumentType.Student) &&
+        document.status === DocumentStatus.Approved,
+    );
+
+    const myDocuments = documents.filter((document) => {
+      const isValid =
+        document.status === DocumentStatus.Approved &&
+        document.type ===
+          (accessType !== AccessType.Teacher
+            ? DocumentType.Student
+            : DocumentType.Teacher);
+
+      if (accessType === AccessType.Admin) {
+        return isValid;
+      }
+
+      return document.user_id === id && isValid;
+    });
+
+    origin[0].children = office.map((doc, index) => {
+      const approvedRequest =
+        documentRequests.findIndex(
+          (element) =>
+            element.document_id === doc.id &&
+            element.user_id === id &&
+            element.status === DocumentRequestStatus.Approved,
+        ) !== -1;
+
+      return {
+        title:
+          doc.is_private &&
+          accessType !== AccessType.Admin &&
+          !approvedRequest ? (
+            <FileWrapper>
+              <a
+                onClick={() => {
+                  setSelectedDocument(doc);
+                  setOpenRequestModal(true);
+                }}>
+                {doc.name}
+              </a>
+            </FileWrapper>
+          ) : (
+            <FileWrapper>
+              <a
+                onClick={() => {
+                  setSelectedDocument(doc);
+                  setOpenRequestModal(true);
+                }}>
+                {doc.name}
+              </a>
+              {accessType === AccessType.Admin && (
+                <Popconfirm
+                  placement="topRight"
+                  title="Delete document"
+                  description="Are you sure you want to delete this document?"
+                  okButtonProps={{ loading: isDeletingDocument }}
+                  cancelButtonProps={{ loading: isDeletingDocument }}
+                  okText="Yes"
+                  cancelText="No"
+                  onConfirm={() => {
+                    setExpandedKeys([]);
+                    setAutoExpandParent(false);
+                    onDeleteDocument(doc.id);
+                  }}>
+                  <Button
+                    size="small"
+                    shape="circle"
+                    icon={<DeleteOutlined />}
+                    type="primary"
+                    danger
+                  />
+                </Popconfirm>
+              )}
+            </FileWrapper>
+          ),
+        key: `0-0-${index}`,
+        icon:
+          doc.is_private &&
+          accessType !== AccessType.Admin &&
+          !approvedRequest ? (
+            <LockOutlined />
+          ) : undefined,
+        isLeaf: true,
+      };
+    });
+
+    if (accessType === AccessType.Admin) {
+      origin[1].children = studentOrTeacherDocs.map((doc, index) => ({
+        title: (
+          <a href={`${BACKEND_URL}/${doc.file_path}`} download target="_blank">
+            {doc.name}
+          </a>
+        ),
+        key: `0-1-${index}`,
+        isLeaf: true,
+      }));
+    }
+
+    origin[accessType !== AccessType.Admin ? 1 : 2].children = myDocuments.map(
+      (doc, index) => ({
+        title: (
+          <FileWrapper>
+            <a
+              onClick={() => {
+                setSelectedDocument(doc);
+                setOpenRequestModal(true);
+              }}>
+              {doc.name}
+            </a>
+            {accessType !== AccessType.Admin && (
+              <Popconfirm
+                placement="topRight"
+                title="Delete document"
+                description="Are you sure you want to delete this document?"
+                okButtonProps={{ loading: isDeletingDocument }}
+                cancelButtonProps={{ loading: isDeletingDocument }}
+                okText="Yes"
+                cancelText="No"
+                onConfirm={() => {
+                  setExpandedKeys([]);
+                  setAutoExpandParent(false);
+                  onDeleteDocument(doc.id);
+                }}>
+                <Button
+                  size="small"
+                  shape="circle"
+                  icon={<DeleteOutlined />}
+                  type="primary"
+                  danger
+                />
+              </Popconfirm>
+            )}
+          </FileWrapper>
+          // <a href={`${BACKEND_URL}/${doc.file_path}`} download target="_blank">
+          //   {doc.name}
+          // </a>
+        ),
+        key: `0-2-${index}`,
+        isLeaf: true,
+      }),
+    );
+
+    return origin;
+  };
+
   useEffect(() => {
     if (isSuccessful) {
       setOpenUploadDocumentsModal(false);
@@ -271,108 +446,7 @@ const OfficeDocuments = ({
 
   useEffect(() => {
     if (documents.length > 0) {
-      setTreeData((origin) => {
-        const office = documents.filter(
-          (document) =>
-            document.type === DocumentType.Office &&
-            document.status === DocumentStatus.Approved,
-        );
-
-        const studentOrTeacherDocs = documents.filter(
-          (document) =>
-            document.type ===
-              (accessType !== AccessType.Teacher
-                ? DocumentType.Teacher
-                : DocumentType.Student) &&
-            document.status === DocumentStatus.Approved,
-        );
-
-        const myDocuments = documents.filter((document) => {
-          const isValid =
-            document.status === DocumentStatus.Approved &&
-            document.type ===
-              (accessType !== AccessType.Teacher
-                ? DocumentType.Student
-                : DocumentType.Teacher);
-
-          if (accessType === AccessType.Admin) {
-            return isValid;
-          }
-
-          return document.user_id === id && isValid;
-        });
-
-        origin[0].children = office.map((doc, index) => {
-          const approvedRequest =
-            documentRequests.findIndex(
-              (element) =>
-                element.document_id === doc.id &&
-                element.user_id === id &&
-                element.status === DocumentRequestStatus.Approved,
-            ) !== -1;
-
-          return {
-            title:
-              doc.is_private &&
-              accessType !== AccessType.Admin &&
-              !approvedRequest ? (
-                <a
-                  onClick={() => {
-                    setSelectedDocument(doc);
-                    setOpenRequestModal(true);
-                  }}>
-                  {doc.name}
-                </a>
-              ) : (
-                <a
-                  href={`${BACKEND_URL}/${doc.file_path}`}
-                  download
-                  target="_blank">
-                  {doc.name}
-                </a>
-              ),
-            key: `0-0-${index}`,
-            icon:
-              doc.is_private &&
-              accessType !== AccessType.Admin &&
-              !approvedRequest ? (
-                <LockOutlined />
-              ) : undefined,
-            isLeaf: true,
-          };
-        });
-
-        if (accessType === AccessType.Admin) {
-          origin[1].children = studentOrTeacherDocs.map((doc, index) => ({
-            title: (
-              <a
-                href={`${BACKEND_URL}/${doc.file_path}`}
-                download
-                target="_blank">
-                {doc.name}
-              </a>
-            ),
-            key: `0-1-${index}`,
-            isLeaf: true,
-          }));
-        }
-
-        origin[accessType !== AccessType.Admin ? 1 : 2].children =
-          myDocuments.map((doc, index) => ({
-            title: (
-              <a
-                href={`${BACKEND_URL}/${doc.file_path}`}
-                download
-                target="_blank">
-                {doc.name}
-              </a>
-            ),
-            key: `0-2-${index}`,
-            isLeaf: true,
-          }));
-
-        return origin;
-      });
+      setTreeData((origin) => updateTreeData(origin));
     }
   }, [documents, documentRequests]);
 
@@ -390,11 +464,14 @@ const OfficeDocuments = ({
       </DocumentsHeader>
 
       <div>
-        <DirectoryTree
+        <StyledDirectoryTree
           showLine
           multiple
           selectable={false}
           treeData={treeData}
+          onExpand={onExpand}
+          expandedKeys={expandedKeys}
+          autoExpandParent={autoExpandParent}
         />
       </div>
 

@@ -9,6 +9,8 @@ import { useUpdateDocumentRequest } from '../api/updateDocumentRequest';
 import { DocumentRequestStatus } from '../types';
 import { useGlobalState } from '@/hooks/global';
 import { AccessType } from '@/features/account/types';
+import { useDeleteDocument } from '../api/deleteDocument';
+import { useEffect } from 'react';
 
 const DocumentsPage = () => {
   const {
@@ -21,8 +23,11 @@ const DocumentsPage = () => {
     isSuccess,
   } = useUploadDocuments();
 
-  const { data: documents = [], isLoading: isFetchingDocuments } =
-    useFetchDocuments();
+  const {
+    data: documents = [],
+    isLoading: isFetchingDocuments,
+    refetch: refetchDocuments,
+  } = useFetchDocuments();
 
   const {
     mutate: addRequestToDocument,
@@ -46,11 +51,25 @@ const DocumentsPage = () => {
     isPending: isUpdatingDocumentRequest,
   } = useUpdateDocumentRequest();
 
+  const {
+    mutate: deleteDocument,
+    isPending: isDeletingDocument,
+    isSuccess: isDeleteSuccess,
+  } = useDeleteDocument();
+
+  useEffect(() => {
+    if (isDeleteSuccess) {
+      refetchDocuments();
+    }
+  }, [isDeleteSuccess]);
+
   return isFetchingDocuments ? (
     <Loader />
   ) : (
     <AdminLayout>
       <Documents
+        onDeleteDocument={deleteDocument}
+        isDeletingDocument={isDeletingDocument}
         onUpdateDocumentRequest={updateDocumentRequest}
         isUpdatingDocumentRequest={isUpdatingDocumentRequest}
         documentRequests={documentRequests}

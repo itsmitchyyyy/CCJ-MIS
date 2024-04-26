@@ -1,5 +1,5 @@
 import { colors } from '@/constants/themes';
-import { Button, Input, Table, TableProps } from 'antd';
+import { Button, Input, Table, TableProps, Tree } from 'antd';
 import styled from 'styled-components';
 
 export const DocumentsWrapper = styled.div`
@@ -33,5 +33,21 @@ export const StyledTable = styled((props: TableProps) => <Table {...props} />)`
 export const StyledTextArea = styled(Input.TextArea)`
   && {
     resize: none;
+  }
+`;
+
+export const FileWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 0.5em;
+`;
+
+export const StyledDirectoryTree = styled(Tree.DirectoryTree)`
+  .ant-tree-node-content-wrapper {
+    display: flex;
+  }
+
+  .ant-tree-title {
+    display: inline-flex;
   }
 `;
