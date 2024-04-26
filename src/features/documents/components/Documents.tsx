@@ -476,7 +476,7 @@ const OfficeDocuments = ({
         if (typeof node.title === 'object') {
           matched = (
             node.title as React.ReactElement
-          ).props?.children[0].props?.children
+          ).props?.children[0]?.props?.children
             ?.toLowerCase()
             .includes(keyword.toLowerCase());
         }
