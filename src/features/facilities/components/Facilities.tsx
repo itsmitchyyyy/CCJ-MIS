@@ -252,10 +252,12 @@ const Facilities = ({
                     <>
                       {record.type === FacilityType.Equipment ? (
                         <StyledButton
-                          disabled={
-                            record.status.toLocaleLowerCase() ===
-                            FacilityStatus.Booked
-                          }
+                          disabled={[
+                            FacilityStatus.Booked,
+                            FacilityStatus.Unavailable,
+                          ].includes(
+                            record.status.toLocaleLowerCase() as FacilityStatus,
+                          )}
                           type="link"
                           onClick={() => {
                             setOpenBorrowEquipment(true);

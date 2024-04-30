@@ -15,6 +15,7 @@ export enum FacilityType {
 export enum FacilityStatus {
   Booked = 'booked',
   Available = 'available',
+  Unavailable = 'unavailable',
 }
 
 export enum RequestFacilityStatus {
