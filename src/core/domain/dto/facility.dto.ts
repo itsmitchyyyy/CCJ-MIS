@@ -60,6 +60,7 @@ export type FacilityRequestDTO = {
   approved_date?: string;
   borrowed_date?: string;
   returned_date?: string;
+  rejected_reason?: string;
   status: RequestFacilityStatus;
   equipmentStatus?: EquipmentStatus;
   reason?: string;
@@ -82,4 +83,5 @@ export type FetchFacilityRequestQuery = {
 export type UpdateFacilityRequestDTO = {
   status: RequestFacilityStatus;
   returned_date?: Date;
+  rejected_reason?: string;
 };

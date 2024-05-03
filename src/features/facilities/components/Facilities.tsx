@@ -173,6 +173,17 @@ const Facilities = ({
       render: (_, record) => capitalizeString(record.status),
     },
     {
+      title: 'Rejection Reason',
+      key: 'rejected_reason',
+      render: (_, data) => {
+        const record = data as FacilityRequestDTO;
+
+        return (
+          <>{record.rejected_reason && <span>{record.rejected_reason}</span>}</>
+        );
+      },
+    },
+    {
       title: 'Action',
       key: 'action',
       render: (_, data) => {

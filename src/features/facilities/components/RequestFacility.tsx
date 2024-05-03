@@ -5,6 +5,7 @@ import {
   FacilitiesWrapper,
   StyledButton,
   StyledTable,
+  StyledTextArea,
 } from './elements';
 import { Form, Popconfirm, Select, Space, TableProps } from 'antd';
 import {
@@ -24,7 +25,10 @@ import { EquipmentStatusOptions, TabItemOptions } from '@/constants/data';
 import { Modal } from '@/components/Elements/Modal';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { equipmentValidationSchema } from './validation';
+import {
+  equipmentValidationSchema,
+  rejectedValidationSchema,
+} from './validation';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { ErrorMessage } from '@hookform/error-message';
 
@@ -34,6 +38,7 @@ type RequestFacilityProps = {
   facilityRequests?: FacilityRequestDTO[];
   isPendingUpdateFacility?: boolean;
   isSuccessfulUpdateFacility?: boolean;
+  isSuccessfulUpdateRequest?: boolean;
   onUpdateRequest: (params: {
     requestId: string;
     data: UpdateFacilityRequestDTO;
@@ -49,6 +54,7 @@ const RequestFacility = ({
   isFetching,
   facilityRequests,
   isPendingUpdateFacility,
+  isSuccessfulUpdateRequest,
   isSuccessfulUpdateFacility,
   onUpdateRequest,
   onUpdateFacility,
@@ -56,6 +62,7 @@ const RequestFacility = ({
   const [selectedRequest, setSelectedRequest] =
     useState<FacilityRequestDTO | null>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isRejectModalVisible, setIsRejectModalVisible] = useState(false);
 
   const tableColumnData: TableProps<FacilityRequestDTO>['columns'] = [
     {
@@ -117,6 +124,14 @@ const RequestFacility = ({
       onFilter: (value, record) => record.status.startsWith(value as string),
     },
     {
+      title: 'Reason Rejected',
+      key: 'rejected_reason',
+      render: (_, record) =>
+        record.status === RequestFacilityStatus.Rejected
+          ? record.rejected_reason
+          : '',
+    },
+    {
       title: 'Action',
       key: 'action',
       render: (_, record) => (
@@ -161,12 +176,10 @@ const RequestFacility = ({
               RequestFacilityStatus.Rejected,
               RequestFacilityStatus.Cancelled,
             ].includes(record.status)}
-            onConfirm={() =>
-              onUpdateRequest({
-                requestId: record.id,
-                data: { status: RequestFacilityStatus.Rejected },
-              })
-            }
+            onConfirm={() => {
+              setSelectedRequest(record);
+              setIsRejectModalVisible(true);
+            }}
             okButtonProps={{ danger: true, loading: isPendingUpdate }}
             icon={<QuestionCircleOutlined style={{ color: 'red' }} />}>
             <StyledButton
@@ -214,6 +227,30 @@ const RequestFacility = ({
     },
   });
 
+  const {
+    control: controlRejection,
+    handleSubmit: handleSubmitRejection,
+    formState: { errors: errorsRejection },
+    reset: resetRejection,
+  } = useForm({
+    resolver: yupResolver(rejectedValidationSchema),
+    defaultValues: {
+      rejected_reason: '',
+    },
+  });
+
+  const onHandleSubmitRejectReason = (data: { rejected_reason: string }) => {
+    const payload: UpdateFacilityRequestDTO = {
+      ...data,
+      status: RequestFacilityStatus.Rejected,
+    };
+
+    onUpdateRequest({
+      requestId: selectedRequest?.id || '',
+      data: payload,
+    });
+  };
+
   const onHandleSubmitEquipmentStatus = (data: {
     equipmentStatus: EquipmentStatus;
   }) => {
@@ -236,6 +273,14 @@ const RequestFacility = ({
       reset();
     }
   }, [isSuccessfulUpdateFacility]);
+
+  useEffect(() => {
+    if (isSuccessfulUpdateRequest) {
+      setSelectedRequest(null);
+      setIsRejectModalVisible(false);
+      resetRejection();
+    }
+  }, [isSuccessfulUpdateRequest]);
 
   return (
     <FacilitiesWrapper>
@@ -278,6 +323,40 @@ const RequestFacility = ({
                   onChange={onChange}
                   options={EquipmentStatusOptions}
                   status={errors.equipmentStatus && 'error'}
+                />
+              </Form.Item>
+            )}
+          />
+        </Form>
+      </Modal>
+
+      <Modal
+        isLoading={isPendingUpdate}
+        open={isRejectModalVisible}
+        title="Rejection Reason"
+        onCancel={() => {
+          setSelectedRequest(null);
+          setIsRejectModalVisible(false);
+        }}
+        onSubmit={handleSubmitRejection(onHandleSubmitRejectReason)}>
+        <Form layout="vertical">
+          <ErrorMessage
+            name="rejected_reason"
+            errors={errorsRejection}
+            render={({ message }) => <ErrorWrapper>{message}</ErrorWrapper>}
+          />
+          <Controller
+            control={controlRejection}
+            name="rejected_reason"
+            render={({ field: { value, onChange } }) => (
+              <Form.Item label="Reason">
+                <StyledTextArea
+                  value={value}
+                  rows={5}
+                  cols={5}
+                  onChange={onChange}
+                  placeholder="Enter rejection reason"
+                  status={errorsRejection.rejected_reason && 'error'}
                 />
               </Form.Item>
             )}

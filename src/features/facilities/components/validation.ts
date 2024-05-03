@@ -33,3 +33,7 @@ export const equipmentValidationSchema = yup.object({
     .oneOf(Object.values(EquipmentStatus))
     .required('Equipment status is required'),
 });
+
+export const rejectedValidationSchema = yup.object({
+  rejected_reason: yup.string().required('Reason is required'),
+});

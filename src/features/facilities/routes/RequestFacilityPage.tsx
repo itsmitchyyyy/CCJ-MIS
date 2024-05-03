@@ -6,7 +6,11 @@ import { useUpdateFacility } from '../api/updateFacility';
 
 const RequestFacilityPage = () => {
   const { data: facilityRequests = [], isLoading } = useFetchFacilityRequests();
-  const { mutate: updateRequest, isPending } = useUpdateRequest();
+  const {
+    mutate: updateRequest,
+    isPending,
+    isSuccess: isSuccessUpdateRequest,
+  } = useUpdateRequest();
   const {
     mutate: updateFacility,
     isPending: isPendingUpdateFacility,
@@ -22,6 +26,7 @@ const RequestFacilityPage = () => {
         isFetching={isLoading}
         isPendingUpdate={isPending}
         isPendingUpdateFacility={isPendingUpdateFacility}
+        isSuccessfulUpdateRequest={isSuccessUpdateRequest}
         isSuccessfulUpdateFacility={isSuccess}
       />
     </AdminLayout>
