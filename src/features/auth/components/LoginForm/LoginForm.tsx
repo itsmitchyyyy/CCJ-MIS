@@ -70,7 +70,7 @@ export const LoginForm = ({ onSubmit, loading }: Props) => {
               </Form.Item>
             )}
           />
-          <RememberMeFormItem>
+          {/* <RememberMeFormItem>
             <Form.Item name="remember" valuePropName="checked" noStyle>
               <Checkbox>Stay Login</Checkbox>
             </Form.Item>
@@ -78,7 +78,7 @@ export const LoginForm = ({ onSubmit, loading }: Props) => {
             <a className="login-form-forgot" href="">
               Forgot password
             </a>
-          </RememberMeFormItem>
+          </RememberMeFormItem> */}
           <Form.Item>
             <StyledButton
               disabled={!(isDirty && isValid) || loading}
