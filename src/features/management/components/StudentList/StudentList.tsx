@@ -338,7 +338,7 @@ export const StudentList = ({
             <Input
               defaultValue={searchValue}
               size="large"
-              placeholder="Search teacher..."
+              placeholder="Search students..."
               onChange={(e) => {
                 const { value } = e.target;
                 handleSearch(value);
