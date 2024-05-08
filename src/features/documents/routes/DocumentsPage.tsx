@@ -41,7 +41,7 @@ const DocumentsPage = () => {
   } = useFetchDocumentRequests({
     status:
       accessType !== AccessType.Admin
-        ? DocumentRequestStatus.Approved
+        ? undefined
         : DocumentRequestStatus.Pending,
     user_id: accessType !== AccessType.Admin ? id : undefined,
   });
@@ -49,6 +49,7 @@ const DocumentsPage = () => {
   const {
     mutate: updateDocumentRequest,
     isPending: isUpdatingDocumentRequest,
+    isSuccess: isUpdateDocumentRequestSuccess,
   } = useUpdateDocumentRequest();
 
   const {
@@ -72,6 +73,7 @@ const DocumentsPage = () => {
         isDeletingDocument={isDeletingDocument}
         onUpdateDocumentRequest={updateDocumentRequest}
         isUpdatingDocumentRequest={isUpdatingDocumentRequest}
+        isUpdateDocumentRequestSuccess={isUpdateDocumentRequestSuccess}
         documentRequests={documentRequests}
         isFetchingDocumentRequests={isFetchingDocumentsRequests}
         isRequestingDocumentSuccess={isRequestingDocumentSuccess}

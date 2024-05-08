@@ -36,7 +36,7 @@ import {
 } from '@/core/domain/dto/document.dto';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { validationSchema } from './validation';
+import { rejectedValidationSchema, validationSchema } from './validation';
 import { DocumentRequestStatus, DocumentStatus, DocumentType } from '../types';
 import { BACKEND_URL } from '@/config';
 import { ErrorMessage } from '@hookform/error-message';
@@ -56,6 +56,7 @@ type Props = {
   isFetchingDocumentRequests?: boolean;
   documentRequests: FetchDocumentRequestsResponseDTO[];
   isUpdatingDocumentRequest?: boolean;
+  isUpdateDocumentRequestSuccess?: boolean;
   onUpdateDocumentRequest: (data: {
     id: string;
     params: UpdateDocumentRequestDTO;
@@ -75,6 +76,7 @@ const OfficeDocuments = ({
   isFetchingDocumentRequests,
   documentRequests,
   isUpdatingDocumentRequest,
+  isUpdateDocumentRequestSuccess,
   onUpdateDocumentRequest,
   onDeleteDocument,
   isDeletingDocument,
@@ -121,6 +123,9 @@ const OfficeDocuments = ({
   const [openRequestModal, setOpenRequestModal] = useState<boolean>(false);
   const [selectedDocument, setSelectedDocument] =
     useState<FetchDocumentsResponseDTO | null>(null);
+  const [selectedRequest, setSelectedRequest] =
+    useState<FetchDocumentRequestsResponseDTO | null>(null);
+  const [isRejectModalVisible, setIsRejectModalVisible] = useState(false);
 
   const {
     handleSubmit,
@@ -140,6 +145,18 @@ const OfficeDocuments = ({
   } = useForm({
     defaultValues: {
       reason: '',
+    },
+  });
+
+  const {
+    control: controlRejection,
+    handleSubmit: handleSubmitRejection,
+    formState: { errors: errorsRejection },
+    reset: resetRejection,
+  } = useForm({
+    resolver: yupResolver(rejectedValidationSchema),
+    defaultValues: {
+      rejected_reason: '',
     },
   });
 
@@ -188,20 +205,28 @@ const OfficeDocuments = ({
               Approve
             </a>
             <a
-              onClick={() =>
-                onUpdateDocumentRequest({
-                  id: record.id,
-                  params: {
-                    status: DocumentStatus.Rejected,
-                  },
-                })
-              }>
+              onClick={() => {
+                setSelectedRequest(record);
+                setIsRejectModalVisible(true);
+              }}>
               Reject
             </a>
           </Space>
         ),
       },
     ];
+
+  const onHandleSubmitRejectReason = (data: { rejected_reason: string }) => {
+    const payload: UpdateDocumentRequestDTO = {
+      ...data,
+      status: DocumentStatus.Rejected,
+    };
+
+    onUpdateDocumentRequest({
+      id: selectedRequest?.id || '',
+      params: payload,
+    });
+  };
 
   const onExpand: TreeProps['onExpand'] = (expandedKeysValue) => {
     setExpandedKeys(expandedKeysValue);
@@ -320,6 +345,13 @@ const OfficeDocuments = ({
             element.status === DocumentRequestStatus.Approved,
         ) !== -1;
 
+      const rejectedReason = documentRequests.find(
+        (element) =>
+          element.document_id === doc.id &&
+          element.user_id === id &&
+          element.status === DocumentRequestStatus.Rejected,
+      )?.rejected_reason;
+
       return {
         title:
           doc.is_private &&
@@ -334,7 +366,12 @@ const OfficeDocuments = ({
                   setSelectedDocument(doc);
                   setOpenRequestModal(true);
                 }}>
-                {doc.name}
+                {doc.name}{' '}
+                {rejectedReason && (
+                  <span style={{ color: 'red' }}>
+                    (Rejected Reason: {rejectedReason})
+                  </span>
+                )}
               </a>
             </FileWrapper>
           ) : (
@@ -523,6 +560,14 @@ const OfficeDocuments = ({
     };
   }, []);
 
+  useEffect(() => {
+    if (isUpdateDocumentRequestSuccess) {
+      setSelectedRequest(null);
+      setIsRejectModalVisible(false);
+      resetRejection();
+    }
+  }, [isUpdateDocumentRequestSuccess]);
+
   return (
     <DocumentsWrapper>
       {contextHolder}
@@ -637,6 +682,40 @@ const OfficeDocuments = ({
               banned files.
             </p>
           </Dragger>
+        </Form>
+      </Modal>
+
+      <Modal
+        isLoading={isUpdatingDocumentRequest}
+        open={isRejectModalVisible}
+        title="Rejection Reason"
+        onCancel={() => {
+          setSelectedRequest(null);
+          setIsRejectModalVisible(false);
+        }}
+        onSubmit={handleSubmitRejection(onHandleSubmitRejectReason)}>
+        <Form layout="vertical">
+          <ErrorMessage
+            name="rejected_reason"
+            errors={errorsRejection}
+            render={({ message }) => <ErrorWrapper>{message}</ErrorWrapper>}
+          />
+          <Controller
+            control={controlRejection}
+            name="rejected_reason"
+            render={({ field: { value, onChange } }) => (
+              <Form.Item label="Reason">
+                <StyledTextArea
+                  value={value}
+                  rows={5}
+                  cols={5}
+                  onChange={onChange}
+                  placeholder="Enter rejection reason"
+                  status={errorsRejection.rejected_reason && 'error'}
+                />
+              </Form.Item>
+            )}
+          />
         </Form>
       </Modal>
     </DocumentsWrapper>
