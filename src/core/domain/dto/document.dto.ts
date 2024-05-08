@@ -28,6 +28,7 @@ export type FetchDocumentsResponseDTO = {
 
 export type UpdateDocumentRequestDTO = {
   status: DocumentStatus;
+  rejected_reason?: string;
 };
 
 export type AddRequestToDocumentDTO = {
@@ -44,6 +45,8 @@ export type FetchDocumentRequestsResponseDTO = {
   document_id: string;
   document: FetchDocumentsResponseDTO;
   status: DocumentRequestStatus;
+  reason?: string;
+  rejected_reason?: string;
   expires_at: Date;
   created_at?: Date;
   updated_at?: Date;

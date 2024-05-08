@@ -5,3 +5,7 @@ export const validationSchema = yup
     is_private: yup.boolean().required(),
   })
   .required();
+
+export const rejectedValidationSchema = yup.object({
+  rejected_reason: yup.string().required('Reason is required'),
+});
