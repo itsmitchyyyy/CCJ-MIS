@@ -82,7 +82,6 @@ const SideNavBar = ({ collapsed }: Props) => {
           getItem('Announcement', 'announcements', <AlertOutlined />),
         ])
       : getItem('Home', 'dashboard', <DashboardOutlined />),
-    getItem('Profile', 'profile', <UserOutlined />),
     getItem('Documents', 'documents', <FileProtectOutlined />),
     accessType === AccessType.Admin
       ? getItem('Facility', 'facility', <BankOutlined />, [
@@ -145,9 +144,6 @@ const SideNavBar = ({ collapsed }: Props) => {
     switch (key) {
       case 'dashboard':
         navigate('/dashboard');
-        break;
-      case 'profile':
-        navigate('/profile');
         break;
       case 'account':
         navigate('/account');

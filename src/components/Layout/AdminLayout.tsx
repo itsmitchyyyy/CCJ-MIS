@@ -8,17 +8,30 @@ import {
   StyledContent,
   LogoutWrapper,
   LogoutButton,
+  AvatarWrapper,
 } from './elements';
-import { MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons';
+import {
+  MenuFoldOutlined,
+  MenuUnfoldOutlined,
+  UserOutlined,
+} from '@ant-design/icons';
 import { useLogout } from '@/features/auth/api/logout';
+import { Avatar } from 'antd';
+import { useGlobalState } from '@/hooks/global';
+import { BACKEND_URL } from '@/config';
+import { useNavigate } from 'react-router-dom';
 
 type Props = {
   children: React.ReactNode;
 };
 
 const AdminLayout = ({ children }: Props) => {
+  const {
+    useAuth: { avatar },
+  } = useGlobalState();
   const [collapsed, setCollapsed] = useState<boolean>(false);
   const { mutate: logout, isPending } = useLogout();
+  const navigate = useNavigate();
 
   return (
     <AdminLayoutContainer>
@@ -32,6 +45,14 @@ const AdminLayout = ({ children }: Props) => {
             onClick={() => setCollapsed(!collapsed)}
           />
           <LogoutWrapper>
+            <AvatarWrapper onClick={() => navigate('/profile')}>
+              <Avatar
+                size="large"
+                style={{ backgroundColor: '#f56a00' }}
+                src={`${BACKEND_URL}/${avatar}`}
+                icon={<UserOutlined />}
+              />
+            </AvatarWrapper>
             <LogoutButton
               type="text"
               onClick={() => logout()}

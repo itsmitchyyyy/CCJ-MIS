@@ -7,6 +7,7 @@ export type LoginData = {
     last_name: string;
     contact_number: string;
     username: string;
+    profile_picture: string;
     access_type: string;
     status: string;
     email: string;

@@ -20,6 +20,16 @@ const Provider = (props: Props) => {
     }
   });
 
+  const [avatar, setAvatar] = useState<string>(() => {
+    try {
+      const data = storage.getItem(storageKeys.AVATAR);
+      const parsedData = data ?? '';
+      return parsedData as string;
+    } catch (error) {
+      return '';
+    }
+  });
+
   const [isLoggedInError, setIsLoggedInError] = useState<string>('');
 
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(() => {
@@ -35,7 +45,7 @@ const Provider = (props: Props) => {
   const [token, setToken] = useState<string>(() => {
     try {
       const data = storage.getItem(storageKeys.AUTH_TOKEN);
-      const parsedData = data ? JSON.parse(data) : '';
+      const parsedData = data ?? '';
       return parsedData as string;
     } catch (error) {
       return '';
@@ -45,7 +55,7 @@ const Provider = (props: Props) => {
   const [emailAddress, setEmailAddress] = useState<string>(() => {
     try {
       const data = storage.getItem(storageKeys.EMAIL_ADDRESS);
-      const parsedData = data ? JSON.parse(data) : '';
+      const parsedData = data ?? '';
       return parsedData as string;
     } catch (error) {
       return '';
@@ -74,6 +84,11 @@ const Provider = (props: Props) => {
         setId(id);
         storage.setItem(storageKeys.USER_ID, id);
       },
+      avatar,
+      setAvatar: (avatar: string) => {
+        setAvatar(avatar);
+        storage.setItem(storageKeys.AVATAR, avatar);
+      },
       token,
       setToken: (token: string) => {
         setToken(token);
@@ -100,6 +115,7 @@ const Provider = (props: Props) => {
       },
       resetAuth: () => {
         setId('');
+        setAvatar('');
         setToken('');
         setEmailAddress('');
         setIsLoggedIn(false);
@@ -108,11 +124,15 @@ const Provider = (props: Props) => {
         storage.removeItem(storageKeys.EMAIL_ADDRESS);
         storage.removeItem(storageKeys.IS_LOGGED_IN);
         storage.removeItem(storageKeys.ACCESS_TYPE);
+        storage.removeItem(storageKeys.USER_ID);
+        storage.removeItem(storageKeys.AVATAR);
       },
     }),
     [
       id,
       setId,
+      avatar,
+      setAvatar,
       token,
       setToken,
       isLoggedIn,
@@ -155,6 +175,7 @@ const Provider = (props: Props) => {
         () => ({ useAuth, useAccount, useSubject }),
         [
           id,
+          avatar,
           token,
           isLoggedIn,
           emailAddress,

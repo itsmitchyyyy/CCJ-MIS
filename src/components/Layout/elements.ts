@@ -55,4 +55,8 @@ export const LogoutWrapper = styled.div`
   padding: 0 1em;
 `;
 
+export const AvatarWrapper = styled.div`
+  cursor: pointer;
+`;
+
 export const LogoutButton = styled(Button)``;

@@ -17,6 +17,7 @@ export const useLogin = () => {
       setEmailAddress,
       setIsLoggedInError,
       setAccessType,
+      setAvatar,
     },
   } = useGlobalState();
 
@@ -27,6 +28,7 @@ export const useLogin = () => {
       setToken(response.token);
       setEmailAddress(response.user.email);
       setAccessType(response.user.access_type);
+      setAvatar(response.user.profile_picture);
     },
     onError: (error: AxiosError) => {
       const errorMessage = (error.response?.data as { message: string })
