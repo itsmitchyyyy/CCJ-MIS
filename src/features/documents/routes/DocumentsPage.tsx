@@ -11,6 +11,7 @@ import { useGlobalState } from '@/hooks/global';
 import { AccessType } from '@/features/account/types';
 import { useDeleteDocument } from '../api/deleteDocument';
 import { useEffect } from 'react';
+import DocumentList from '../components/DocumentList';
 
 const DocumentsPage = () => {
   const {
@@ -68,7 +69,23 @@ const DocumentsPage = () => {
     <Loader />
   ) : (
     <AdminLayout>
-      <Documents
+      <DocumentList
+        onDeleteDocument={deleteDocument}
+        isDeletingDocument={isDeletingDocument}
+        documents={documents}
+        onUploadDocuments={uploadDocuments}
+        isLoading={isPending}
+        isSuccessful={isSuccess}
+        documentRequests={documentRequests}
+        isFetchingDocumentRequests={isFetchingDocumentsRequests}
+        onUpdateDocumentRequest={updateDocumentRequest}
+        isUpdatingDocumentRequest={isUpdatingDocumentRequest}
+        isUpdateDocumentRequestSuccess={isUpdateDocumentRequestSuccess}
+        isRequestingDocumentSuccess={isRequestingDocumentSuccess}
+        isRequestingDocument={isRequestingDocument}
+        onAddRequestToDocument={addRequestToDocument}
+      />
+      {/* <Documents
         onDeleteDocument={deleteDocument}
         isDeletingDocument={isDeletingDocument}
         onUpdateDocumentRequest={updateDocumentRequest}
@@ -83,7 +100,7 @@ const DocumentsPage = () => {
         onUploadDocuments={uploadDocuments}
         isLoading={isPending}
         isSuccessful={isSuccess}
-      />
+      /> */}
     </AdminLayout>
   );
 };

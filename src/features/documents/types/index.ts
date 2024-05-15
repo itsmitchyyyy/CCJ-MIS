@@ -2,6 +2,7 @@ export enum DocumentType {
   Office = 'office',
   Student = 'student',
   Teacher = 'teacher',
+  Document = 'document',
 }
 
 export enum DocumentStatus {

@@ -63,3 +63,9 @@ export const FilterWrapper = styled.div`
   width: 200px;
   margin-bottom: 1em;
 `;
+
+export const FileTextWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 0.5em;
+`;
