@@ -69,3 +69,9 @@ export const FileTextWrapper = styled.div`
   flex-direction: row;
   gap: 0.5em;
 `;
+
+export const ListFolder = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 0.5em;
+`;

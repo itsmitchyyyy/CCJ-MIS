@@ -78,4 +78,8 @@ export default class DocumentRepository implements DocumentRepositoryInterface {
       {},
     );
   };
+
+  fetchStoredDocuments = async (): Promise<string[]> => {
+    return await this.httpAdapter.get(urls.documents.storedDocuments, {});
+  };
 }

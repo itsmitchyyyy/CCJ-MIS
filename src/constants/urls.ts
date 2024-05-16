@@ -38,6 +38,7 @@ export default {
   documents: {
     base: '/documents',
     requests: '/document-requests',
+    storedDocuments: '/documents/fetch-stored-documents',
   },
   assignments: {
     base: '/assignments',

@@ -20,4 +20,5 @@ export default interface DocumentRepositoryInterface {
     id: string,
     data: UpdateDocumentRequestDTO,
   ): Promise<void>;
+  fetchStoredDocuments(): Promise<string[]>;
 }

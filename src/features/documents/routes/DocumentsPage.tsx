@@ -12,6 +12,7 @@ import { AccessType } from '@/features/account/types';
 import { useDeleteDocument } from '../api/deleteDocument';
 import { useEffect } from 'react';
 import DocumentList from '../components/DocumentList';
+import { useFetchStoredDocuments } from '../api/fetchStoredDocuments';
 
 const DocumentsPage = () => {
   const {
@@ -59,6 +60,9 @@ const DocumentsPage = () => {
     isSuccess: isDeleteSuccess,
   } = useDeleteDocument();
 
+  const { data: storedDocuments = [], isLoading: isFetchingStoredDocuments } =
+    useFetchStoredDocuments();
+
   useEffect(() => {
     if (isDeleteSuccess) {
       refetchDocuments();
@@ -84,6 +88,8 @@ const DocumentsPage = () => {
         isRequestingDocumentSuccess={isRequestingDocumentSuccess}
         isRequestingDocument={isRequestingDocument}
         onAddRequestToDocument={addRequestToDocument}
+        storedDocuments={storedDocuments}
+        isFetchingStoredDocuments={isFetchingStoredDocuments}
       />
       {/* <Documents
         onDeleteDocument={deleteDocument}
