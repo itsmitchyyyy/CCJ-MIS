@@ -197,7 +197,7 @@ const StoredDocuments = ({
             New Folder
           </UploadButton>
         )}
-        {accessType === AccessType.Teacher && q && (
+        {accessType !== AccessType.Admin && q && (
           <UploadButton
             size="large"
             type="primary"
