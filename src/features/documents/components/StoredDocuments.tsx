@@ -9,9 +9,13 @@ import {
 import {
   Breadcrumb,
   Button,
+  Col,
+  Flex,
   Form,
+  Grid,
   Input,
   List,
+  Row,
   Upload,
   UploadFile,
   message,
@@ -21,6 +25,7 @@ import {
   DocumentsHeader,
   DocumentsWrapper,
   ErrorWrapper,
+  FilterWrapper,
   UploadButton,
 } from './elements';
 import {
@@ -76,6 +81,7 @@ const StoredDocuments = ({
   const [isAddingNewFolderModal, setIsAddingNewFolderModal] = useState(false);
 
   const q = searchParams.get('q');
+  const type = searchParams.get('type');
 
   const [documentFiles, setDocumentFiles] = useState<UploadFile[]>([]);
   const [openUploadDocumentsModal, setOpenUploadDocumentsModal] =
@@ -206,6 +212,60 @@ const StoredDocuments = ({
           </UploadButton>
         )}
       </DocumentsHeader>
+
+      {accessType === AccessType.Admin && (
+        <>
+          <Flex
+            wrap="wrap"
+            gap="large"
+            justify="space-evenly"
+            style={{ marginTop: '2em', marginBottom: '2em' }}>
+            <Button
+              style={{ minWidth: '200px' }}
+              onClick={() => setSearchParams({ type: 'student' })}
+              size="large"
+              type={type === 'student' ? 'primary' : undefined}>
+              Student
+            </Button>
+
+            <Button
+              style={{ minWidth: '200px' }}
+              onClick={() => setSearchParams({ type: 'teacher' })}
+              size="large"
+              type={type === 'teacher' ? 'primary' : undefined}>
+              Teacher
+            </Button>
+
+            <Button
+              style={{ minWidth: '200px' }}
+              onClick={() => setSearchParams({ type: 'office' })}
+              size="large"
+              type={type === 'office' ? 'primary' : undefined}>
+              Office
+            </Button>
+          </Flex>
+
+          {type && (
+            <DocumentsWrapper>
+              <DocumentsHeader>
+                <h2>
+                  {type === 'student'
+                    ? 'Student List'
+                    : type === 'teacher'
+                    ? 'Teacher List'
+                    : 'Office Documents'}
+                </h2>
+              </DocumentsHeader>
+
+              {type !== 'office' && (
+                <FilterWrapper>
+                  <Input placeholder={`Search ${type}...`} size="large" />
+                </FilterWrapper>
+              )}
+            </DocumentsWrapper>
+          )}
+        </>
+      )}
 
       {accessType !== AccessType.Admin && !q && (
         <List
