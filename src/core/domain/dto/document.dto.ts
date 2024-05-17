@@ -12,6 +12,12 @@ export type UploadDocumentRequestDTO = {
   user_id: string;
   status?: DocumentStatus;
   is_private?: boolean;
+  folder_type?: string;
+};
+
+export type FetchDocumentsQuery = {
+  user_id?: string;
+  folder_type?: string;
 };
 
 export type FetchDocumentsResponseDTO = {
@@ -55,4 +61,9 @@ export type FetchDocumentRequestsResponseDTO = {
 export type FetchDocumentRequestsQueryParams = {
   status?: DocumentRequestStatus;
   user_id?: string;
+};
+
+export type AddNewFolderParams = {
+  user_id: string;
+  folder_name: string;
 };

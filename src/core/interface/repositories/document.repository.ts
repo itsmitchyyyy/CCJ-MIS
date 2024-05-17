@@ -1,8 +1,10 @@
 import urls from '@/constants/urls';
 import {
+  AddNewFolderParams,
   AddRequestToDocumentDTO,
   FetchDocumentRequestsQueryParams,
   FetchDocumentRequestsResponseDTO,
+  FetchDocumentsQuery,
   FetchDocumentsResponseDTO,
   UpdateDocumentRequestDTO,
   UploadDocumentRequestDTO,
@@ -39,8 +41,12 @@ export default class DocumentRepository implements DocumentRepositoryInterface {
     });
   };
 
-  fetchDocuments = async (): Promise<FetchDocumentsResponseDTO[]> => {
-    return await this.httpAdapter.get(urls.documents.base, {});
+  fetchDocuments = async (
+    query?: FetchDocumentsQuery,
+  ): Promise<FetchDocumentsResponseDTO[]> => {
+    return await this.httpAdapter.get(urls.documents.base, {
+      params: query,
+    });
   };
 
   updateDocument = async (
@@ -79,7 +85,13 @@ export default class DocumentRepository implements DocumentRepositoryInterface {
     );
   };
 
-  fetchStoredDocuments = async (): Promise<string[]> => {
-    return await this.httpAdapter.get(urls.documents.storedDocuments, {});
+  fetchStoredDocuments = async (userId?: string): Promise<string[]> => {
+    return await this.httpAdapter.get(urls.documents.storedDocuments, {
+      params: { user_id: userId },
+    });
+  };
+
+  addNewFolder = async (data: AddNewFolderParams): Promise<void> => {
+    return await this.httpAdapter.post(urls.documents.addNewFolder, data, {});
   };
 }

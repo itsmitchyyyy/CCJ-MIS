@@ -39,6 +39,7 @@ export default {
     base: '/documents',
     requests: '/document-requests',
     storedDocuments: '/documents/fetch-stored-documents',
+    addNewFolder: '/documents/create-new-folder',
   },
   assignments: {
     base: '/assignments',

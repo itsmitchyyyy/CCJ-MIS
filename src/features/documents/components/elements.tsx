@@ -75,3 +75,8 @@ export const ListFolder = styled.div`
   flex-direction: row;
   gap: 0.5em;
 `;
+
+export const DocumentDetailsWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+`;

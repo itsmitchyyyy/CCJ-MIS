@@ -15,6 +15,7 @@ import {
 } from './elements';
 import RequestList from './RequestList';
 import {
+  AddNewFolderParams,
   AddRequestToDocumentDTO,
   FetchDocumentRequestsResponseDTO,
   FetchDocumentsResponseDTO,
@@ -61,6 +62,11 @@ type Props = {
   // stored documents props
   storedDocuments: string[];
   isFetchingStoredDocuments: boolean;
+  queriedDocuments: FetchDocumentsResponseDTO[];
+  isFetchingQueriedDocuments?: boolean;
+  onAddNewFolder: (data: AddNewFolderParams) => void;
+  isAddingNewFolder?: boolean;
+  isSuccessAddingNewFolder?: boolean;
 };
 
 const DocumentList = ({
@@ -80,6 +86,11 @@ const DocumentList = ({
   onAddRequestToDocument,
   storedDocuments,
   isFetchingStoredDocuments,
+  queriedDocuments,
+  isFetchingQueriedDocuments,
+  onAddNewFolder,
+  isAddingNewFolder,
+  isSuccessAddingNewFolder,
 }: Props) => {
   const {
     useAuth: { accessType, id },
@@ -140,6 +151,11 @@ const DocumentList = ({
         <StoredDocuments
           storedDocuments={storedDocuments}
           isFetchingStoredDocuments={isFetchingStoredDocuments}
+          isFetchingQueriedDocuments={isFetchingQueriedDocuments}
+          queriedDocuments={queriedDocuments}
+          onAddNewFolder={onAddNewFolder}
+          isAddingNewFolder={isAddingNewFolder}
+          isSuccessAddingNewFolder={isSuccessAddingNewFolder}
         />
       ),
     },
@@ -239,12 +255,14 @@ const DocumentList = ({
       {contextHolder}
       <DocumentsHeader>
         <h1>Documents</h1>
-        <UploadButton
-          size="large"
-          type="primary"
-          onClick={() => setOpenUploadDocumentsModal(true)}>
-          Upload Documents
-        </UploadButton>
+        {accessType === AccessType.Admin && (
+          <UploadButton
+            size="large"
+            type="primary"
+            onClick={() => setOpenUploadDocumentsModal(true)}>
+            Upload Documents
+          </UploadButton>
+        )}
       </DocumentsHeader>
 
       <div>

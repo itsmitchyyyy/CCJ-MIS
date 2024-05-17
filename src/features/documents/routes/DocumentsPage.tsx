@@ -13,11 +13,22 @@ import { useDeleteDocument } from '../api/deleteDocument';
 import { useEffect } from 'react';
 import DocumentList from '../components/DocumentList';
 import { useFetchStoredDocuments } from '../api/fetchStoredDocuments';
+import { useSearchParams } from 'react-router-dom';
+import { useAddNewFolder } from '../api/addNewFolder';
 
 const DocumentsPage = () => {
   const {
     useAuth: { id, accessType },
   } = useGlobalState();
+
+  const [searchParams] = useSearchParams();
+
+  const userId =
+    accessType !== AccessType.Admin
+      ? id
+      : searchParams.get('user_id') || undefined;
+
+  const q = searchParams.get('q') || undefined;
 
   const {
     mutate: uploadDocuments,
@@ -61,7 +72,16 @@ const DocumentsPage = () => {
   } = useDeleteDocument();
 
   const { data: storedDocuments = [], isLoading: isFetchingStoredDocuments } =
-    useFetchStoredDocuments();
+    useFetchStoredDocuments(userId);
+
+  const { data: queriedDocuments = [], isLoading: isFetchingQueriedDocuments } =
+    useFetchDocuments({ user_id: userId, folder_type: q });
+
+  const {
+    mutate: addNewFolder,
+    isPending: isAddingNewFolder,
+    isSuccess: isSuccessAddingNewFolder,
+  } = useAddNewFolder();
 
   useEffect(() => {
     if (isDeleteSuccess) {
@@ -90,6 +110,11 @@ const DocumentsPage = () => {
         onAddRequestToDocument={addRequestToDocument}
         storedDocuments={storedDocuments}
         isFetchingStoredDocuments={isFetchingStoredDocuments}
+        queriedDocuments={queriedDocuments}
+        isFetchingQueriedDocuments={isFetchingQueriedDocuments}
+        onAddNewFolder={addNewFolder}
+        isAddingNewFolder={isAddingNewFolder}
+        isSuccessAddingNewFolder={isSuccessAddingNewFolder}
       />
       {/* <Documents
         onDeleteDocument={deleteDocument}

@@ -1,14 +1,16 @@
 import dependencies from '@/core/dependencies';
 import { useQuery } from '@tanstack/react-query';
 
-const fetchStoredDocuments = async (): Promise<string[]> => {
-  return await dependencies.documentProvider.documentRepository.fetchStoredDocuments();
+const fetchStoredDocuments = async (userId?: string): Promise<string[]> => {
+  return await dependencies.documentProvider.documentRepository.fetchStoredDocuments(
+    userId,
+  );
 };
 
-const useFetchStoredDocuments = () => {
+const useFetchStoredDocuments = (userId?: string) => {
   return useQuery({
-    queryKey: ['fetchStoredDocuments'],
-    queryFn: fetchStoredDocuments,
+    queryKey: ['fetchStoredDocuments', userId],
+    queryFn: () => fetchStoredDocuments(userId),
   });
 };
 

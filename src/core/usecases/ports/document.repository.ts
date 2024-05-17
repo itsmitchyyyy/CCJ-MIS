@@ -1,7 +1,9 @@
 import {
+  AddNewFolderParams,
   AddRequestToDocumentDTO,
   FetchDocumentRequestsQueryParams,
   FetchDocumentRequestsResponseDTO,
+  FetchDocumentsQuery,
   FetchDocumentsResponseDTO,
   UpdateDocumentRequestDTO,
   UploadDocumentRequestDTO,
@@ -9,7 +11,9 @@ import {
 
 export default interface DocumentRepositoryInterface {
   uploadDocument(data: UploadDocumentRequestDTO): Promise<void>;
-  fetchDocuments(): Promise<FetchDocumentsResponseDTO[]>;
+  fetchDocuments(
+    query?: FetchDocumentsQuery,
+  ): Promise<FetchDocumentsResponseDTO[]>;
   updateDocument(id: string, data: UpdateDocumentRequestDTO): Promise<void>;
   deleeteDocument(id: string): Promise<void>;
   addRequestToDocument(data: AddRequestToDocumentDTO): Promise<void>;
@@ -20,5 +24,6 @@ export default interface DocumentRepositoryInterface {
     id: string,
     data: UpdateDocumentRequestDTO,
   ): Promise<void>;
-  fetchStoredDocuments(): Promise<string[]>;
+  fetchStoredDocuments(userId?: string): Promise<string[]>;
+  addNewFolder(data: AddNewFolderParams): Promise<void>;
 }

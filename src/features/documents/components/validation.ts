@@ -13,3 +13,7 @@ export const validationSchema = yup
 export const rejectedValidationSchema = yup.object({
   rejected_reason: yup.string().required('Reason is required'),
 });
+
+export const addFolderValidationSchema = yup.object({
+  folderName: yup.string().required('Folder name is required'),
+});
