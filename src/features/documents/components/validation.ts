@@ -10,10 +10,20 @@ export const validationSchema = yup
   })
   .required();
 
-export const rejectedValidationSchema = yup.object({
-  rejected_reason: yup.string().required('Reason is required'),
-});
+export const rejectedValidationSchema = yup
+  .object({
+    rejected_reason: yup.string().required('Reason is required'),
+  })
+  .required();
 
-export const addFolderValidationSchema = yup.object({
-  folderName: yup.string().required('Folder name is required'),
-});
+export const addFolderValidationSchema = yup
+  .object({
+    folderName: yup.string().required('Folder name is required'),
+  })
+  .required();
+
+export const uploadValidationSchema = yup
+  .object({
+    type: yup.string().oneOf(['student', 'teacher']).required(),
+  })
+  .required();

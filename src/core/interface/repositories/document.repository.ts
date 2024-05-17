@@ -36,6 +36,10 @@ export default class DocumentRepository implements DocumentRepositoryInterface {
       formData.append('is_private', JSON.stringify(+data.is_private));
     }
 
+    if (data.folder_type) {
+      formData.append('folder_type', data.folder_type);
+    }
+
     return await this.httpAdapter.post(urls.documents.base, formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     });

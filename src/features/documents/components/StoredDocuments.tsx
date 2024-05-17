@@ -1,8 +1,21 @@
 import { AccessType } from '@/features/account/types';
 import { useGlobalState } from '@/hooks/global';
 import { capitalizeStringWithSpace } from '@/utils/string';
-import { FolderOutlined, PaperClipOutlined } from '@ant-design/icons';
-import { Breadcrumb, Button, Form, Input, List } from 'antd';
+import {
+  FolderOutlined,
+  InboxOutlined,
+  PaperClipOutlined,
+} from '@ant-design/icons';
+import {
+  Breadcrumb,
+  Button,
+  Form,
+  Input,
+  List,
+  Upload,
+  UploadFile,
+  message,
+} from 'antd';
 import { useSearchParams } from 'react-router-dom';
 import {
   DocumentsHeader,
@@ -13,14 +26,22 @@ import {
 import {
   AddNewFolderParams,
   FetchDocumentsResponseDTO,
+  UploadDocumentRequestDTO,
 } from '@/core/domain/dto/document.dto';
 import { BACKEND_URL } from '@/config';
 import { Modal } from '@/components/Elements/Modal';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { addFolderValidationSchema } from './validation';
+import {
+  addFolderValidationSchema,
+  uploadValidationSchema,
+} from './validation';
 import { ErrorMessage } from '@hookform/error-message';
+import { RcFile } from 'antd/es/upload';
+import { DocumentStatus, DocumentType } from '../types';
+
+const { Dragger } = Upload;
 
 type Props = {
   storedDocuments: string[];
@@ -30,6 +51,9 @@ type Props = {
   onAddNewFolder: (data: AddNewFolderParams) => void;
   isAddingNewFolder?: boolean;
   isSuccessAddingNewFolder?: boolean;
+  onUploadDocuments: (data: UploadDocumentRequestDTO) => void;
+  isLoading?: boolean;
+  isSuccessful?: boolean;
 };
 
 const StoredDocuments = ({
@@ -40,14 +64,22 @@ const StoredDocuments = ({
   onAddNewFolder,
   isAddingNewFolder,
   isSuccessAddingNewFolder,
+  onUploadDocuments,
+  isLoading,
+  isSuccessful,
 }: Props) => {
   const {
     useAuth: { accessType, id },
   } = useGlobalState();
+  const [messageApi, contextHolder] = message.useMessage();
   const [searchParams, setSearchParams] = useSearchParams();
   const [isAddingNewFolderModal, setIsAddingNewFolderModal] = useState(false);
 
   const q = searchParams.get('q');
+
+  const [documentFiles, setDocumentFiles] = useState<UploadFile[]>([]);
+  const [openUploadDocumentsModal, setOpenUploadDocumentsModal] =
+    useState<boolean>(false);
 
   const handleDocumentClick = (document: string) => {
     setSearchParams({ q: document });
@@ -74,6 +106,68 @@ const StoredDocuments = ({
     onAddNewFolder(params);
   };
 
+  const { handleSubmit: handleSubmitUpload, reset: resetUpload } = useForm({
+    defaultValues: {
+      type: accessType as 'teacher' | 'student',
+    },
+    resolver: yupResolver(uploadValidationSchema),
+  });
+
+  const handleUploadFile = (request: { type: string }) => {
+    if (documentFiles.length === 0) {
+      messageApi.error('Please select a file to upload');
+      return;
+    }
+
+    const data: UploadDocumentRequestDTO = {
+      type:
+        accessType === AccessType.Teacher
+          ? DocumentType.Teacher
+          : DocumentType.Student,
+      user_id: id,
+      documents: documentFiles,
+      folder_type: q || undefined,
+      status: DocumentStatus.Approved,
+    };
+
+    onUploadDocuments(data);
+  };
+
+  const handleBeforeUploadFile = (_: RcFile, fileList: RcFile[]) => {
+    let isAllFilesValid = true;
+    if (fileList.length > 0) {
+      isAllFilesValid = fileList.every((file) => {
+        const extension = file.name.split('.').pop() as string;
+
+        return [
+          'xlsx',
+          'xls',
+          'doc',
+          'docx',
+          'ppt',
+          'pptx',
+          'txt',
+          'pdf',
+        ].includes(extension.toLowerCase());
+      });
+    }
+
+    if (isAllFilesValid) {
+      setDocumentFiles([...documentFiles, ...fileList]);
+    } else {
+      messageApi.error('Some files are invalid file type');
+    }
+
+    return false;
+  };
+
+  const handleOnRemoveFile = (file: UploadFile) => {
+    const index = documentFiles.indexOf(file);
+    const newDocumentFiles = documentFiles.slice();
+    newDocumentFiles.splice(index, 1);
+    setDocumentFiles(newDocumentFiles);
+  };
+
   useEffect(() => {
     if (isSuccessAddingNewFolder) {
       setIsAddingNewFolderModal(false);
@@ -81,17 +175,34 @@ const StoredDocuments = ({
     }
   });
 
+  useEffect(() => {
+    if (isSuccessful) {
+      setOpenUploadDocumentsModal(false);
+      setDocumentFiles([]);
+      resetUpload();
+    }
+  }, [isSuccessful]);
+
   return (
     <DocumentsWrapper>
+      {contextHolder}
       <DocumentsHeader>
         <h2>Stored Documents</h2>
-        {accessType === AccessType.Teacher && (
+        {accessType === AccessType.Teacher && !q && (
           <UploadButton
             style={{ alignItems: 'center' }}
             size="large"
             onClick={() => setIsAddingNewFolderModal(true)}
             icon={<FolderOutlined />}>
             New Folder
+          </UploadButton>
+        )}
+        {accessType === AccessType.Teacher && q && (
+          <UploadButton
+            size="large"
+            type="primary"
+            onClick={() => setOpenUploadDocumentsModal(true)}>
+            Upload Documents
           </UploadButton>
         )}
       </DocumentsHeader>
@@ -195,6 +306,33 @@ const StoredDocuments = ({
               </Form.Item>
             )}
           />
+        </Form>
+      </Modal>
+
+      <Modal
+        isLoading={isLoading}
+        open={openUploadDocumentsModal}
+        onSubmit={handleSubmitUpload(handleUploadFile)}
+        title="Upload Documents"
+        onCancel={() => setOpenUploadDocumentsModal(false)}>
+        <Form layout="vertical">
+          <Dragger
+            accept=".xlsx, .xls, .doc, .docx,.ppt, .pptx,.txt,.pdf"
+            multiple
+            beforeUpload={handleBeforeUploadFile}
+            onRemove={handleOnRemoveFile}
+            fileList={documentFiles}>
+            <p className="ant-upload-drag-icon">
+              <InboxOutlined />
+            </p>
+            <p className="ant-upload-text">
+              Click or drag file to this area to upload
+            </p>
+            <p className="ant-upload-hint">
+              Support for a single or bulk upload. Strictly prohibited from
+              banned files.
+            </p>
+          </Dragger>
         </Form>
       </Modal>
     </DocumentsWrapper>

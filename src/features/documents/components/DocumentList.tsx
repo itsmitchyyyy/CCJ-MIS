@@ -156,6 +156,9 @@ const DocumentList = ({
           onAddNewFolder={onAddNewFolder}
           isAddingNewFolder={isAddingNewFolder}
           isSuccessAddingNewFolder={isSuccessAddingNewFolder}
+          onUploadDocuments={onUploadDocuments}
+          isLoading={isLoading}
+          isSuccessful={isSuccessful}
         />
       ),
     },
