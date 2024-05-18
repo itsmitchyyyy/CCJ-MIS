@@ -86,6 +86,7 @@ const StoredDocuments = ({
   const [documentFiles, setDocumentFiles] = useState<UploadFile[]>([]);
   const [openUploadDocumentsModal, setOpenUploadDocumentsModal] =
     useState<boolean>(false);
+  const [isFolder, setIsFolder] = useState<boolean>(false);
 
   const handleDocumentClick = (document: string) => {
     setSearchParams({ q: document });
@@ -189,6 +190,13 @@ const StoredDocuments = ({
     }
   }, [isSuccessful]);
 
+  useEffect(() => {
+    if (q) {
+      const hasFolder = storedDocuments.includes(q);
+      setIsFolder(hasFolder);
+    }
+  }, [q]);
+
   return (
     <DocumentsWrapper>
       {contextHolder}
@@ -267,7 +275,7 @@ const StoredDocuments = ({
         </>
       )}
 
-      {accessType !== AccessType.Admin && !q && (
+      {accessType !== AccessType.Admin && (!q || (q && !isFolder)) && (
         <List
           style={{ marginTop: '2em' }}
           loading={isFetchingStoredDocuments}
@@ -296,7 +304,7 @@ const StoredDocuments = ({
         />
       )}
 
-      {q && (
+      {q && isFolder && (
         <DocumentsWrapper>
           <DocumentsHeader>
             <Breadcrumb
