@@ -35,7 +35,7 @@ import {
 } from '@/core/domain/dto/document.dto';
 import { BACKEND_URL } from '@/config';
 import { Modal } from '@/components/Elements/Modal';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import {
@@ -45,6 +45,8 @@ import {
 import { ErrorMessage } from '@hookform/error-message';
 import { RcFile } from 'antd/es/upload';
 import { DocumentStatus, DocumentType } from '../types';
+import { FetchStudentsResponseDTO } from '@/core/domain/dto/student.dto';
+import { FetchTeachersResponseDTO } from '@/core/domain/dto/user.dto';
 
 const { Dragger } = Upload;
 
@@ -59,6 +61,10 @@ type Props = {
   onUploadDocuments: (data: UploadDocumentRequestDTO) => void;
   isLoading?: boolean;
   isSuccessful?: boolean;
+  students: FetchStudentsResponseDTO[];
+  isFetchingStudents?: boolean;
+  teachers: FetchTeachersResponseDTO[];
+  isFetchingTeachers?: boolean;
 };
 
 const StoredDocuments = ({
@@ -72,6 +78,10 @@ const StoredDocuments = ({
   onUploadDocuments,
   isLoading,
   isSuccessful,
+  students,
+  isFetchingStudents,
+  teachers,
+  isFetchingTeachers,
 }: Props) => {
   const {
     useAuth: { accessType, id },
@@ -79,14 +89,19 @@ const StoredDocuments = ({
   const [messageApi, contextHolder] = message.useMessage();
   const [searchParams, setSearchParams] = useSearchParams();
   const [isAddingNewFolderModal, setIsAddingNewFolderModal] = useState(false);
+  const [searchValue, setSearchValue] = useState<string>(
+    searchParams.get('search') || '',
+  );
 
   const q = searchParams.get('q');
   const type = searchParams.get('type');
+  // const searchValue = searchParams.get('search') || '';
 
   const [documentFiles, setDocumentFiles] = useState<UploadFile[]>([]);
   const [openUploadDocumentsModal, setOpenUploadDocumentsModal] =
     useState<boolean>(false);
   const [isFolder, setIsFolder] = useState<boolean>(false);
+  const searchTimeoutRef = useRef<NodeJS.Timeout | undefined>();
 
   const handleDocumentClick = (document: string) => {
     setSearchParams({ q: document });
@@ -175,6 +190,22 @@ const StoredDocuments = ({
     setDocumentFiles(newDocumentFiles);
   };
 
+  const handleSearch = (keyword: string) => {
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+    }
+
+    searchTimeoutRef.current = setTimeout(() => {
+      performSearch(keyword);
+    }, 300);
+  };
+
+  const performSearch = (keyword: string) => {
+    searchParams.set('search', keyword);
+
+    setSearchParams(searchParams);
+  };
+
   useEffect(() => {
     if (isSuccessAddingNewFolder) {
       setIsAddingNewFolderModal(false);
@@ -230,7 +261,10 @@ const StoredDocuments = ({
             style={{ marginTop: '2em', marginBottom: '2em' }}>
             <Button
               style={{ minWidth: '200px' }}
-              onClick={() => setSearchParams({ type: 'student' })}
+              onClick={() => {
+                setSearchParams({ type: 'student' });
+                setSearchValue('');
+              }}
               size="large"
               type={type === 'student' ? 'primary' : undefined}>
               Student
@@ -238,7 +272,10 @@ const StoredDocuments = ({
 
             <Button
               style={{ minWidth: '200px' }}
-              onClick={() => setSearchParams({ type: 'teacher' })}
+              onClick={() => {
+                setSearchParams({ type: 'teacher' });
+                setSearchValue('');
+              }}
               size="large"
               type={type === 'teacher' ? 'primary' : undefined}>
               Teacher
@@ -246,7 +283,10 @@ const StoredDocuments = ({
 
             <Button
               style={{ minWidth: '200px' }}
-              onClick={() => setSearchParams({ type: 'office' })}
+              onClick={() => {
+                setSearchParams({ type: 'office' });
+                setSearchValue('');
+              }}
               size="large"
               type={type === 'office' ? 'primary' : undefined}>
               Office
@@ -266,9 +306,50 @@ const StoredDocuments = ({
               </DocumentsHeader>
 
               {type !== 'office' && (
-                <FilterWrapper>
-                  <Input placeholder={`Search ${type}...`} size="large" />
-                </FilterWrapper>
+                <>
+                  <FilterWrapper>
+                    <Input
+                      value={searchValue}
+                      placeholder={`Search ${type}...`}
+                      size="large"
+                      onChange={(e) => {
+                        const { value } = e.target;
+                        handleSearch(value);
+                        setSearchValue(value);
+                      }}
+                    />
+                  </FilterWrapper>
+
+                  <div style={{ marginTop: '1em' }}>
+                    {type === 'student' && (
+                      <List
+                        dataSource={students}
+                        loading={isFetchingStudents}
+                        renderItem={(student) => (
+                          <List.Item>
+                            <a>
+                              {student.first_name} {student.last_name}
+                            </a>
+                          </List.Item>
+                        )}
+                      />
+                    )}
+
+                    {type === 'teacher' && (
+                      <List
+                        dataSource={teachers}
+                        loading={isFetchingTeachers}
+                        renderItem={(teacher) => (
+                          <List.Item>
+                            <a>
+                              {teacher.first_name} {teacher.last_name}
+                            </a>
+                          </List.Item>
+                        )}
+                      />
+                    )}
+                  </div>
+                </>
               )}
             </DocumentsWrapper>
           )}

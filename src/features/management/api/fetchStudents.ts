@@ -16,7 +16,7 @@ const fetchStudents = async (
 
 const useFetchStudents = (queryParams?: FetchStudentsQueryParams) => {
   const query = useQuery({
-    queryKey: ['fetch-students'],
+    queryKey: ['fetch-students', queryParams],
     queryFn: () => fetchStudents(queryParams),
   });
 

@@ -36,6 +36,8 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { validationSchema } from './validation';
 import { ErrorMessage } from '@hookform/error-message';
 import { InboxOutlined } from '@ant-design/icons';
+import { FetchStudentsResponseDTO } from '@/core/domain/dto/student.dto';
+import { FetchTeachersResponseDTO } from '@/core/domain/dto/user.dto';
 
 const { Dragger } = Upload;
 
@@ -67,6 +69,10 @@ type Props = {
   onAddNewFolder: (data: AddNewFolderParams) => void;
   isAddingNewFolder?: boolean;
   isSuccessAddingNewFolder?: boolean;
+  students: FetchStudentsResponseDTO[];
+  isFetchingStudents?: boolean;
+  teachers: FetchTeachersResponseDTO[];
+  isFetchingTeachers?: boolean;
 };
 
 const DocumentList = ({
@@ -91,6 +97,10 @@ const DocumentList = ({
   onAddNewFolder,
   isAddingNewFolder,
   isSuccessAddingNewFolder,
+  students,
+  isFetchingStudents,
+  teachers,
+  isFetchingTeachers,
 }: Props) => {
   const {
     useAuth: { accessType, id },
@@ -159,6 +169,10 @@ const DocumentList = ({
           onUploadDocuments={onUploadDocuments}
           isLoading={isLoading}
           isSuccessful={isSuccessful}
+          students={students}
+          isFetchingStudents={isFetchingStudents}
+          teachers={teachers}
+          isFetchingTeachers={isFetchingTeachers}
         />
       ),
     },

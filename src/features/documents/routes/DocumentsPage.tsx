@@ -1,5 +1,4 @@
 import { AdminLayout } from '@/components/Layout';
-import Documents from '../components/Documents';
 import { useUploadDocuments } from '../api/uploadDocuments';
 import { useFetchDocuments } from '../api/fetchDocuments';
 import { Loader } from '@/components/Elements/Loader';
@@ -15,6 +14,8 @@ import DocumentList from '../components/DocumentList';
 import { useFetchStoredDocuments } from '../api/fetchStoredDocuments';
 import { useSearchParams } from 'react-router-dom';
 import { useAddNewFolder } from '../api/addNewFolder';
+import { useFetchStudents } from '@/features/management/api/fetchStudents';
+import { useFetchTeachers } from '@/features/management/api/fetchTeachers';
 
 const DocumentsPage = () => {
   const {
@@ -29,6 +30,9 @@ const DocumentsPage = () => {
       : searchParams.get('user_id') || undefined;
 
   const q = searchParams.get('q') || undefined;
+
+  const type = searchParams.get('type') || undefined;
+  const search = searchParams.get('search') || undefined;
 
   const {
     mutate: uploadDocuments,
@@ -83,6 +87,12 @@ const DocumentsPage = () => {
     isSuccess: isSuccessAddingNewFolder,
   } = useAddNewFolder();
 
+  const { data: students = [], isFetching: isFetchingStudents } =
+    useFetchStudents({ search: type === 'student' ? search : undefined });
+
+  const { data: teachers = [], isFetching: isFetchingTeachers } =
+    useFetchTeachers({ search: type === 'teacher' ? search : undefined });
+
   useEffect(() => {
     if (isDeleteSuccess) {
       refetchDocuments();
@@ -115,6 +125,10 @@ const DocumentsPage = () => {
         onAddNewFolder={addNewFolder}
         isAddingNewFolder={isAddingNewFolder}
         isSuccessAddingNewFolder={isSuccessAddingNewFolder}
+        students={students}
+        isFetchingStudents={isFetchingStudents}
+        teachers={teachers}
+        isFetchingTeachers={isFetchingTeachers}
       />
       {/* <Documents
         onDeleteDocument={deleteDocument}
