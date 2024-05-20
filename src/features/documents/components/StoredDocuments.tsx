@@ -243,6 +243,15 @@ const StoredDocuments = ({
     }
   }, [q]);
 
+  // Cleanup the search timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
+    };
+  }, []);
+
   return (
     <DocumentsWrapper>
       {contextHolder}

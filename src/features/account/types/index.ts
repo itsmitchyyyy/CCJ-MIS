@@ -46,6 +46,7 @@ export type FetchAccountsResponse = {
 
 export type FetchAccountsParams = {
   access_type?: AccessType;
+  search?: string;
 };
 
 export type FetchAccountResponse = {

@@ -10,6 +10,8 @@ type Props = {
   onSubmit: () => void;
   onCancel?: () => void;
   footer?: ModalFooterRender | React.ReactNode;
+  centered?: boolean;
+  okText?: string;
 };
 
 const Modal = ({
@@ -20,11 +22,14 @@ const Modal = ({
   onSubmit,
   onCancel,
   footer,
+  centered,
+  okText = 'Save',
 }: Props) => {
   return (
     <AntModal
+      centered={centered}
       title={title}
-      okText="Save"
+      okText={okText}
       open={open}
       onOk={onSubmit}
       onCancel={onCancel}
