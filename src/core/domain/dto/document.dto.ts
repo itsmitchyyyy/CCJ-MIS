@@ -18,6 +18,7 @@ export type UploadDocumentRequestDTO = {
 export type FetchDocumentsQuery = {
   user_id?: string;
   folder_type?: string;
+  type?: string;
 };
 
 export type FetchDocumentsResponseDTO = {

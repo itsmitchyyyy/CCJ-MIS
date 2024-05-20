@@ -7,6 +7,10 @@ export const validationSchema = yup
       is: (value: string) => value === 'document',
       then: () => yup.boolean().required(),
     }),
+    folder_type: yup.string().when('type', {
+      is: (value: string) => value === 'office',
+      then: () => yup.string().required(),
+    }),
   })
   .required();
 

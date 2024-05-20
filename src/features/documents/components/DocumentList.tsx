@@ -3,6 +3,7 @@ import {
   CollapseProps,
   Form,
   Radio,
+  Select,
   Upload,
   UploadFile,
   message,
@@ -188,6 +189,7 @@ const DocumentList = ({
     defaultValues: {
       is_private: false,
       type: 'office',
+      folder_type: '',
     },
     resolver: yupResolver(validationSchema),
   });
@@ -195,6 +197,7 @@ const DocumentList = ({
   const handleUploadFile = (request: {
     type: string;
     is_private?: boolean;
+    folder_type?: string;
   }) => {
     if (documentFiles.length === 0) {
       messageApi.error('Please select a file to upload');
@@ -212,6 +215,7 @@ const DocumentList = ({
       documents: documentFiles,
       status: DocumentStatus.Approved,
       is_private: request.is_private,
+      folder_type: request.folder_type,
     };
 
     onUploadDocuments(data);
@@ -341,6 +345,35 @@ const DocumentList = ({
                 />
               </>
             )}
+
+          {accessType === AccessType.Admin && type === DocumentType.Office && (
+            <>
+              <ErrorMessage
+                name="folder_type"
+                errors={errors}
+                render={({ message }) => <ErrorWrapper>{message}</ErrorWrapper>}
+              />
+
+              <Controller
+                control={control}
+                name="folder_type"
+                render={({ field: { onChange, value } }) => (
+                  <Form.Item label="Folder">
+                    <Select
+                      onChange={onChange}
+                      value={value}
+                      placeholder="Select a folder">
+                      {storedDocuments.map((folder) => (
+                        <Select.Option key={folder} value={folder}>
+                          {folder}
+                        </Select.Option>
+                      ))}
+                    </Select>
+                  </Form.Item>
+                )}
+              />
+            </>
+          )}
 
           <Dragger
             accept=".xlsx, .xls, .doc, .docx,.ppt, .pptx,.txt,.pdf"

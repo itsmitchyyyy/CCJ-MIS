@@ -104,7 +104,14 @@ const StoredDocuments = ({
   const searchTimeoutRef = useRef<NodeJS.Timeout | undefined>();
 
   const handleDocumentClick = (document: string) => {
-    setSearchParams({ q: document });
+    if (accessType === AccessType.Admin) {
+      searchParams.set('q', document);
+      searchParams.set('type', 'office');
+    } else {
+      searchParams.set('q', document);
+    }
+
+    setSearchParams(searchParams);
   };
 
   const {
@@ -233,7 +240,7 @@ const StoredDocuments = ({
       {contextHolder}
       <DocumentsHeader>
         <h2>Stored Documents</h2>
-        {accessType === AccessType.Teacher && !q && (
+        {accessType !== AccessType.Student && !q && (
           <UploadButton
             style={{ alignItems: 'center' }}
             size="large"
@@ -304,6 +311,35 @@ const StoredDocuments = ({
                     : 'Office Documents'}
                 </h2>
               </DocumentsHeader>
+
+              {type == 'office' && !q && (
+                <List
+                  style={{ marginTop: '2em' }}
+                  loading={isFetchingStoredDocuments}
+                  grid={{ gutter: 16, xs: 1, sm: 2, md: 4 }}
+                  dataSource={storedDocuments}
+                  renderItem={(item) => (
+                    <List.Item>
+                      <Button
+                        onClick={() => handleDocumentClick(item)}
+                        size="large"
+                        type="primary"
+                        style={{
+                          width: '200px',
+                          textAlign: 'left',
+                          whiteSpace: 'nowrap',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                        }}
+                        icon={<FolderOutlined />}>
+                        <span style={{ display: 'inline' }}>
+                          {capitalizeStringWithSpace(item.replace(/_/g, ' '))}
+                        </span>
+                      </Button>
+                    </List.Item>
+                  )}
+                />
+              )}
 
               {type !== 'office' && (
                 <>
@@ -393,7 +429,16 @@ const StoredDocuments = ({
               items={[
                 {
                   title: <a>Back</a>,
-                  onClick: () => setSearchParams({ q: '' }),
+                  onClick: () => {
+                    if (accessType === AccessType.Admin) {
+                      searchParams.delete('q');
+                      searchParams.set('type', 'office');
+                    } else {
+                      searchParams.set('q', '');
+                    }
+
+                    setSearchParams(searchParams);
+                  },
                 },
                 { title: capitalizeStringWithSpace(q.replace(/_/g, ' ')) },
               ]}

@@ -76,10 +76,17 @@ const DocumentsPage = () => {
   } = useDeleteDocument();
 
   const { data: storedDocuments = [], isLoading: isFetchingStoredDocuments } =
-    useFetchStoredDocuments(userId);
+    useFetchStoredDocuments(
+      userId,
+      accessType === AccessType.Admin ? accessType : undefined,
+    );
 
   const { data: queriedDocuments = [], isLoading: isFetchingQueriedDocuments } =
-    useFetchDocuments({ user_id: userId, folder_type: q });
+    useFetchDocuments({
+      user_id: userId,
+      folder_type: q,
+      type: accessType === AccessType.Admin ? type : undefined,
+    });
 
   const {
     mutate: addNewFolder,

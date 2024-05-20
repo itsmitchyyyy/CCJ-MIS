@@ -11,6 +11,7 @@ import {
 } from '@/core/domain/dto/document.dto';
 import DocumentRepositoryInterface from '@/core/usecases/ports/document.repository';
 import { HttpAdapter } from '@/core/usecases/ports/httpAdapter.interface';
+import { AccessType } from '@/features/account/types';
 
 export default class DocumentRepository implements DocumentRepositoryInterface {
   httpAdapter: HttpAdapter;
@@ -89,9 +90,12 @@ export default class DocumentRepository implements DocumentRepositoryInterface {
     );
   };
 
-  fetchStoredDocuments = async (userId?: string): Promise<string[]> => {
+  fetchStoredDocuments = async (
+    userId?: string,
+    accessType?: AccessType,
+  ): Promise<string[]> => {
     return await this.httpAdapter.get(urls.documents.storedDocuments, {
-      params: { user_id: userId },
+      params: { user_id: userId, access_type: accessType },
     });
   };
 
