@@ -24,15 +24,17 @@ const DocumentsPage = () => {
 
   const [searchParams] = useSearchParams();
 
-  const userId =
-    accessType !== AccessType.Admin
-      ? id
-      : searchParams.get('user_id') || undefined;
-
   const q = searchParams.get('q') || undefined;
 
   const type = searchParams.get('type') || undefined;
   const search = searchParams.get('search') || undefined;
+
+  const userId =
+    accessType !== AccessType.Admin
+      ? id
+      : ['teacher', 'student'].includes(type || '')
+      ? searchParams.get('user_id') || undefined
+      : undefined;
 
   const {
     mutate: uploadDocuments,
@@ -78,7 +80,10 @@ const DocumentsPage = () => {
   const { data: storedDocuments = [], isLoading: isFetchingStoredDocuments } =
     useFetchStoredDocuments(
       userId,
-      accessType === AccessType.Admin ? accessType : undefined,
+      accessType === AccessType.Admin &&
+        !['teacher', 'student'].includes(type || '')
+        ? accessType
+        : undefined,
     );
 
   const { data: queriedDocuments = [], isLoading: isFetchingQueriedDocuments } =

@@ -1,6 +1,6 @@
 import { AccessType } from '@/features/account/types';
 import { useGlobalState } from '@/hooks/global';
-import { capitalizeStringWithSpace } from '@/utils/string';
+import { capitalizeString, capitalizeStringWithSpace } from '@/utils/string';
 import {
   FolderOutlined,
   InboxOutlined,
@@ -95,7 +95,7 @@ const StoredDocuments = ({
 
   const q = searchParams.get('q');
   const type = searchParams.get('type');
-  // const searchValue = searchParams.get('search') || '';
+  const userId = searchParams.get('user_id');
 
   const [documentFiles, setDocumentFiles] = useState<UploadFile[]>([]);
   const [openUploadDocumentsModal, setOpenUploadDocumentsModal] =
@@ -106,7 +106,7 @@ const StoredDocuments = ({
   const handleDocumentClick = (document: string) => {
     if (accessType === AccessType.Admin) {
       searchParams.set('q', document);
-      searchParams.set('type', 'office');
+      searchParams.set('type', type || 'office');
     } else {
       searchParams.set('q', document);
     }
@@ -213,6 +213,14 @@ const StoredDocuments = ({
     setSearchParams(searchParams);
   };
 
+  const getUserInfo = (id: string, type: string) => {
+    if (type === 'student') {
+      return students.find((student) => student.id.toString() === id);
+    }
+
+    return teachers.find((teacher) => teacher.id.toString() === id);
+  };
+
   useEffect(() => {
     if (isSuccessAddingNewFolder) {
       setIsAddingNewFolderModal(false);
@@ -304,11 +312,15 @@ const StoredDocuments = ({
             <DocumentsWrapper>
               <DocumentsHeader>
                 <h2>
-                  {type === 'student'
-                    ? 'Student List'
-                    : type === 'teacher'
-                    ? 'Teacher List'
-                    : 'Office Documents'}
+                  {!userId && (
+                    <>
+                      {type === 'student'
+                        ? 'Student List'
+                        : type === 'teacher'
+                        ? 'Teacher List'
+                        : 'Office Documents'}
+                    </>
+                  )}
                 </h2>
               </DocumentsHeader>
 
@@ -343,27 +355,60 @@ const StoredDocuments = ({
 
               {type !== 'office' && (
                 <>
-                  <FilterWrapper>
-                    <Input
-                      value={searchValue}
-                      placeholder={`Search ${type}...`}
-                      size="large"
-                      onChange={(e) => {
-                        const { value } = e.target;
-                        handleSearch(value);
-                        setSearchValue(value);
-                      }}
+                  {userId && (
+                    <Breadcrumb
+                      style={{ fontSize: '1.2em' }}
+                      items={[
+                        {
+                          title: <a>{capitalizeString(type)} List</a>,
+                          onClick: () => {
+                            searchParams.delete('user_id');
+                            searchParams.delete('q');
+                            searchParams.set('type', type || 'office');
+
+                            setSearchParams(searchParams);
+                          },
+                        },
+                        {
+                          title: (
+                            <>
+                              {getUserInfo(userId, type)?.first_name}{' '}
+                              {getUserInfo(userId, type)?.last_name} Document's
+                            </>
+                          ),
+                        },
+                      ]}
                     />
-                  </FilterWrapper>
+                  )}
+                  {!userId && (
+                    <FilterWrapper>
+                      <Input
+                        value={searchValue}
+                        placeholder={`Search ${type}...`}
+                        size="large"
+                        onChange={(e) => {
+                          const { value } = e.target;
+                          handleSearch(value);
+                          setSearchValue(value);
+                        }}
+                      />
+                    </FilterWrapper>
+                  )}
 
                   <div style={{ marginTop: '1em' }}>
-                    {type === 'student' && (
+                    {type === 'student' && !userId && (
                       <List
                         dataSource={students}
                         loading={isFetchingStudents}
                         renderItem={(student) => (
                           <List.Item>
-                            <a>
+                            <a
+                              onClick={() => {
+                                searchParams.delete('search');
+                                searchParams.set('type', 'student');
+                                searchParams.set('user_id', student.id);
+                                setSearchParams(searchParams);
+                              }}>
                               {student.first_name} {student.last_name}
                             </a>
                           </List.Item>
@@ -371,13 +416,19 @@ const StoredDocuments = ({
                       />
                     )}
 
-                    {type === 'teacher' && (
+                    {type === 'teacher' && !userId && (
                       <List
                         dataSource={teachers}
                         loading={isFetchingTeachers}
                         renderItem={(teacher) => (
                           <List.Item>
-                            <a>
+                            <a
+                              onClick={() => {
+                                searchParams.delete('search');
+                                searchParams.set('type', 'teacher');
+                                searchParams.set('user_id', teacher.id);
+                                setSearchParams(searchParams);
+                              }}>
                               {teacher.first_name} {teacher.last_name}
                             </a>
                           </List.Item>
@@ -385,6 +436,37 @@ const StoredDocuments = ({
                       />
                     )}
                   </div>
+
+                  {userId && !q && (
+                    <List
+                      style={{ marginTop: '2em' }}
+                      loading={isFetchingStoredDocuments}
+                      grid={{ gutter: 16, xs: 1, sm: 2, md: 4 }}
+                      dataSource={storedDocuments}
+                      renderItem={(item) => (
+                        <List.Item>
+                          <Button
+                            onClick={() => handleDocumentClick(item)}
+                            size="large"
+                            type="primary"
+                            style={{
+                              width: '200px',
+                              textAlign: 'left',
+                              whiteSpace: 'nowrap',
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                            }}
+                            icon={<FolderOutlined />}>
+                            <span style={{ display: 'inline' }}>
+                              {capitalizeStringWithSpace(
+                                item.replace(/_/g, ' '),
+                              )}
+                            </span>
+                          </Button>
+                        </List.Item>
+                      )}
+                    />
+                  )}
                 </>
               )}
             </DocumentsWrapper>
@@ -432,7 +514,7 @@ const StoredDocuments = ({
                   onClick: () => {
                     if (accessType === AccessType.Admin) {
                       searchParams.delete('q');
-                      searchParams.set('type', 'office');
+                      searchParams.set('type', type || 'office');
                     } else {
                       searchParams.set('q', '');
                     }
