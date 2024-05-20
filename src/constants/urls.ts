@@ -60,4 +60,7 @@ export default {
   settings: {
     base: '/settings',
   },
+  messages: {
+    base: '/messages',
+  },
 };

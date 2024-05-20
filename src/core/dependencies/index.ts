@@ -22,6 +22,8 @@ import AnnouncementRepository from '../interface/repositories/announcement.repos
 import announcementProvider from './providers/announcement.provider';
 import SettingsRepository from '../interface/repositories/settings.repository';
 import settingsProvider from './providers/settings.provider';
+import MessageRepository from '../interface/repositories/message.repository';
+import messageProvider from './providers/message.provider';
 
 const httpAdapter = new HttpAxiosAdapter(axiosInstance);
 
@@ -36,6 +38,7 @@ const assignmentRepository = new AssignmentRepository(httpAdapter);
 const facilityRepository = new FacilityRepository(httpAdapter);
 const announcementRepository = new AnnouncementRepository(httpAdapter);
 const settingsRepository = new SettingsRepository(httpAdapter);
+const messageRepository = new MessageRepository(httpAdapter);
 
 export default {
   authProvider: authProvider({ authRepository }),
@@ -49,4 +52,5 @@ export default {
   facilityProvider: facilityProvider({ facilityRepository }),
   announcementProvider: announcementProvider({ announcementRepository }),
   settingsProvider: settingsProvider({ settingsRepository }),
+  messageProvider: messageProvider({ messageRepository }),
 };
