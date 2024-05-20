@@ -18,22 +18,14 @@ import {
   UserOutlined,
 } from '@ant-design/icons';
 import { useLogout } from '@/features/auth/api/logout';
-import {
-  AutoComplete,
-  Avatar,
-  Button,
-  FloatButton,
-  Form,
-  Input,
-  Upload,
-} from 'antd';
+import { Avatar, Button, FloatButton, Form, Input, Spin, Upload } from 'antd';
 import { useGlobalState } from '@/hooks/global';
 import { BACKEND_URL } from '@/config';
 import { useNavigate } from 'react-router-dom';
 import { Modal } from '../Elements/Modal';
 import { RcFile, UploadFile } from 'antd/es/upload';
 import { useFetchAccounts } from '@/features/account/api/fetchAccounts';
-import { DefaultOptionType } from 'antd/es/select';
+import Select from 'antd/es/select';
 
 type Props = {
   children: React.ReactNode;
@@ -46,12 +38,13 @@ const AdminLayout = ({ children }: Props) => {
 
   const [search, setSearch] = useState<string | undefined>(undefined);
 
-  const { data: users = { data: [] } } = useFetchAccounts({ search });
+  const { data: users = { data: [] }, isFetching } = useFetchAccounts({
+    search,
+  });
 
   const searchTimeoutRef = useRef<NodeJS.Timeout | undefined>();
   const [openComposeModal, setOpenComposeModal] = useState<boolean>(false);
   const [collapsed, setCollapsed] = useState<boolean>(false);
-  const [options, setOptions] = useState<DefaultOptionType[]>([]);
   const [documentFiles, setDocumentFiles] = useState<UploadFile[]>([]);
 
   const { mutate: logout, isPending } = useLogout();
@@ -82,19 +75,6 @@ const AdminLayout = ({ children }: Props) => {
     newDocumentFiles.splice(index, 1);
     setDocumentFiles(newDocumentFiles);
   };
-
-  useEffect(() => {
-    if (users.data.length && search) {
-      setOptions(
-        users.data.map((user) => ({
-          value: user.id,
-          label: user.email,
-        })),
-      );
-    } else {
-      setOptions([]);
-    }
-  }, [users, search]);
 
   useEffect(() => {
     return () => {
@@ -149,7 +129,18 @@ const AdminLayout = ({ children }: Props) => {
         onCancel={() => setOpenComposeModal(false)}>
         <Form layout="vertical">
           <Form.Item label="To" name="to">
-            <AutoComplete options={options} onSearch={handleSearch} />
+            <Select
+              showSearch
+              filterOption={false}
+              notFoundContent={isFetching ? <Spin size="small" /> : null}
+              onSearch={handleSearch}
+              placeholder="Search user">
+              {users.data.map((user) => (
+                <Select.Option key={user.id} value={user.id}>
+                  {user.email}
+                </Select.Option>
+              ))}
+            </Select>
           </Form.Item>
           <Form.Item label="Subject" name="subject">
             <Input type="text" />
@@ -159,6 +150,7 @@ const AdminLayout = ({ children }: Props) => {
           </Form.Item>
           <Form.Item label="Files" name="files">
             <Upload
+              fileList={documentFiles}
               multiple
               beforeUpload={handleBeforeUploadFile}
               onRemove={handleOnRemoveFile}>
