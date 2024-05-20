@@ -97,8 +97,8 @@ const SideNavBar = ({ collapsed }: Props) => {
           getItem('Teachers', 'teachers', <UserOutlined />),
         ])
       : getItem('Manage', 'manage', <SettingOutlined />),
-    getItem('Inbox', 'inbox', <InboxOutlined />),
     getItem('Account', 'account', <UserAddOutlined />),
+    getItem('Inbox', 'inbox', <InboxOutlined />),
   ];
 
   const getLevelKeys = (items1: LevelKeysProps[]) => {
