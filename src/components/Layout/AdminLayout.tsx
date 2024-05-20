@@ -26,6 +26,13 @@ import { Modal } from '../Elements/Modal';
 import { RcFile, UploadFile } from 'antd/es/upload';
 import { useFetchAccounts } from '@/features/account/api/fetchAccounts';
 import Select from 'antd/es/select';
+import { Controller, useForm } from 'react-hook-form';
+import { ErrorMessage } from '@hookform/error-message';
+import { ErrorWrapper } from '@/features/account/components/elements';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { messageValidationSchema } from '@/features/account/components/validation';
+import { useSendMessage } from '@/features/account/api/sendMessage';
+import { MessageParams, MessageType } from '@/core/domain/dto/message.dto';
 
 type Props = {
   children: React.ReactNode;
@@ -33,7 +40,7 @@ type Props = {
 
 const AdminLayout = ({ children }: Props) => {
   const {
-    useAuth: { avatar },
+    useAuth: { avatar, id },
   } = useGlobalState();
 
   const [search, setSearch] = useState<string | undefined>(undefined);
@@ -41,6 +48,11 @@ const AdminLayout = ({ children }: Props) => {
   const { data: users = { data: [] }, isFetching } = useFetchAccounts({
     search,
   });
+  const {
+    mutate: sendMessage,
+    isPending: isSendingMessage,
+    isSuccess,
+  } = useSendMessage();
 
   const searchTimeoutRef = useRef<NodeJS.Timeout | undefined>();
   const [openComposeModal, setOpenComposeModal] = useState<boolean>(false);
@@ -49,6 +61,20 @@ const AdminLayout = ({ children }: Props) => {
 
   const { mutate: logout, isPending } = useLogout();
   const navigate = useNavigate();
+
+  const {
+    control,
+    formState: { errors },
+    handleSubmit,
+    reset,
+  } = useForm({
+    defaultValues: {
+      to: '',
+      subject: '',
+      description: '',
+    },
+    resolver: yupResolver(messageValidationSchema),
+  });
 
   const handleSearch = (keyword: string) => {
     if (searchTimeoutRef.current) {
@@ -76,6 +102,27 @@ const AdminLayout = ({ children }: Props) => {
     setDocumentFiles(newDocumentFiles);
   };
 
+  const onSendMessage = ({
+    to,
+    subject,
+    description,
+  }: {
+    to: string;
+    subject: string;
+    description: string;
+  }) => {
+    const payload: MessageParams = {
+      message: description,
+      send_from_id: id,
+      to_id: to,
+      subject,
+      type: MessageType.SENT,
+      attachment: documentFiles,
+    };
+
+    sendMessage(payload);
+  };
+
   useEffect(() => {
     return () => {
       if (searchTimeoutRef.current) {
@@ -83,6 +130,14 @@ const AdminLayout = ({ children }: Props) => {
       }
     };
   }, []);
+
+  useEffect(() => {
+    if (isSuccess) {
+      setOpenComposeModal(false);
+      reset();
+      setDocumentFiles([]);
+    }
+  }, [isSuccess]);
 
   return (
     <AdminLayoutContainer>
@@ -121,33 +176,82 @@ const AdminLayout = ({ children }: Props) => {
       />
 
       <Modal
+        isLoading={isSendingMessage}
         centered
         okText="Send"
         title="Compose Message"
         open={openComposeModal}
-        onSubmit={() => {}}
+        onSubmit={handleSubmit(onSendMessage)}
         onCancel={() => setOpenComposeModal(false)}>
         <Form layout="vertical">
-          <Form.Item label="To" name="to">
-            <Select
-              showSearch
-              filterOption={false}
-              notFoundContent={isFetching ? <Spin size="small" /> : null}
-              onSearch={handleSearch}
-              placeholder="Search user">
-              {users.data.map((user) => (
-                <Select.Option key={user.id} value={user.id}>
-                  {user.email}
-                </Select.Option>
-              ))}
-            </Select>
-          </Form.Item>
-          <Form.Item label="Subject" name="subject">
-            <Input type="text" />
-          </Form.Item>
-          <Form.Item label="Description" name="description">
-            <Input.TextArea rows={6} cols={6} />
-          </Form.Item>
+          <ErrorMessage
+            errors={errors}
+            name="to"
+            render={({ message }) => <ErrorWrapper>{message}</ErrorWrapper>}
+          />
+          <Controller
+            control={control}
+            name="to"
+            render={({ field: { onChange, value } }) => (
+              <Form.Item label="To" name="to">
+                <Select
+                  status={errors.to ? 'error' : ''}
+                  showSearch
+                  filterOption={false}
+                  notFoundContent={isFetching ? <Spin size="small" /> : null}
+                  onSearch={handleSearch}
+                  onChange={onChange}
+                  value={value}
+                  placeholder="Search user">
+                  {users.data.map((user) => (
+                    <Select.Option key={user.id} value={user.id}>
+                      {user.email}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </Form.Item>
+            )}
+          />
+          <ErrorMessage
+            errors={errors}
+            name="subject"
+            render={({ message }) => <ErrorWrapper>{message}</ErrorWrapper>}
+          />
+          <Controller
+            control={control}
+            name="subject"
+            render={({ field: { onChange, value } }) => (
+              <Form.Item label="Subject" name="subject">
+                <Input
+                  status={errors.subject ? 'error' : ''}
+                  type="text"
+                  value={value}
+                  onChange={onChange}
+                />
+              </Form.Item>
+            )}
+          />
+          <ErrorMessage
+            errors={errors}
+            name="description"
+            render={({ message }) => <ErrorWrapper>{message}</ErrorWrapper>}
+          />
+          <Controller
+            control={control}
+            name="description"
+            render={({ field: { onChange, value } }) => (
+              <Form.Item label="Description" name="description">
+                <Input.TextArea
+                  status={errors.description ? 'error' : ''}
+                  rows={6}
+                  cols={6}
+                  value={value}
+                  onChange={onChange}
+                />
+              </Form.Item>
+            )}
+          />
+
           <Form.Item label="Files" name="files">
             <Upload
               fileList={documentFiles}

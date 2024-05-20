@@ -45,3 +45,9 @@ export const updateValidationSchema = yup
     username: yup.string().required('Username is required'),
   })
   .required();
+
+export const messageValidationSchema = yup.object({
+  to: yup.string().required('To is required'),
+  subject: yup.string().required('Subject is required'),
+  description: yup.string().required('Description is required'),
+});
