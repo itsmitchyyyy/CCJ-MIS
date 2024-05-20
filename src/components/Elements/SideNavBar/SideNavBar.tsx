@@ -10,6 +10,7 @@ import {
   FileProtectOutlined,
   FundOutlined,
   HomeOutlined,
+  InboxOutlined,
   OrderedListOutlined,
   SettingOutlined,
   UserAddOutlined,
@@ -96,6 +97,7 @@ const SideNavBar = ({ collapsed }: Props) => {
           getItem('Teachers', 'teachers', <UserOutlined />),
         ])
       : getItem('Manage', 'manage', <SettingOutlined />),
+    getItem('Inbox', 'inbox', <InboxOutlined />),
     getItem('Account', 'account', <UserAddOutlined />),
   ];
 
@@ -171,6 +173,9 @@ const SideNavBar = ({ collapsed }: Props) => {
         break;
       case 'announcements':
         navigate('/announcements');
+        break;
+      case 'inbox':
+        navigate('/messages/inbox');
         break;
     }
   };

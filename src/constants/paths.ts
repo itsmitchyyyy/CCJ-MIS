@@ -40,4 +40,8 @@ export const PATHS = {
   ANNOUCEMENTS: {
     BASE: '/announcements',
   },
+  MESSAGES: {
+    INBOX: '/messages/inbox',
+    SENT: '/messages/sent',
+  },
 };
