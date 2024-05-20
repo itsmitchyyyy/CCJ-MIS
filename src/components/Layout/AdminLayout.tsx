@@ -13,10 +13,11 @@ import {
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
+  MessageOutlined,
   UserOutlined,
 } from '@ant-design/icons';
 import { useLogout } from '@/features/auth/api/logout';
-import { Avatar } from 'antd';
+import { Avatar, FloatButton } from 'antd';
 import { useGlobalState } from '@/hooks/global';
 import { BACKEND_URL } from '@/config';
 import { useNavigate } from 'react-router-dom';
@@ -63,6 +64,7 @@ const AdminLayout = ({ children }: Props) => {
         </StyledHeader>
         <StyledContent>{children}</StyledContent>
       </AdminContentLayoutContainer>
+      <FloatButton type="primary" icon={<MessageOutlined />} />
     </AdminLayoutContainer>
   );
 };
