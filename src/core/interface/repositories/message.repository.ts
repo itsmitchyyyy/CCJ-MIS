@@ -1,5 +1,9 @@
 import urls from '@/constants/urls';
-import { MessageParams } from '@/core/domain/dto/message.dto';
+import {
+  Message,
+  MessageParams,
+  MessageQuery,
+} from '@/core/domain/dto/message.dto';
 import { HttpAdapter } from '@/core/usecases/ports/httpAdapter.interface';
 import MessageRepositoryInterface from '@/core/usecases/ports/message.repository.interface';
 
@@ -27,6 +31,12 @@ export default class MessageRepository implements MessageRepositoryInterface {
 
     return await this.httpAdapter.post(urls.messages.base, formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
+    });
+  };
+
+  getInboxMessages = async (query?: MessageQuery): Promise<Message[]> => {
+    return await this.httpAdapter.get(urls.messages.base, {
+      params: query,
     });
   };
 }

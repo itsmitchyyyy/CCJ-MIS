@@ -11,6 +11,7 @@ export const colors = {
     blackAlpha: '#00000040',
     warning: '#faad14',
     gainsboro: '#e1dede',
+    read: '#c2dbff',
   },
   sysLight: {
     primary: '#269DB9',
