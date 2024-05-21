@@ -43,5 +43,6 @@ export const PATHS = {
   MESSAGES: {
     INBOX: '/messages/inbox',
     SENT: '/messages/sent',
+    MESSAGE: '/messages/inbox/:id',
   },
 };

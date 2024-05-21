@@ -12,6 +12,7 @@ export const colors = {
     warning: '#faad14',
     gainsboro: '#e1dede',
     read: '#c2dbff',
+    listHover: '#3e3c3c',
   },
   sysLight: {
     primary: '#269DB9',

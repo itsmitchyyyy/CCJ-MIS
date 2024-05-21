@@ -1,8 +1,14 @@
 import { Message, MessageStatus } from '@/core/domain/dto/message.dto';
-import { MessageWrapper, MessagetHeader, Wrapper } from './elements';
+import {
+  MessageWrapper,
+  MessagetHeader,
+  StyledList,
+  Wrapper,
+} from './elements';
 import { Card, List } from 'antd';
 import { inboxDateFormatter } from '@/utils/format';
 import { colors } from '@/constants/themes';
+import { useNavigate } from 'react-router-dom';
 
 type Props = {
   messages: Message[];
@@ -10,6 +16,8 @@ type Props = {
 };
 
 const Inbox = ({ messages, isFetchingMessages }: Props) => {
+  const navigate = useNavigate();
+
   return (
     <MessageWrapper>
       <MessagetHeader>
@@ -17,12 +25,13 @@ const Inbox = ({ messages, isFetchingMessages }: Props) => {
       </MessagetHeader>
 
       <Wrapper>
-        <List
+        <StyledList
           bordered
           dataSource={messages}
           loading={isFetchingMessages}
           renderItem={(item) => (
             <List.Item
+              onClick={() => navigate(`/messages/inbox/${item.id}`)}
               key={item.id}
               style={{
                 background:

@@ -41,9 +41,11 @@ const SideNavBar = ({ collapsed }: Props) => {
   const splitPathName = pathname.split('/');
 
   const selectedKey = !pathname.includes('management')
-    ? splitPathName[1] === 'facilities' &&
-      splitPathName.length > 2 &&
-      splitPathName[2] === 'requests'
+    ? splitPathName[1] === 'messages'
+      ? ['inbox']
+      : splitPathName[1] === 'facilities' &&
+        splitPathName.length > 2 &&
+        splitPathName[2] === 'requests'
       ? ['facility_request']
       : splitPathName[1] === 'facilities' &&
         splitPathName.length > 2 &&
