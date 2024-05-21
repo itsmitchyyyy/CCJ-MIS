@@ -24,6 +24,8 @@ import SettingsRepository from '../interface/repositories/settings.repository';
 import settingsProvider from './providers/settings.provider';
 import MessageRepository from '../interface/repositories/message.repository';
 import messageProvider from './providers/message.provider';
+import NotificationRepository from '../interface/repositories/notification.repository';
+import notificationProvider from './providers/notification.provider';
 
 const httpAdapter = new HttpAxiosAdapter(axiosInstance);
 
@@ -39,6 +41,7 @@ const facilityRepository = new FacilityRepository(httpAdapter);
 const announcementRepository = new AnnouncementRepository(httpAdapter);
 const settingsRepository = new SettingsRepository(httpAdapter);
 const messageRepository = new MessageRepository(httpAdapter);
+const notificationRepository = new NotificationRepository(httpAdapter);
 
 export default {
   authProvider: authProvider({ authRepository }),
@@ -53,4 +56,5 @@ export default {
   announcementProvider: announcementProvider({ announcementRepository }),
   settingsProvider: settingsProvider({ settingsRepository }),
   messageProvider: messageProvider({ messageRepository }),
+  notificationProvider: notificationProvider({ notificationRepository }),
 };

@@ -75,11 +75,14 @@ export const NotificationContent = styled.div`
   flex-direction: column;
   gap: 1em;
   width: 360px;
+  max-height: 400px;
+  overflow-y: auto;
   background: white;
   border: 1px solid;
   border-radius: 5px;
   z-index: 9999;
   padding: 0 8px;
+  min-height: 50px;
 `;
 
 export const AvatarWrapper = styled.div`

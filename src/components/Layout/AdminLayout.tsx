@@ -24,6 +24,7 @@ import {
 import { useLogout } from '@/features/auth/api/logout';
 import {
   Avatar,
+  Badge,
   Button,
   Divider,
   FloatButton,
@@ -48,7 +49,7 @@ import { useSendMessage } from '@/features/account/api/sendMessage';
 import { MessageParams, MessageType } from '@/core/domain/dto/message.dto';
 import { useClickOutside } from '@/hooks/useClickOutside';
 import Pusher from 'pusher-js';
-import { User } from '@/core/domain/entities/user.entity';
+import { useGetNotifications } from '@/features/account/api/getNotifications';
 
 type Props = {
   children: React.ReactNode;
@@ -69,25 +70,21 @@ const AdminLayout = ({ children }: Props) => {
     isPending: isSendingMessage,
     isSuccess,
   } = useSendMessage();
+  const {
+    data: notifications = [],
+    isFetching: isFetchingNotifications,
+    refetch: refetchNotifications,
+  } = useGetNotifications({ user_id: id });
+  const { mutate: logout, isPending } = useLogout();
 
   const searchTimeoutRef = useRef<NodeJS.Timeout | undefined>();
   const [openComposeModal, setOpenComposeModal] = useState<boolean>(false);
   const [collapsed, setCollapsed] = useState<boolean>(false);
   const [documentFiles, setDocumentFiles] = useState<UploadFile[]>([]);
   const [showNotification, setShowNotification] = useState<boolean>(false);
-  const [notificationData, setNotificationData] = useState<{
-    message: string;
-    thread_id: number;
-    user: User | null;
-  }>({
-    message: '',
-    thread_id: 0,
-    user: null,
-  });
 
   const { ref, isClickOutside, setIsClickOutside } =
     useClickOutside(showNotification);
-  const { mutate: logout, isPending } = useLogout();
   const navigate = useNavigate();
 
   const {
@@ -181,7 +178,7 @@ const AdminLayout = ({ children }: Props) => {
 
     const channel = pusher.subscribe('send-message-channel');
     channel.bind('send.message', (data: any) => {
-      setNotificationData(data);
+      refetchNotifications();
     });
 
     return () => {
@@ -204,17 +201,44 @@ const AdminLayout = ({ children }: Props) => {
             <IconWrapper>
               <NotificationContainer
                 ref={ref}
-                onClick={() => setShowNotification(!showNotification)}>
-                <div>
-                  <BellOutlined style={{ fontSize: '16px' }} />
-                </div>
+                onClick={() => {
+                  setShowNotification(!showNotification);
+                  refetchNotifications();
+                }}>
+                <Badge
+                  count={
+                    notifications.filter(
+                      (notification) => notification.status === 'unread',
+                    ).length
+                  }
+                  size="small">
+                  <div>
+                    <BellOutlined style={{ fontSize: '16px' }} />
+                  </div>
+                </Badge>
                 {showNotification && (
                   <NotificationContent>
-                    <span>2</span>
-                    <span>2</span>
-                    <span>2</span>
-                    <span>2</span>
-                    <span>2</span>
+                    {isFetchingNotifications ? (
+                      <div style={{ margin: 'auto' }}>
+                        <Spin size="small" />
+                      </div>
+                    ) : (
+                      <>
+                        {notifications.length === 0 ? (
+                          <div>No notifications</div>
+                        ) : (
+                          notifications.map((notification) => (
+                            <div
+                              key={notification.id}
+                              onClick={() => navigate(notification.url)}>
+                              <span style={{ lineHeight: '24px' }}>
+                                {notification.message}
+                              </span>
+                            </div>
+                          ))
+                        )}
+                      </>
+                    )}
                   </NotificationContent>
                 )}
               </NotificationContainer>

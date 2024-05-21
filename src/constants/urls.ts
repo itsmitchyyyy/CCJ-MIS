@@ -64,4 +64,7 @@ export default {
     base: '/messages',
     threads: (id: string | number) => `/messages/threads/${id}`,
   },
+  notifications: {
+    base: '/notifications',
+  },
 };
