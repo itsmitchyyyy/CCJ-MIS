@@ -22,6 +22,6 @@ export type Notification = {
   url: string;
   event: string;
   status: NotificationStatus;
-  createdAt?: Date;
-  updatedAt?: Date;
+  created_at?: Date;
+  updated_at?: Date;
 };

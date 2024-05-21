@@ -73,7 +73,7 @@ export const NotificationContent = styled.div`
   right: 15px;
   display: flex;
   flex-direction: column;
-  gap: 1em;
+  gap: 1.5em;
   width: 360px;
   max-height: 400px;
   overflow-y: auto;
@@ -81,7 +81,7 @@ export const NotificationContent = styled.div`
   border: 1px solid;
   border-radius: 5px;
   z-index: 9999;
-  padding: 0 8px;
+  padding: 8px;
   min-height: 50px;
 `;
 

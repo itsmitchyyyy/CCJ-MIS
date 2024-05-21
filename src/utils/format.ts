@@ -15,3 +15,11 @@ export const inboxDateFormatter = (date: string) => {
 
   return formatDate(date, 'MMM D');
 };
+
+export const humanDateFormatter = (date: string) => {
+  if (date === '') {
+    return '';
+  }
+
+  return moment(date).fromNow();
+};

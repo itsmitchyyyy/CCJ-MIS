@@ -26,7 +26,6 @@ import {
   Avatar,
   Badge,
   Button,
-  Divider,
   FloatButton,
   Form,
   Input,
@@ -40,7 +39,7 @@ import { Modal } from '../Elements/Modal';
 import { RcFile, UploadFile } from 'antd/es/upload';
 import { useFetchAccounts } from '@/features/account/api/fetchAccounts';
 import Select from 'antd/es/select';
-import { Controller, set, useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
 import { ErrorWrapper } from '@/features/account/components/elements';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -52,6 +51,7 @@ import Pusher from 'pusher-js';
 import { useGetNotifications } from '@/features/account/api/getNotifications';
 import { useUpdateNotification } from '@/features/account/api/updateNotification';
 import { NotificationStatus } from '@/core/domain/dto/notification.dto';
+import { humanDateFormatter } from '@/utils/format';
 
 type Props = {
   children: React.ReactNode;
@@ -161,9 +161,10 @@ const AdminLayout = ({ children }: Props) => {
 
   useEffect(() => {
     if (isSuccess) {
-      setOpenComposeModal(false);
       reset();
       setDocumentFiles([]);
+      setOpenComposeModal(false);
+      console.log('here');
     }
   }, [isSuccess]);
 
@@ -232,6 +233,12 @@ const AdminLayout = ({ children }: Props) => {
                         ) : (
                           notifications.map((notification) => (
                             <div
+                              style={{
+                                display: 'flex',
+                                padding: '10px 0',
+                                borderBottom: '1px solid #f0f0f0',
+                                flexDirection: 'column',
+                              }}
                               key={notification.id}
                               onClick={() => {
                                 updateNotification({
@@ -243,8 +250,20 @@ const AdminLayout = ({ children }: Props) => {
                                 navigate(notification.url);
                               }}>
                               <span style={{ lineHeight: '24px' }}>
-                                {notification.message}
+                                {notification.status ===
+                                NotificationStatus.UNREAD ? (
+                                  <b>{notification.message}</b>
+                                ) : (
+                                  notification.message
+                                )}
                               </span>
+                              <small style={{ lineHeight: '24px' }}>
+                                {humanDateFormatter(
+                                  notification.created_at
+                                    ? notification.created_at.toLocaleString()
+                                    : '',
+                                )}
+                              </small>
                             </div>
                           ))
                         )}
