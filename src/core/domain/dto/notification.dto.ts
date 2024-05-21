@@ -10,6 +10,10 @@ export type NotificationQuery = {
   isEnabled?: boolean;
 };
 
+export type NotificationParams = {
+  status?: NotificationStatus;
+};
+
 export type Notification = {
   id: string;
   user_id: string;

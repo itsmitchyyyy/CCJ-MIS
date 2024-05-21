@@ -50,6 +50,8 @@ import { MessageParams, MessageType } from '@/core/domain/dto/message.dto';
 import { useClickOutside } from '@/hooks/useClickOutside';
 import Pusher from 'pusher-js';
 import { useGetNotifications } from '@/features/account/api/getNotifications';
+import { useUpdateNotification } from '@/features/account/api/updateNotification';
+import { NotificationStatus } from '@/core/domain/dto/notification.dto';
 
 type Props = {
   children: React.ReactNode;
@@ -76,6 +78,7 @@ const AdminLayout = ({ children }: Props) => {
     refetch: refetchNotifications,
   } = useGetNotifications({ user_id: id });
   const { mutate: logout, isPending } = useLogout();
+  const { mutate: updateNotification } = useUpdateNotification();
 
   const searchTimeoutRef = useRef<NodeJS.Timeout | undefined>();
   const [openComposeModal, setOpenComposeModal] = useState<boolean>(false);
@@ -230,7 +233,15 @@ const AdminLayout = ({ children }: Props) => {
                           notifications.map((notification) => (
                             <div
                               key={notification.id}
-                              onClick={() => navigate(notification.url)}>
+                              onClick={() => {
+                                updateNotification({
+                                  notificationId: notification.id,
+                                  params: {
+                                    status: NotificationStatus.READ,
+                                  },
+                                });
+                                navigate(notification.url);
+                              }}>
                               <span style={{ lineHeight: '24px' }}>
                                 {notification.message}
                               </span>
