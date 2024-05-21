@@ -11,14 +11,33 @@ export enum MessageType {
   SENT = 'sent',
 }
 
+export type MessageThread = {
+  id: string;
+  last_message_at: string;
+  last_message_id: string;
+  subject: string;
+  unread_count: number;
+  user_one: User;
+  user_one_id: string;
+  user_two: User;
+  user_two_id: string;
+  created_at?: Date;
+  updated_at?: Date;
+};
+
+export type MessageThreadResponse = MessageThread & {
+  messages: Message[];
+};
+
 export type Message = {
   id: string;
   to_id: string;
   to: User;
   message: string;
+  message_thread_id: string;
+  message_thread: MessageThread;
   send_from_id: string;
   send_from: User;
-  subject: string;
   attachment?: string[];
   type: MessageType;
   status: MessageStatus;
@@ -32,12 +51,19 @@ export type MessageParams = {
   to_id: string;
   message: string;
   send_from_id: string;
-  subject: string;
+  subject?: string;
   attachment?: UploadFile[];
   type: MessageType;
+  message_thread_id?: string;
+};
+
+export type ReplyMessageParams = Omit<MessageParams, 'subject'> & {
+  message_thread_id: string;
 };
 
 export type MessageQuery = {
   to_id?: string;
   send_from_id?: string;
+  isGroup?: boolean;
+  message_thread_id?: string;
 };

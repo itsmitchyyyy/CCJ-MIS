@@ -3,6 +3,7 @@ import {
   Message,
   MessageParams,
   MessageQuery,
+  MessageThreadResponse,
 } from '@/core/domain/dto/message.dto';
 import { HttpAdapter } from '@/core/usecases/ports/httpAdapter.interface';
 import MessageRepositoryInterface from '@/core/usecases/ports/message.repository.interface';
@@ -26,7 +27,9 @@ export default class MessageRepository implements MessageRepositoryInterface {
     formData.append('to_id', data.to_id);
     formData.append('message', data.message);
     formData.append('send_from_id', data.send_from_id);
-    formData.append('subject', data.subject);
+    if (data.subject) formData.append('subject', data.subject);
+    if (data.message_thread_id)
+      formData.append('message_thread_id', data.message_thread_id);
     formData.append('type', data.type);
 
     return await this.httpAdapter.post(urls.messages.base, formData, {
@@ -38,5 +41,16 @@ export default class MessageRepository implements MessageRepositoryInterface {
     return await this.httpAdapter.get(urls.messages.base, {
       params: query,
     });
+  };
+
+  getMessageThread = async (id: string): Promise<MessageThreadResponse> => {
+    return await this.httpAdapter.get(`${urls.messages.threads(id)}`, {});
+  };
+
+  markAsRead = async (id: string): Promise<void> => {
+    return await this.httpAdapter.put(
+      `${urls.messages.base}/${id}/mark-as-read`,
+      {},
+    );
   };
 }

@@ -62,5 +62,6 @@ export default {
   },
   messages: {
     base: '/messages',
+    threads: (id: string | number) => `/messages/threads/${id}`,
   },
 };

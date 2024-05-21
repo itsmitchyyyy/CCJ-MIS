@@ -33,3 +33,32 @@ export const StyledList = styled((props: ListProps<Message>) => (
     box-shadow: 0 0 4px ${colors.keyColors.listHover};
   }
 `;
+
+export const ActionsWrapper = styled.div`
+  margin-top: 1em;
+  display: flex;
+  width: 100%;
+`;
+
+export const ReplyFormContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 1em;
+`;
+
+export const ReplyFormWrapper = styled.div`
+  margin-top: 1em;
+  display: flex;
+  gap: 1em;
+  width: 100%;
+`;
+
+export const FormWrapper = styled.div`
+  display: flex;
+  width: 100%;
+
+  form {
+    width: 100%;
+  }
+`;

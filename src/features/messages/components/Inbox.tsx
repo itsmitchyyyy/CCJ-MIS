@@ -5,7 +5,7 @@ import {
   StyledList,
   Wrapper,
 } from './elements';
-import { Card, List } from 'antd';
+import { List } from 'antd';
 import { inboxDateFormatter } from '@/utils/format';
 import { colors } from '@/constants/themes';
 import { useNavigate } from 'react-router-dom';
@@ -13,10 +13,17 @@ import { useNavigate } from 'react-router-dom';
 type Props = {
   messages: Message[];
   isFetchingMessages?: boolean;
+  onMarkAsRead: (id: string) => void;
 };
 
-const Inbox = ({ messages, isFetchingMessages }: Props) => {
+const Inbox = ({ messages, isFetchingMessages, onMarkAsRead }: Props) => {
   const navigate = useNavigate();
+
+  const handleMarkAsRead = (item: Message) => {
+    onMarkAsRead(item.id);
+
+    navigate(`/messages/inbox/${item.message_thread_id}`);
+  };
 
   return (
     <MessageWrapper>
@@ -31,7 +38,7 @@ const Inbox = ({ messages, isFetchingMessages }: Props) => {
           loading={isFetchingMessages}
           renderItem={(item) => (
             <List.Item
-              onClick={() => navigate(`/messages/inbox/${item.id}`)}
+              onClick={() => handleMarkAsRead(item)}
               key={item.id}
               style={{
                 background:
@@ -39,7 +46,10 @@ const Inbox = ({ messages, isFetchingMessages }: Props) => {
                     ? colors.keyColors.read
                     : 'initial',
               }}>
-              <List.Item.Meta title={item.subject} description={item.message} />
+              <List.Item.Meta
+                title={item.message_thread.subject}
+                description={item.message}
+              />
               <div>{inboxDateFormatter(item.sent_at)}</div>
             </List.Item>
           )}

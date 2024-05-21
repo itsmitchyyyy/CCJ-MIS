@@ -13,7 +13,8 @@ const useSendMessage = () => {
   return useMutation({
     mutationFn: sendMessage,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['messages'] });
+      queryClient.invalidateQueries({ queryKey: ['inboxMessages'] });
+      queryClient.invalidateQueries({ queryKey: ['messageThread'] });
 
       toast.success('Message sent successfully');
     },
