@@ -142,28 +142,16 @@ const Message = ({
                 <small>{formatDate(item.sent_at, 'MMM DD, YYYY, h:mmA')}</small>
               }>
               <List.Item.Meta
-                title={
-                  messageThread.user_one_id === id
-                    ? `${messageThread.user_one?.first_name} ${messageThread.user_one?.last_name}`
-                    : `${messageThread.user_two?.first_name} ${messageThread.user_two?.last_name}`
-                }
+                title={`${item.send_from?.first_name} ${item.send_from?.last_name}`}
                 avatar={
                   <Avatar
                     src={
-                      `${BACKEND_URL}/${
-                        messageThread.user_one_id === id
-                          ? messageThread.user_one?.profile_picture
-                          : messageThread.user_two?.profile_picture
-                      }` || ''
+                      `${BACKEND_URL}/${item.send_from?.profile_picture}` || ''
                     }
                     alt="avatar"
                   />
                 }
-                description={
-                  messageThread.user_one_id === id
-                    ? messageThread.user_one?.email
-                    : messageThread.user_two?.email
-                }
+                description={item.send_from?.email}
               />
               <div>
                 <div>

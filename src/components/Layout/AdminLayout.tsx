@@ -39,7 +39,7 @@ import { Modal } from '../Elements/Modal';
 import { RcFile, UploadFile } from 'antd/es/upload';
 import { useFetchAccounts } from '@/features/account/api/fetchAccounts';
 import Select from 'antd/es/select';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller, set, useForm } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
 import { ErrorWrapper } from '@/features/account/components/elements';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -47,6 +47,8 @@ import { messageValidationSchema } from '@/features/account/components/validatio
 import { useSendMessage } from '@/features/account/api/sendMessage';
 import { MessageParams, MessageType } from '@/core/domain/dto/message.dto';
 import { useClickOutside } from '@/hooks/useClickOutside';
+import Pusher from 'pusher-js';
+import { User } from '@/core/domain/entities/user.entity';
 
 type Props = {
   children: React.ReactNode;
@@ -73,6 +75,15 @@ const AdminLayout = ({ children }: Props) => {
   const [collapsed, setCollapsed] = useState<boolean>(false);
   const [documentFiles, setDocumentFiles] = useState<UploadFile[]>([]);
   const [showNotification, setShowNotification] = useState<boolean>(false);
+  const [notificationData, setNotificationData] = useState<{
+    message: string;
+    thread_id: number;
+    user: User | null;
+  }>({
+    message: '',
+    thread_id: 0,
+    user: null,
+  });
 
   const { ref, isClickOutside, setIsClickOutside } =
     useClickOutside(showNotification);
@@ -162,6 +173,21 @@ const AdminLayout = ({ children }: Props) => {
       setIsClickOutside(false);
     }
   }, [isClickOutside]);
+
+  useEffect(() => {
+    const pusher = new Pusher(import.meta.env.VITE_PUSHER_APP_KEY, {
+      cluster: import.meta.env.VITE_PUSHER_APP_CLUSTER,
+    });
+
+    const channel = pusher.subscribe('send-message-channel');
+    channel.bind('send.message', (data: any) => {
+      setNotificationData(data);
+    });
+
+    return () => {
+      pusher.unsubscribe('send-message-channel');
+    };
+  }, []);
 
   return (
     <AdminLayoutContainer>
