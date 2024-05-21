@@ -9,8 +9,12 @@ import {
   LogoutWrapper,
   LogoutButton,
   AvatarWrapper,
+  IconWrapper,
+  NotificationContent,
+  NotificationContainer,
 } from './elements';
 import {
+  BellOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   MessageOutlined,
@@ -18,7 +22,16 @@ import {
   UserOutlined,
 } from '@ant-design/icons';
 import { useLogout } from '@/features/auth/api/logout';
-import { Avatar, Button, FloatButton, Form, Input, Spin, Upload } from 'antd';
+import {
+  Avatar,
+  Button,
+  Divider,
+  FloatButton,
+  Form,
+  Input,
+  Spin,
+  Upload,
+} from 'antd';
 import { useGlobalState } from '@/hooks/global';
 import { BACKEND_URL } from '@/config';
 import { useNavigate } from 'react-router-dom';
@@ -33,6 +46,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { messageValidationSchema } from '@/features/account/components/validation';
 import { useSendMessage } from '@/features/account/api/sendMessage';
 import { MessageParams, MessageType } from '@/core/domain/dto/message.dto';
+import { useClickOutside } from '@/hooks/useClickOutside';
 
 type Props = {
   children: React.ReactNode;
@@ -58,7 +72,10 @@ const AdminLayout = ({ children }: Props) => {
   const [openComposeModal, setOpenComposeModal] = useState<boolean>(false);
   const [collapsed, setCollapsed] = useState<boolean>(false);
   const [documentFiles, setDocumentFiles] = useState<UploadFile[]>([]);
+  const [showNotification, setShowNotification] = useState<boolean>(false);
 
+  const { ref, isClickOutside, setIsClickOutside } =
+    useClickOutside(showNotification);
   const { mutate: logout, isPending } = useLogout();
   const navigate = useNavigate();
 
@@ -139,6 +156,13 @@ const AdminLayout = ({ children }: Props) => {
     }
   }, [isSuccess]);
 
+  useEffect(() => {
+    if (isClickOutside) {
+      setShowNotification(false);
+      setIsClickOutside(false);
+    }
+  }, [isClickOutside]);
+
   return (
     <AdminLayoutContainer>
       <SideNavBar collapsed={collapsed} />
@@ -151,6 +175,24 @@ const AdminLayout = ({ children }: Props) => {
             onClick={() => setCollapsed(!collapsed)}
           />
           <LogoutWrapper>
+            <IconWrapper>
+              <NotificationContainer
+                ref={ref}
+                onClick={() => setShowNotification(!showNotification)}>
+                <div>
+                  <BellOutlined style={{ fontSize: '16px' }} />
+                </div>
+                {showNotification && (
+                  <NotificationContent>
+                    <span>2</span>
+                    <span>2</span>
+                    <span>2</span>
+                    <span>2</span>
+                    <span>2</span>
+                  </NotificationContent>
+                )}
+              </NotificationContainer>
+            </IconWrapper>
             <AvatarWrapper onClick={() => navigate('/profile')}>
               <Avatar
                 size="large"

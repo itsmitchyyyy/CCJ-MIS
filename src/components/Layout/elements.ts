@@ -55,6 +55,33 @@ export const LogoutWrapper = styled.div`
   padding: 0 1em;
 `;
 
+export const IconWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+export const NotificationContainer = styled.div`
+  cursor: pointer;
+  padding: 0 1em;
+  position: relative;
+`;
+
+export const NotificationContent = styled.div`
+  position: absolute;
+  top: 50px;
+  right: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+  width: 360px;
+  background: white;
+  border: 1px solid;
+  border-radius: 5px;
+  z-index: 9999;
+  padding: 0 8px;
+`;
+
 export const AvatarWrapper = styled.div`
   cursor: pointer;
 `;
