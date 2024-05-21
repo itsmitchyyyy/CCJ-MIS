@@ -25,6 +25,8 @@ In your root directory, copy the contents of `.env.example` inside `.env` file.
 cp .env.example .env
 ```
 
+Ask Anthony Aparre for the values of `.env` as it is needed for notifications
+
 ## Running the project
 
 ```sh
