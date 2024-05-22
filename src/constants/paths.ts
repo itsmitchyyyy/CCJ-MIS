@@ -9,6 +9,7 @@ export const PATHS = {
   },
   PROFILE: {
     BASE: '/profile',
+    ATTENDANCE_RECORDS: '/profile/attendance-records',
   },
   ACCOUNT: {
     BASE: '/account',

@@ -27,6 +27,7 @@ import {
   Avatar,
   Badge,
   Button,
+  Dropdown,
   FloatButton,
   Form,
   Input,
@@ -53,6 +54,7 @@ import { useGetNotifications } from '@/features/account/api/getNotifications';
 import { useUpdateNotification } from '@/features/account/api/updateNotification';
 import { NotificationStatus } from '@/core/domain/dto/notification.dto';
 import { humanDateFormatter } from '@/utils/format';
+import { AccessType } from '@/features/account/types';
 
 type Props = {
   children: React.ReactNode;
@@ -90,6 +92,19 @@ const AdminLayout = ({ children }: Props) => {
   const { ref, isClickOutside, setIsClickOutside } =
     useClickOutside(showNotification);
   const navigate = useNavigate();
+
+  const dropdownItems = [
+    {
+      label: 'Profile',
+      onClick: () => navigate('/profile'),
+      key: 'profile',
+    },
+    {
+      label: 'My Attendance',
+      onClick: () => navigate('/profile/attendance-records'),
+      key: 'attendance',
+    },
+  ];
 
   const {
     control,
@@ -277,14 +292,33 @@ const AdminLayout = ({ children }: Props) => {
                 )}
               </NotificationContainer>
             </IconWrapper>
-            <AvatarWrapper onClick={() => navigate('/profile')}>
-              <Avatar
-                size="large"
-                style={{ backgroundColor: '#f56a00' }}
-                src={`${BACKEND_URL}/${avatar}`}
-                icon={<UserOutlined />}
-              />
-            </AvatarWrapper>
+            {accessType === AccessType.Teacher ? (
+              <Dropdown
+                trigger={['click']}
+                placement="bottomRight"
+                menu={{
+                  items: dropdownItems,
+                }}>
+                <AvatarWrapper>
+                  <Avatar
+                    size="large"
+                    style={{ backgroundColor: '#f56a00' }}
+                    src={`${BACKEND_URL}/${avatar}`}
+                    icon={<UserOutlined />}
+                  />
+                </AvatarWrapper>
+              </Dropdown>
+            ) : (
+              <AvatarWrapper onClick={() => navigate('/profile')}>
+                <Avatar
+                  size="large"
+                  style={{ backgroundColor: '#f56a00' }}
+                  src={`${BACKEND_URL}/${avatar}`}
+                  icon={<UserOutlined />}
+                />
+              </AvatarWrapper>
+            )}
+
             <LogoutButton
               type="text"
               onClick={() => logout()}
