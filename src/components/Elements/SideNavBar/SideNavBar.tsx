@@ -87,11 +87,11 @@ const SideNavBar = ({ collapsed }: Props) => {
         ])
       : getItem('Facilities', 'facilities', <BankOutlined />),
     accessType === AccessType.Admin
-      ? getItem('Manage', 'manage', <SettingOutlined />, [
+      ? getItem('Records', 'manage', <SettingOutlined />, [
           getItem('Subjects', 'subjects', <BookOutlined />),
           getItem('Teachers', 'teachers', <UserOutlined />),
         ])
-      : getItem('Manage', 'manage', <SettingOutlined />),
+      : getItem('Records', 'manage', <SettingOutlined />),
     getItem('Account', 'account', <UserAddOutlined />),
     getItem('Inbox', 'inbox', <InboxOutlined />),
   ];
