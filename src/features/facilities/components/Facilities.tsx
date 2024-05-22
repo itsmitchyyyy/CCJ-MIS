@@ -800,7 +800,7 @@ const Facilities = ({
             control={controlBookARoom}
             name="reservation_time"
             render={({ field: { value, onChange } }) => (
-              <Form.Item label="Reservation Time">
+              <Form.Item label="Start Time">
                 <FacilitiesDateContainer>
                   <StyledTimePicker
                     status={errorsBookARoom.reservation_time && 'error'}
@@ -826,7 +826,7 @@ const Facilities = ({
             control={controlBookARoom}
             name="reservation_end_time"
             render={({ field: { value, onChange } }) => (
-              <Form.Item label="Reservation Time">
+              <Form.Item label="End Time">
                 <FacilitiesDateContainer>
                   <StyledTimePicker
                     status={errorsBookARoom.reservation_end_time && 'error'}
@@ -843,7 +843,7 @@ const Facilities = ({
                         const afterHours = [];
                         const getSelectedTime = dayjs(reservationTime).hour();
 
-                        for (let i = 0; i < getSelectedTime; i++) {
+                        for (let i = 0; i <= getSelectedTime; i++) {
                           beforeHours.push(i);
                         }
 
