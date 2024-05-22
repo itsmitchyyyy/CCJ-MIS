@@ -53,6 +53,7 @@ import { useSearchParams } from 'react-router-dom';
 import { RangePickerProps } from 'antd/es/date-picker';
 import dayjs from 'dayjs';
 import { capitalizeString } from '@/utils/string';
+import { formatDate } from '@/utils/format';
 
 type FacilityProps = {
   onCreateFacility: (data: StoreFacilityDTO) => void;
@@ -142,6 +143,35 @@ const Facilities = ({
       hidden: filterFacilityType !== FacilityType.MyRequest,
     },
     {
+      title: 'Description',
+      render: (_, data) => {
+        const record = data as FacilityDTO;
+        const requestRecord = data as FacilityRequestDTO;
+
+        return (
+          <>
+            {filterFacilityType === FacilityType.MyRequest ? (
+              <span>{requestRecord.facility.description}</span>
+            ) : (
+              <span>{record.description}</span>
+            )}
+          </>
+        );
+      },
+      key: 'description',
+    },
+    {
+      title: 'Quantity',
+      key: 'quantity',
+      render: (_, record) => {
+        const requestRecord = record as FacilityRequestDTO;
+
+        return requestRecord.facility.type === FacilityType.Equipment
+          ? requestRecord.quantity
+          : 'N/A';
+      },
+    },
+    {
       title: 'Room Number',
       key: 'room_number',
       render: (_, data) => {
@@ -161,22 +191,19 @@ const Facilities = ({
       hidden: filterFacilityType === FacilityType.Equipment,
     },
     {
-      title: 'Description',
-      render: (_, data) => {
-        const record = data as FacilityDTO;
-        const requestRecord = data as FacilityRequestDTO;
+      title: 'Date Due',
+      key: 'date_due',
+      render: (_, record) => {
+        const requestRecord = record as FacilityRequestDTO;
 
-        return (
-          <>
-            {filterFacilityType === FacilityType.MyRequest ? (
-              <span>{requestRecord.facility.description}</span>
-            ) : (
-              <span>{record.description}</span>
-            )}
-          </>
-        );
+        return requestRecord.facility.type === FacilityType.Equipment
+          ? formatDate(requestRecord.borrow_end_date || '', 'MMM DD, YYYY')
+          : formatDate(
+              `${requestRecord.reservation_date} ${requestRecord.reservation_end_time}` ||
+                '',
+              'MMM DD, YYYY hh:mm A',
+            );
       },
-      key: 'description',
     },
     {
       title: 'Status',
