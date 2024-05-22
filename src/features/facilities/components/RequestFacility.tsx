@@ -93,6 +93,14 @@ const RequestFacility = ({
         `${record.user.first_name} ${record.user.last_name}`,
     },
     {
+      title: 'Quantity',
+      key: 'quantity',
+      render: (_, record) =>
+        record.facility.type === FacilityType.Equipment
+          ? record.quantity
+          : 'N/A',
+    },
+    {
       title: 'Date Reserve/Borrowed',
       key: 'date_requested',
       render: (_, record) =>
@@ -100,6 +108,17 @@ const RequestFacility = ({
           ? formatDate(record.borrowed_date || '', 'MMM DD, YYYY')
           : formatDate(
               `${record.reservation_date} ${record.reservation_time}` || '',
+              'MMM DD, YYYY hh:mm A',
+            ),
+    },
+    {
+      title: 'Date Due',
+      key: 'date_due',
+      render: (_, record) =>
+        record.facility.type === FacilityType.Equipment
+          ? formatDate(record.borrow_end_date || '', 'MMM DD, YYYY')
+          : formatDate(
+              `${record.reservation_date} ${record.reservation_end_time}` || '',
               'MMM DD, YYYY hh:mm A',
             ),
     },

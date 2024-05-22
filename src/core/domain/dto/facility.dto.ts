@@ -60,12 +60,15 @@ export type FacilityRequestDTO = {
   approved_by_user?: User;
   reservation_date?: string;
   reservation_time?: string;
+  reservation_end_time?: string;
   approved_date?: string;
   borrowed_date?: string;
   returned_date?: string;
   rejected_reason?: string;
   status: RequestFacilityStatus;
   equipmentStatus?: EquipmentStatus;
+  quantity?: number;
+  borrow_end_date?: string;
   reason?: string;
   created_at?: Date;
   updated_at?: Date;
