@@ -114,7 +114,7 @@ const RequestFacility = ({
           : 'N/A',
     },
     {
-      title: 'Date Reserve/Borrowed',
+      title: 'Start Date Reserve/Borrowed ',
       key: 'date_requested',
       render: (_, record) =>
         record.facility.type === FacilityType.Equipment
@@ -125,7 +125,7 @@ const RequestFacility = ({
             ),
     },
     {
-      title: 'Date Due',
+      title: 'Due Date Reserve/Borrowed',
       key: 'date_due',
       render: (_, record) =>
         record.facility.type === FacilityType.Equipment
@@ -136,7 +136,7 @@ const RequestFacility = ({
             ),
     },
     {
-      title: 'Date Returned',
+      title: 'Date Returned Equipment',
       key: 'date_returned',
       render: (_, record) =>
         record.returned_date
