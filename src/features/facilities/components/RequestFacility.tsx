@@ -7,7 +7,7 @@ import {
   StyledTable,
   StyledTextArea,
 } from './elements';
-import { Form, Popconfirm, Select, Space, TableProps } from 'antd';
+import { Form, Image, Popconfirm, Select, Space, TableProps } from 'antd';
 import {
   FacilityRequestDTO,
   UpdateFacilityQuery,
@@ -31,6 +31,7 @@ import {
 } from './validation';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { ErrorMessage } from '@hookform/error-message';
+import { BACKEND_URL } from '@/config';
 
 type RequestFacilityProps = {
   isPendingUpdate?: boolean;
@@ -71,6 +72,13 @@ const RequestFacility = ({
       key: 'id',
     },
     {
+      title: 'Form Attachment',
+      key: 'form_attachment',
+      render: (_, record) => (
+        <Image width={50} src={`${BACKEND_URL}/${record.attachment}`} />
+      ),
+    },
+    {
       title: 'Type',
       key: 'facility_type',
       render: (_, record) => record.facility.type.toLocaleUpperCase(),
@@ -80,6 +88,11 @@ const RequestFacility = ({
       })),
       onFilter: (value, record) =>
         record.facility.type.startsWith(value as string),
+    },
+    {
+      title: 'Request Reason',
+      key: 'reason',
+      render: (_, record) => record.reason,
     },
     {
       title: 'Room/Equipment Name',

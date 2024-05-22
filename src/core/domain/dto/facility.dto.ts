@@ -5,6 +5,7 @@ import {
   RequestFacilityStatus,
 } from '@/features/facilities/types';
 import { User } from '../entities/user.entity';
+import { UploadFile } from 'antd';
 
 export type StoreFacilityDTO = {
   type: FacilityType;
@@ -31,6 +32,7 @@ export type StoreRequestFacilityDTO = {
   borrowed_date?: Date;
   borrow_end_date?: Date;
   quantity?: number;
+  attachment: UploadFile;
 };
 
 export type FacilityQuery = {
@@ -72,6 +74,7 @@ export type FacilityRequestDTO = {
   reason?: string;
   created_at?: Date;
   updated_at?: Date;
+  attachment: string;
 };
 
 export type FetchFacilityRequestQuery = {

@@ -11,6 +11,7 @@ import {
 } from '@/core/domain/dto/facility.dto';
 import FacilityRepositoryInterface from '@/core/usecases/ports/facility.repository.interface';
 import { HttpAdapter } from '@/core/usecases/ports/httpAdapter.interface';
+import { appendFormData } from '@/utils/formData';
 
 export default class FacilityRepository implements FacilityRepositoryInterface {
   httpAdapter: HttpAdapter;
@@ -46,9 +47,16 @@ export default class FacilityRepository implements FacilityRepositoryInterface {
     facilityId: string,
     data: StoreRequestFacilityDTO,
   ): Promise<void> => {
+    let formData = new FormData();
+
+    appendFormData(formData, data);
+
     await this.httpAdapter.post(
       `${urls.facilities.requests}/${facilityId}`,
-      data,
+      formData,
+      {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      },
     );
   };
 

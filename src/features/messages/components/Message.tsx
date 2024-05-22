@@ -169,7 +169,7 @@ const Message = ({
                             href={`${BACKEND_URL}/${file}`}
                             target="_blank"
                             rel="noreferrer">
-                            {file}
+                            {file.replace('message_attachments/', '')}
                           </a>
                         ))}
                       </Space>

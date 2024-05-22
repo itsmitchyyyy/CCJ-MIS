@@ -25,7 +25,6 @@ const AccountPage = () => {
   useEffect(() => {
     if (isSuccess) {
       queryClient.invalidateQueries({ queryKey: ['fetch-accounts'] });
-      console.log('here success');
     }
   }, [isSuccess]);
 

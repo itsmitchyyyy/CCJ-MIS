@@ -14,13 +14,17 @@ import {
 } from './elements';
 import {
   Alert,
+  Button,
   Form,
+  Image,
   Input,
   Popconfirm,
   Select,
   Space,
   TableProps,
   Tabs,
+  Upload,
+  message,
 } from 'antd';
 import {
   BorrowRequestFacility,
@@ -53,7 +57,10 @@ import { useSearchParams } from 'react-router-dom';
 import { RangePickerProps } from 'antd/es/date-picker';
 import dayjs from 'dayjs';
 import { capitalizeString } from '@/utils/string';
-import { formatDate } from '@/utils/format';
+import { formatDate, formatStringDate } from '@/utils/format';
+import { UploadOutlined } from '@ant-design/icons';
+import { RcFile, UploadFile } from 'antd/es/upload';
+import { BACKEND_URL } from '@/config';
 
 type FacilityProps = {
   onCreateFacility: (data: StoreFacilityDTO) => void;
@@ -91,6 +98,7 @@ const Facilities = ({
     useAuth: { accessType, id },
   } = useGlobalState();
 
+  const [messageApi, contextHolder] = message.useMessage();
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [openFacility, setOpenFacility] = useState<boolean>(false);
@@ -106,6 +114,8 @@ const Facilities = ({
   const [borrowDate, setBorrowDate] = useState(new Date());
   const [reservationTime, setReservationTime] = useState(new Date());
 
+  const [requestForm, setRequestForm] = useState<UploadFile[]>([]);
+
   const filterFacilityType =
     (searchParams.get('type') as FacilityType) || FacilityType.Regular;
 
@@ -116,6 +126,32 @@ const Facilities = ({
       title: 'ID',
       dataIndex: 'id',
       key: 'id',
+    },
+    {
+      title: 'Form Attachment',
+      key: 'form_attachment',
+      render: (_, record) => {
+        const data = record as FacilityRequestDTO;
+        return <Image width={50} src={`${BACKEND_URL}/${data.attachment}`} />;
+      },
+      hidden: filterFacilityType !== FacilityType.MyRequest,
+    },
+    {
+      title: 'Type',
+      key: 'type',
+      render: (_, record) =>
+        capitalizeString((record as FacilityRequestDTO).facility.type),
+      hidden: filterFacilityType !== FacilityType.MyRequest,
+    },
+    {
+      title: 'Request Reason',
+      key: 'reason',
+      render: (_, record) => {
+        const requestRecord = record as FacilityRequestDTO;
+
+        return <span>{requestRecord.reason}</span>;
+      },
+      hidden: filterFacilityType !== FacilityType.MyRequest,
     },
     {
       title: 'Name',
@@ -134,13 +170,6 @@ const Facilities = ({
           </>
         );
       },
-    },
-    {
-      title: 'Type',
-      key: 'type',
-      render: (_, record) =>
-        capitalizeString((record as FacilityRequestDTO).facility.type),
-      hidden: filterFacilityType !== FacilityType.MyRequest,
     },
     {
       title: 'Description',
@@ -170,6 +199,7 @@ const Facilities = ({
           ? requestRecord.quantity
           : 'N/A';
       },
+      hidden: filterFacilityType !== FacilityType.MyRequest,
     },
     {
       title: 'Room Number',
@@ -197,13 +227,17 @@ const Facilities = ({
         const requestRecord = record as FacilityRequestDTO;
 
         return filterFacilityType === FacilityType.Equipment
-          ? formatDate(requestRecord.borrow_end_date || '', 'MMM DD, YYYY')
-          : formatDate(
+          ? formatStringDate(
+              requestRecord.borrow_end_date || '',
+              'MMM DD, YYYY',
+            )
+          : formatStringDate(
               `${requestRecord.reservation_date} ${requestRecord.reservation_end_time}` ||
                 '',
               'MMM DD, YYYY hh:mm A',
             );
       },
+      hidden: filterFacilityType !== FacilityType.MyRequest,
     },
     {
       title: 'Status',
@@ -221,6 +255,7 @@ const Facilities = ({
           <>{record.rejected_reason && <span>{record.rejected_reason}</span>}</>
         );
       },
+      hidden: filterFacilityType !== FacilityType.MyRequest,
     },
     {
       title: 'Action',
@@ -493,10 +528,16 @@ const Facilities = ({
     reservation_end_time: Date;
     reason?: string;
   }) => {
+    if (requestForm.length === 0) {
+      messageApi.error('Please select a file to upload');
+      return;
+    }
+
     const payload: RequestFacility = {
       ...data,
       facility_id: selectedFacility?.id as string,
       user_id: id,
+      attachment: requestForm[0],
     };
 
     onRequestFacility(payload);
@@ -508,13 +549,45 @@ const Facilities = ({
     borrow_end_date: Date;
     quantity: number;
   }) => {
+    if (requestForm.length === 0) {
+      messageApi.error('Please select a file to upload');
+      return;
+    }
+
     const payload: BorrowRequestFacility = {
       ...data,
       facility_id: selectedFacility?.id as string,
       user_id: id,
+      attachment: requestForm[0],
     };
 
     onRequestFacility(payload);
+  };
+
+  const handleBeforeUploadFile = (_: RcFile, fileList: RcFile[]) => {
+    let isAllFilesValid = true;
+    if (fileList.length > 0) {
+      isAllFilesValid = fileList.every((file) => {
+        const extension = file.name.split('.').pop() as string;
+
+        return ['jpg', 'jpeg', 'png', 'gif'].includes(extension.toLowerCase());
+      });
+    }
+
+    if (isAllFilesValid) {
+      setRequestForm([...requestForm, ...fileList]);
+    } else {
+      messageApi.error('Invalid file type');
+    }
+
+    return false;
+  };
+
+  const handleOnRemoveFile = (file: UploadFile) => {
+    const index = requestForm.indexOf(file);
+    const newRequestForm = requestForm.slice();
+    newRequestForm.splice(index, 1);
+    setRequestForm(newRequestForm);
   };
 
   useEffect(() => {
@@ -537,6 +610,7 @@ const Facilities = ({
       setOpenBorrowEquipment(false);
       resetBookARoom();
       resetBorrowEquipment();
+      setRequestForm([]);
     }
   }, [isRequestSuccess]);
 
@@ -558,6 +632,7 @@ const Facilities = ({
 
   return (
     <FacilitiesWrapper>
+      {contextHolder}
       <FacilitiesHeader>
         <h1>Facilities</h1>
 
@@ -688,6 +763,7 @@ const Facilities = ({
         isLoading={isRequesting}
         open={openBookARoom}
         onCancel={() => {
+          setRequestForm([]);
           setOpenBookARoom(false);
           setSelectedFacility(null);
         }}
@@ -803,6 +879,16 @@ const Facilities = ({
               </Form.Item>
             )}
           />
+
+          <Form.Item label="Form">
+            <Upload
+              accept="image/*"
+              fileList={requestForm}
+              beforeUpload={handleBeforeUploadFile}
+              onRemove={handleOnRemoveFile}>
+              <Button icon={<UploadOutlined />}>Upload</Button>
+            </Upload>
+          </Form.Item>
         </Form>
       </Modal>
 
@@ -811,6 +897,7 @@ const Facilities = ({
         isLoading={isRequesting}
         open={openBorrowEquipment}
         onCancel={() => {
+          setRequestForm([]);
           setOpenBorrowEquipment(false);
           setSelectedFacility(null);
         }}
@@ -897,6 +984,16 @@ const Facilities = ({
               </Form.Item>
             )}
           />
+
+          <Form.Item label="Form">
+            <Upload
+              accept="image/*"
+              fileList={requestForm}
+              beforeUpload={handleBeforeUploadFile}
+              onRemove={handleOnRemoveFile}>
+              <Button icon={<UploadOutlined />}>Upload</Button>
+            </Upload>
+          </Form.Item>
         </Form>
       </Modal>
     </FacilitiesWrapper>

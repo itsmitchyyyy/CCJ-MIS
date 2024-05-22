@@ -27,7 +27,10 @@ import { RcFile, UploadFile } from 'antd/es/upload';
 import { DeleteOutlined, InboxOutlined, UserOutlined } from '@ant-design/icons';
 import { StoreAnnouncementDTO } from '@/core/domain/dto/announcement.dto';
 import { useGlobalState } from '@/hooks/global';
-import { Announcement as AnnouncementType } from '../types';
+import {
+  AnnouncementType as AnnouncementEnum,
+  Announcement as AnnouncementType,
+} from '../types';
 import { BACKEND_URL } from '@/config';
 import { formatDate } from '@/utils/format';
 import { colors } from '@/constants/themes';
@@ -109,6 +112,7 @@ const Announcement = ({
       ...data,
       images: imageFiles,
       posted_by_id: id,
+      type: AnnouncementEnum.All,
     });
   };
 

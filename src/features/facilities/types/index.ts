@@ -1,3 +1,5 @@
+import { UploadFile } from 'antd';
+
 export type Tab = {
   label: string;
   key: string;
@@ -32,6 +34,7 @@ export type RequestFacility = {
   reservation_time: Date;
   reservation_end_time: Date;
   reason?: string;
+  attachment: UploadFile;
 };
 
 export type BorrowRequestFacility = {
@@ -41,6 +44,7 @@ export type BorrowRequestFacility = {
   reason?: string;
   borrow_end_date: Date;
   quantity: number;
+  attachment: UploadFile;
 };
 
 export enum EquipmentStatus {

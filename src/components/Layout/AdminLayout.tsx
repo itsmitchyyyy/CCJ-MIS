@@ -180,7 +180,6 @@ const AdminLayout = ({ children }: Props) => {
       reset();
       setDocumentFiles([]);
       setOpenComposeModal(false);
-      console.log('here');
     }
   }, [isSuccess]);
 

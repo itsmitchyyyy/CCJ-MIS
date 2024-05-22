@@ -22,7 +22,17 @@ export const bookingValidationSchema = yup.object({
   reservation_end_time: yup
     .date()
     .required('End Time is required')
-    .min(yup.ref('reservation_time'), 'Must be after Start Time'),
+    .min(yup.ref('reservation_time'), 'Must be after Start Time')
+    .test('Interval', 'Must be at least 1 hour', function (value) {
+      if (value && this.parent.reservation_time) {
+        const start = new Date(this.parent.reservation_time);
+        const end = new Date(value);
+        const interval = end.getTime() - start.getTime();
+        return interval >= 3600000;
+      }
+
+      return false;
+    }),
   reason: yup.string(),
 });
 
