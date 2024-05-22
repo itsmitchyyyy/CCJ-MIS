@@ -166,7 +166,7 @@ const Facilities = ({
       render: (_, record) => {
         const requestRecord = record as FacilityRequestDTO;
 
-        return requestRecord.facility.type === FacilityType.Equipment
+        return filterFacilityType === FacilityType.Equipment
           ? requestRecord.quantity
           : 'N/A';
       },
@@ -196,7 +196,7 @@ const Facilities = ({
       render: (_, record) => {
         const requestRecord = record as FacilityRequestDTO;
 
-        return requestRecord.facility.type === FacilityType.Equipment
+        return filterFacilityType === FacilityType.Equipment
           ? formatDate(requestRecord.borrow_end_date || '', 'MMM DD, YYYY')
           : formatDate(
               `${requestRecord.reservation_date} ${requestRecord.reservation_end_time}` ||
