@@ -30,6 +30,7 @@ export type RequestFacility = {
   user_id: string;
   reservation_date: Date;
   reservation_time: Date;
+  reservation_end_time: Date;
   reason?: string;
 };
 
@@ -38,6 +39,8 @@ export type BorrowRequestFacility = {
   user_id: string;
   borrowed_date: Date;
   reason?: string;
+  borrow_end_date: Date;
+  quantity: number;
 };
 
 export enum EquipmentStatus {

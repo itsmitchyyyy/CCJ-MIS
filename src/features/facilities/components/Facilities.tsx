@@ -7,6 +7,7 @@ import {
   FacilitiesWrapper,
   StyledButton,
   StyledDatePicker,
+  StyledInputNumber,
   StyledTable,
   StyledTextArea,
   StyledTimePicker,
@@ -101,6 +102,8 @@ const Facilities = ({
   const [type, setType] = useState<FacilityType>(
     TabItemOptions[0].key as FacilityType,
   );
+  const [borrowDate, setBorrowDate] = useState(new Date());
+  const [reservationTime, setReservationTime] = useState(new Date());
 
   const filterFacilityType =
     (searchParams.get('type') as FacilityType) || FacilityType.Regular;
@@ -331,11 +334,13 @@ const Facilities = ({
     reset: resetBookARoom,
     control: controlBookARoom,
     formState: { errors: errorsBookARoom },
+    watch: watchBookARoom,
   } = useForm({
     resolver: yupResolver(bookingValidationSchema),
     defaultValues: {
       reservation_date: new Date(),
       reservation_time: dayjs().hour(24).minute(0).toDate(),
+      reservation_end_time: dayjs().hour(24).minute(0).toDate(),
       reason: '',
     },
   });
@@ -345,11 +350,14 @@ const Facilities = ({
     reset: resetBorrowEquipment,
     control: controlBorrowEquipment,
     formState: { errors: errorsBorrowEquipment },
+    watch: watchEquipment,
   } = useForm({
     resolver: yupResolver(borrowValidationSchema),
     defaultValues: {
       borrowed_date: new Date(),
       reason: '',
+      borrow_end_date: new Date(),
+      quantity: 1,
     },
   });
 
@@ -455,6 +463,7 @@ const Facilities = ({
   const onHandleSubmitBookARoom = (data: {
     reservation_date: Date;
     reservation_time: Date;
+    reservation_end_time: Date;
     reason?: string;
   }) => {
     const payload: RequestFacility = {
@@ -469,6 +478,8 @@ const Facilities = ({
   const onHandleSubmitBorrowEquipment = (data: {
     borrowed_date: Date;
     reason?: string;
+    borrow_end_date: Date;
+    quantity: number;
   }) => {
     const payload: BorrowRequestFacility = {
       ...data,
@@ -501,6 +512,22 @@ const Facilities = ({
       resetBorrowEquipment();
     }
   }, [isRequestSuccess]);
+
+  useEffect(() => {
+    const subscription = watchEquipment(({ borrowed_date }) => {
+      setBorrowDate(borrowed_date || new Date());
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    const subscription = watchBookARoom(({ reservation_time }) => {
+      setReservationTime(reservation_time || new Date());
+    });
+
+    return () => subscription.unsubscribe();
+  });
 
   return (
     <FacilitiesWrapper>
@@ -688,6 +715,49 @@ const Facilities = ({
           />
 
           <ErrorMessage
+            name="reservation_end_time"
+            errors={errorsBookARoom}
+            render={({ message }) => <ErrorWrapper>{message}</ErrorWrapper>}
+          />
+          <Controller
+            control={controlBookARoom}
+            name="reservation_end_time"
+            render={({ field: { value, onChange } }) => (
+              <Form.Item label="Reservation Time">
+                <FacilitiesDateContainer>
+                  <StyledTimePicker
+                    status={errorsBookARoom.reservation_end_time && 'error'}
+                    size="large"
+                    value={dayjs(new Date(value))}
+                    use12Hours
+                    format="h:mm a"
+                    onChange={onChange}
+                    needConfirm={false}
+                    minuteStep={30}
+                    disabledTime={() => ({
+                      disabledHours: () => {
+                        const beforeHours = [];
+                        const afterHours = [];
+                        const getSelectedTime = dayjs(reservationTime).hour();
+
+                        for (let i = 0; i < getSelectedTime; i++) {
+                          beforeHours.push(i);
+                        }
+
+                        for (let i = getSelectedTime + 4; i < 24; i++) {
+                          afterHours.push(i);
+                        }
+
+                        return [...beforeHours, ...afterHours];
+                      },
+                    })}
+                  />
+                </FacilitiesDateContainer>
+              </Form.Item>
+            )}
+          />
+
+          <ErrorMessage
             name="reason"
             errors={errorsBookARoom}
             render={({ message }) => <ErrorWrapper>{message}</ErrorWrapper>}
@@ -728,7 +798,7 @@ const Facilities = ({
             control={controlBorrowEquipment}
             name="borrowed_date"
             render={({ field: { value, onChange } }) => (
-              <Form.Item label="Borrow Date">
+              <Form.Item label="Start Date">
                 <FacilitiesDateContainer>
                   <StyledDatePicker
                     value={dayjs(value)}
@@ -737,6 +807,46 @@ const Facilities = ({
                     disabledDate={disabledDate}
                   />
                 </FacilitiesDateContainer>
+              </Form.Item>
+            )}
+          />
+
+          <ErrorMessage
+            name="borrow_end_date"
+            errors={errorsBorrowEquipment}
+            render={({ message }) => <ErrorWrapper>{message}</ErrorWrapper>}
+          />
+          <Controller
+            control={controlBorrowEquipment}
+            name="borrow_end_date"
+            render={({ field: { value, onChange } }) => (
+              <Form.Item label="Borrow End Date">
+                <StyledDatePicker
+                  value={dayjs(value)}
+                  onChange={onChange}
+                  size="large"
+                  minDate={dayjs(borrowDate)}
+                  maxDate={dayjs(borrowDate).add(2, 'day')}
+                />
+              </Form.Item>
+            )}
+          />
+
+          <ErrorMessage
+            name="quantity"
+            errors={errorsBorrowEquipment}
+            render={({ message }) => <ErrorWrapper>{message}</ErrorWrapper>}
+          />
+          <Controller
+            control={controlBorrowEquipment}
+            name="quantity"
+            render={({ field: { value, onChange } }) => (
+              <Form.Item label="Item Quantity">
+                <StyledInputNumber
+                  value={value}
+                  onChange={(value) => onChange(value)}
+                  min={1}
+                />
               </Form.Item>
             )}
           />

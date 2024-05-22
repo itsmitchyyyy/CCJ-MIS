@@ -19,11 +19,17 @@ export const validationSchema = yup
 export const bookingValidationSchema = yup.object({
   reservation_date: yup.date().required('Reservation date is required'),
   reservation_time: yup.date().required('Start Time is required'),
+  reservation_end_time: yup
+    .date()
+    .required('End Time is required')
+    .min(yup.ref('reservation_time'), 'Must be after Start Time'),
   reason: yup.string(),
 });
 
 export const borrowValidationSchema = yup.object({
   borrowed_date: yup.date().required('Reservation date is required'),
+  borrow_end_date: yup.date().required('End Date is required'),
+  quantity: yup.number().required('Quantity is required'),
   reason: yup.string(),
 });
 

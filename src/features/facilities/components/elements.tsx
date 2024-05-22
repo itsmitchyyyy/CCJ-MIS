@@ -3,6 +3,7 @@ import {
   Button,
   DatePicker,
   Input,
+  InputNumber,
   Select,
   Table,
   TableProps,
@@ -74,6 +75,10 @@ export const StyledButton = styled(Button)`
   &&:disabled {
     color: gray;
   }
+`;
+
+export const StyledInputNumber = styled(InputNumber)`
+  width: 100%;
 `;
 
 export const StyledTimePicker = styled(TimePicker)`
