@@ -182,7 +182,7 @@ const Message = ({
         />
 
         <ActionsWrapper>
-          {!showReply && (
+          {!showReply && !isFetchingThread && (
             <Button
               size="large"
               icon={<SendOutlined />}
