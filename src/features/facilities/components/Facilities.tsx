@@ -847,7 +847,7 @@ const Facilities = ({
                           beforeHours.push(i);
                         }
 
-                        for (let i = getSelectedTime + 4; i < 24; i++) {
+                        for (let i = getSelectedTime + 11; i < 24; i++) {
                           afterHours.push(i);
                         }
 
