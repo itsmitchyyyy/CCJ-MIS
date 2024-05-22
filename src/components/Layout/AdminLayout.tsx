@@ -255,33 +255,43 @@ const AdminLayout = ({ children }: Props) => {
                                 display: 'flex',
                                 padding: '10px 0',
                                 borderBottom: '1px solid #f0f0f0',
-                                flexDirection: 'column',
-                              }}
-                              key={notification.id}
-                              onClick={() => {
-                                updateNotification({
-                                  notificationId: notification.id,
-                                  params: {
-                                    status: NotificationStatus.READ,
-                                  },
-                                });
-                                navigate(notification.url);
+                                gap: '.5em',
                               }}>
-                              <span style={{ lineHeight: '24px' }}>
-                                {notification.status ===
-                                NotificationStatus.UNREAD ? (
-                                  <b>{notification.message}</b>
-                                ) : (
-                                  notification.message
-                                )}
-                              </span>
-                              <small style={{ lineHeight: '24px' }}>
-                                {humanDateFormatter(
-                                  notification.created_at
-                                    ? notification.created_at.toLocaleString()
-                                    : '',
-                                )}
-                              </small>
+                              <Avatar
+                                src={`${BACKEND_URL}/${notification.user.profile_picture}`}
+                              />
+                              <div
+                                style={{
+                                  display: 'flex',
+
+                                  flexDirection: 'column',
+                                }}
+                                key={notification.id}
+                                onClick={() => {
+                                  updateNotification({
+                                    notificationId: notification.id,
+                                    params: {
+                                      status: NotificationStatus.READ,
+                                    },
+                                  });
+                                  navigate(notification.url);
+                                }}>
+                                <span style={{ lineHeight: '24px' }}>
+                                  {notification.status ===
+                                  NotificationStatus.UNREAD ? (
+                                    <b>{notification.message}</b>
+                                  ) : (
+                                    notification.message
+                                  )}
+                                </span>
+                                <small style={{ lineHeight: '24px' }}>
+                                  {humanDateFormatter(
+                                    notification.created_at
+                                      ? notification.created_at.toLocaleString()
+                                      : '',
+                                  )}
+                                </small>
+                              </div>
                             </div>
                           ))
                         )}
