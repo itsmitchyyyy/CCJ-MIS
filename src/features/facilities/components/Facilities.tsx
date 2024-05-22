@@ -11,7 +11,16 @@ import {
   StyledTextArea,
   StyledTimePicker,
 } from './elements';
-import { Form, Input, Popconfirm, Select, Space, TableProps, Tabs } from 'antd';
+import {
+  Alert,
+  Form,
+  Input,
+  Popconfirm,
+  Select,
+  Space,
+  TableProps,
+  Tabs,
+} from 'antd';
 import {
   BorrowRequestFacility,
   FacilityStatus,
@@ -348,12 +357,90 @@ const Facilities = ({
     label: item.label,
     key: item.key,
     children: (
-      <StyledTable
-        loading={isFetching}
-        columns={tableColumnData}
-        dataSource={facilities}
-        rowKey="id"
-      />
+      <>
+        {item.key === FacilityType.Equipment ? (
+          <>
+            <Alert
+              showIcon
+              message="Borrowing Disclaimer"
+              type="info"
+              closable
+              description={
+                <div
+                  style={{
+                    flexDirection: 'column',
+                    display: 'flex',
+                    marginBottom: '1em',
+                  }}>
+                  <span>
+                    By borrowing items, you agree to the following terms:
+                  </span>
+                  <ol>
+                    <li>
+                      <b>Responsibility: </b>
+                      <span>
+                        You are responsible for any damage, loss, or theft of
+                        borrowed items.
+                      </span>
+                    </li>
+                    <li>
+                      <b>Care: </b>
+                      <span>
+                        Handle items with care and report any pre-existing
+                        damage immediately.
+                      </span>
+                    </li>
+                    <li>
+                      <b>Return: </b>
+                      <span>
+                        Return items by the due date. Late returns may incur
+                        fees.
+                      </span>
+                    </li>
+                    <li>
+                      <b>Damages: </b>
+                      <span>
+                        You will pay for repairs or replacement if items are
+                        damaged or lost.
+                      </span>
+                    </li>
+                    <li>
+                      <b>Usage: </b>
+                      <span>
+                        Borrowed items are for personal use only and must not be
+                        transferred to others.
+                      </span>
+                    </li>
+                    <li>
+                      <b>Indemnity: </b>
+                      <span>
+                        You agree to indemnify the school against any claims
+                        arising from misuse.
+                      </span>
+                    </li>
+                  </ol>
+
+                  <span>By borrowing, you agree to these terms.</span>
+                </div>
+              }
+            />
+
+            <StyledTable
+              loading={isFetching}
+              columns={tableColumnData}
+              dataSource={facilities}
+              rowKey="id"
+            />
+          </>
+        ) : (
+          <StyledTable
+            loading={isFetching}
+            columns={tableColumnData}
+            dataSource={facilities}
+            rowKey="id"
+          />
+        )}
+      </>
     ),
   }));
 
