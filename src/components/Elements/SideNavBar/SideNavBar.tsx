@@ -3,10 +3,8 @@ import DashboardLogo from '@/assets/images/logo_3.png';
 import { LogoWrapper } from './elements';
 import { Menu, MenuProps } from 'antd';
 import {
-  AlertOutlined,
   BankOutlined,
   BookOutlined,
-  DashboardOutlined,
   FileProtectOutlined,
   FundOutlined,
   HomeOutlined,
@@ -79,12 +77,7 @@ const SideNavBar = ({ collapsed }: Props) => {
   };
 
   const items: MenuItem[] = [
-    accessType === AccessType.Admin
-      ? getItem('Home', 'home', <HomeOutlined />, [
-          getItem('Home', 'dashboard', <DashboardOutlined />),
-          getItem('Announcement', 'announcements', <AlertOutlined />),
-        ])
-      : getItem('Home', 'dashboard', <DashboardOutlined />),
+    getItem('Home', 'dashboard', <HomeOutlined />),
     getItem('Documents', 'documents', <FileProtectOutlined />),
     accessType === AccessType.Admin
       ? getItem('Facility', 'facility', <BankOutlined />, [

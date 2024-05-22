@@ -1,5 +1,8 @@
 import urls from '@/constants/urls';
-import { StoreAnnouncementDTO } from '@/core/domain/dto/announcement.dto';
+import {
+  AnnouncementQuery,
+  StoreAnnouncementDTO,
+} from '@/core/domain/dto/announcement.dto';
 import AnnouncementRepositoryInterface from '@/core/usecases/ports/announcement.repository.interface';
 import { HttpAdapter } from '@/core/usecases/ports/httpAdapter.interface';
 import { Announcement } from '@/features/announcement/types';
@@ -29,14 +32,19 @@ export default class AnnouncementRepository
     formData.append('title', data.title);
     formData.append('description', data.description);
     formData.append('posted_by_id', data.posted_by_id);
+    formData.append('type', data.type);
 
     return await this.httpAdapter.post(urls.announcements.base, formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     });
   };
 
-  fetchAnnouncements = async (): Promise<Announcement[]> => {
-    return await this.httpAdapter.get(urls.announcements.base, {});
+  fetchAnnouncements = async (
+    query?: AnnouncementQuery,
+  ): Promise<Announcement[]> => {
+    return await this.httpAdapter.get(urls.announcements.base, {
+      params: query,
+    });
   };
 
   deleteAnnouncement = async (id: string): Promise<void> => {

@@ -1,8 +1,11 @@
-import { StoreAnnouncementDTO } from '@/core/domain/dto/announcement.dto';
+import {
+  AnnouncementQuery,
+  StoreAnnouncementDTO,
+} from '@/core/domain/dto/announcement.dto';
 import { Announcement } from '@/features/announcement/types';
 
 export default interface AnnouncementRepositoryInterface {
   createAnnouncement(data: StoreAnnouncementDTO): void;
-  fetchAnnouncements(): Promise<Announcement[]>;
+  fetchAnnouncements(query?: AnnouncementQuery): Promise<Announcement[]>;
   deleteAnnouncement(id: string): void;
 }

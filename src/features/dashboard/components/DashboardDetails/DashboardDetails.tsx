@@ -1,5 +1,9 @@
 import {
+  AddAnnouncementButton,
+  AnnouncementHeader,
   AnnouncementListContainer,
+  AnnouncementWrapper,
+  ErrorWrapper,
   StyledTextArea,
 } from '@/features/announcement/components/elements';
 import {
@@ -9,17 +13,42 @@ import {
   Wrapper,
   WrapperContainer,
 } from './elements';
-import { Avatar, Form, Image, List, Row } from 'antd';
+import {
+  Avatar,
+  Button,
+  Form,
+  Image,
+  Input,
+  List,
+  Popconfirm,
+  Radio,
+  Row,
+  UploadFile,
+  message,
+} from 'antd';
 import { BACKEND_URL } from '@/config';
-import { EditOutlined, UserOutlined } from '@ant-design/icons';
+import {
+  DeleteOutlined,
+  EditOutlined,
+  InboxOutlined,
+  UserOutlined,
+} from '@ant-design/icons';
 import { formatDate } from '@/utils/format';
-import { Announcement } from '@/features/announcement/types';
+import { Announcement, AnnouncementType } from '@/features/announcement/types';
 import { useEffect, useState } from 'react';
 import { Modal } from '@/components/Elements/Modal';
 import { Setting, SettingRequest } from '@/core/domain/dto/settings.dto';
-import { Controller, set, useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { useGlobalState } from '@/hooks/global';
 import { AccessType } from '@/features/account/types';
+import Upload, { RcFile } from 'antd/es/upload';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { validationSchema } from '@/features/announcement/components/validation';
+import { StoreAnnouncementDTO } from '@/core/domain/dto/announcement.dto';
+import { ErrorMessage } from '@hookform/error-message';
+import { colors } from '@/constants/themes';
+
+const { Dragger } = Upload;
 
 type DashboardDetailsProps = {
   isFetchingAnnouncements?: boolean;
@@ -29,6 +58,11 @@ type DashboardDetailsProps = {
   onSubmitSetting: (params: SettingRequest) => void;
   isSubmittingSetting?: boolean;
   isSuccessfullySubmittedSetting?: boolean;
+  onCreateAnnouncement: (data: StoreAnnouncementDTO) => void;
+  isCreatingAnnouncement?: boolean;
+  isSuccessfullyCreated?: boolean;
+  onDeleteAnnouncement: (id: string) => void;
+  isDeletingAnnouncement?: boolean;
 };
 
 const DashboardDetails = ({
@@ -39,13 +73,22 @@ const DashboardDetails = ({
   onSubmitSetting,
   isSubmittingSetting,
   isSuccessfullySubmittedSetting,
+  onCreateAnnouncement,
+  isCreatingAnnouncement,
+  isSuccessfullyCreated,
+  isDeletingAnnouncement,
+  onDeleteAnnouncement,
 }: DashboardDetailsProps) => {
   const {
-    useAuth: { accessType },
+    useAuth: { accessType, id },
   } = useGlobalState();
 
   const [isEditVision, setIsEditVision] = useState(false);
   const [isEditMission, setIsEditMission] = useState(false);
+  const [addAnnounceModalVisibile, setAddAnnounceModalVisibile] =
+    useState<boolean>(false);
+  const [imageFiles, setImageFiles] = useState<UploadFile[]>([]);
+  const [messageApi, contextHolder] = message.useMessage();
 
   const {
     control: controlVision,
@@ -58,6 +101,20 @@ const DashboardDetails = ({
     handleSubmit: handleSubmitMission,
     reset: resetMission,
   } = useForm();
+
+  const {
+    control: controlAnnouncement,
+    handleSubmit: handleSubmitAnnouncement,
+    formState: { errors: errorsAnnouncement },
+    reset,
+  } = useForm({
+    resolver: yupResolver(validationSchema),
+    defaultValues: {
+      title: '',
+      description: '',
+      type: AnnouncementType.All,
+    },
+  });
 
   useEffect(() => {
     if (setting) {
@@ -77,6 +134,44 @@ const DashboardDetails = ({
     onSubmitSetting(settingRequest);
   };
 
+  const handleBeforeUploadFile = (_: RcFile, fileList: RcFile[]) => {
+    let isAllFilesValid = true;
+    if (fileList.length > 0) {
+      isAllFilesValid = fileList.every((file) => {
+        const extension = file.name.split('.').pop() as string;
+
+        return ['jpg', 'jpeg', 'png', 'gif'].includes(extension.toLowerCase());
+      });
+    }
+
+    if (isAllFilesValid) {
+      setImageFiles([...imageFiles, ...fileList]);
+    } else {
+      messageApi.error('Some files are invalid file type');
+    }
+
+    return false;
+  };
+
+  const handleOnRemoveFile = (file: UploadFile) => {
+    const index = imageFiles.indexOf(file);
+    const newImageFiles = imageFiles.slice();
+    newImageFiles.splice(index, 1);
+    setImageFiles(newImageFiles);
+  };
+
+  const onHandleSubmitAnnouncement = (data: {
+    title: string;
+    description: string;
+    type: AnnouncementType;
+  }) => {
+    onCreateAnnouncement({
+      ...data,
+      images: imageFiles,
+      posted_by_id: id,
+    });
+  };
+
   useEffect(() => {
     if (isSuccessfullySubmittedSetting) {
       setIsEditVision(false);
@@ -85,6 +180,14 @@ const DashboardDetails = ({
       resetMission();
     }
   }, [isSuccessfullySubmittedSetting]);
+
+  useEffect(() => {
+    if (isSuccessfullyCreated) {
+      setAddAnnounceModalVisibile(false);
+      setImageFiles([]);
+      reset();
+    }
+  }, [isSuccessfullyCreated]);
 
   return (
     <WrapperContainer>
@@ -128,8 +231,23 @@ const DashboardDetails = ({
         </StyledCard>
       </Wrapper>
 
+      <AnnouncementWrapper>
+        {contextHolder}
+        <AnnouncementHeader>
+          <h1>Announcements</h1>
+
+          {accessType === AccessType.Admin && (
+            <AddAnnouncementButton
+              onClick={() => setAddAnnounceModalVisibile(true)}
+              type="primary"
+              size="large">
+              Add Announcement
+            </AddAnnouncementButton>
+          )}
+        </AnnouncementHeader>
+      </AnnouncementWrapper>
+
       <AnnouncementListContainer>
-        <h1>Announcements</h1>
         <StyledList
           loading={isFetchingAnnouncements}
           size="large"
@@ -138,6 +256,34 @@ const DashboardDetails = ({
           renderItem={(item) => (
             <List.Item
               key={item.id}
+              actions={
+                accessType === AccessType.Admin
+                  ? [
+                      <Popconfirm
+                        placement="topRight"
+                        title="Delete announcement"
+                        description="Are you sure you want to delete this announcement?"
+                        okText="Yes"
+                        cancelText="No"
+                        icon={
+                          <DeleteOutlined
+                            style={{ color: colors.keyColors.danger }}
+                          />
+                        }
+                        okButtonProps={{ loading: isDeletingAnnouncement }}
+                        cancelButtonProps={{ loading: isDeletingAnnouncement }}
+                        onConfirm={() => onDeleteAnnouncement(item.id)}>
+                        <Button
+                          disabled={isDeletingAnnouncement}
+                          type="text"
+                          shape="default"
+                          danger
+                          icon={<DeleteOutlined />}
+                        />
+                      </Popconfirm>,
+                    ]
+                  : undefined
+              }
               extra={
                 item.images?.length ? (
                   <Image.PreviewGroup
@@ -176,6 +322,95 @@ const DashboardDetails = ({
           )}
         />
       </AnnouncementListContainer>
+
+      <Modal
+        isLoading={isCreatingAnnouncement}
+        title="Add Announcement"
+        open={addAnnounceModalVisibile}
+        onCancel={() => setAddAnnounceModalVisibile(false)}
+        onSubmit={handleSubmitAnnouncement(onHandleSubmitAnnouncement)}>
+        <Form layout="vertical">
+          <ErrorMessage
+            errors={errorsAnnouncement}
+            name="type"
+            render={({ message }) => <ErrorWrapper>{message}</ErrorWrapper>}
+          />
+
+          <Controller
+            control={controlAnnouncement}
+            name="type"
+            render={({ field: { value, onChange } }) => (
+              <Form.Item label="Type" required>
+                <Radio.Group onChange={onChange} value={value}>
+                  <Radio value={AnnouncementType.All}>All</Radio>
+                  <Radio value={AnnouncementType.Student}>Student</Radio>
+                  <Radio value={AnnouncementType.Teacher}>Teacher</Radio>
+                </Radio.Group>
+              </Form.Item>
+            )}
+          />
+
+          <ErrorMessage
+            errors={errorsAnnouncement}
+            name="title"
+            render={({ message }) => <ErrorWrapper>{message}</ErrorWrapper>}
+          />
+          <Controller
+            control={controlAnnouncement}
+            name="title"
+            render={({ field: { value, onChange } }) => (
+              <Form.Item label="Title" required>
+                <Input
+                  value={value}
+                  size="large"
+                  onChange={onChange}
+                  status={errorsAnnouncement.title && 'error'}
+                />
+              </Form.Item>
+            )}
+          />
+
+          <ErrorMessage
+            errors={errorsAnnouncement}
+            name="description"
+            render={({ message }) => <ErrorWrapper>{message}</ErrorWrapper>}
+          />
+          <Controller
+            control={controlAnnouncement}
+            name="description"
+            render={({ field: { value, onChange } }) => (
+              <Form.Item label="Description" required>
+                <StyledTextArea
+                  rows={6}
+                  cols={5}
+                  value={value}
+                  size="large"
+                  onChange={onChange}
+                  status={errorsAnnouncement.description && 'error'}
+                />
+              </Form.Item>
+            )}
+          />
+
+          <Dragger
+            accept="image/*"
+            multiple
+            beforeUpload={handleBeforeUploadFile}
+            onRemove={handleOnRemoveFile}
+            fileList={imageFiles}>
+            <p className="ant-upload-drag-icon">
+              <InboxOutlined />
+            </p>
+            <p className="ant-upload-text">
+              Click or drag file to this area to upload
+            </p>
+            <p className="ant-upload-hint">
+              Support for a single or bulk upload. Strictly prohibited from
+              banned files.
+            </p>
+          </Dragger>
+        </Form>
+      </Modal>
 
       <Modal
         title={`Edit Vision`}

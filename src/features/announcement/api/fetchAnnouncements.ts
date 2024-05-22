@@ -1,14 +1,17 @@
 import dependencies from '@/core/dependencies';
+import { AnnouncementQuery } from '@/core/domain/dto/announcement.dto';
 import { useQuery } from '@tanstack/react-query';
 
-const fetchAnnouncements = async () => {
-  return dependencies.announcementProvider.announcementRepository.fetchAnnouncements();
+const fetchAnnouncements = async (query?: AnnouncementQuery) => {
+  return dependencies.announcementProvider.announcementRepository.fetchAnnouncements(
+    query,
+  );
 };
 
-const useFetchAnnouncements = () => {
+const useFetchAnnouncements = (query?: AnnouncementQuery) => {
   return useQuery({
-    queryKey: ['announcements'],
-    queryFn: fetchAnnouncements,
+    queryKey: ['announcements', query],
+    queryFn: () => fetchAnnouncements(query),
   });
 };
 
