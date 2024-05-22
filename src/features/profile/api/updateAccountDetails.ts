@@ -25,13 +25,16 @@ const updateAccountDetails = async (
 const useUpdateAccountDetails = () => {
   const {
     useAccount: { setAccountError },
+    useAuth: { setAvatar },
   } = useGlobalState();
   const queryClient = useQueryClient();
 
   const query = useMutation({
-    onSuccess: ({ data: { id } }) => {
+    onSuccess: ({ data: { id, profile_picture } }) => {
       queryClient.invalidateQueries({ queryKey: [`fetch-account-${id}`] });
       queryClient.invalidateQueries({ queryKey: ['profileDetails'] });
+
+      setAvatar(profile_picture);
       toast.success('Account details updated');
     },
     onError: (error: AxiosError) => {
