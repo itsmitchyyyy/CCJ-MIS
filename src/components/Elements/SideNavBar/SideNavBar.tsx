@@ -80,18 +80,18 @@ const SideNavBar = ({ collapsed }: Props) => {
     getItem('Home', 'dashboard', <HomeOutlined />),
     getItem('Documents', 'documents', <FileProtectOutlined />),
     accessType === AccessType.Admin
+      ? getItem('Records', 'manage', <SettingOutlined />, [
+          getItem('Subjects', 'subjects', <BookOutlined />),
+          getItem('Teachers', 'teachers', <UserOutlined />),
+        ])
+      : getItem('Records', 'manage', <SettingOutlined />),
+    accessType === AccessType.Admin
       ? getItem('Facility', 'facility', <BankOutlined />, [
           getItem('List', 'facilities', <OrderedListOutlined />),
           getItem('Request', 'facility_request', <BookOutlined />),
           getItem('Reports', 'facility_reports', <FundOutlined />),
         ])
       : getItem('Facilities', 'facilities', <BankOutlined />),
-    accessType === AccessType.Admin
-      ? getItem('Records', 'manage', <SettingOutlined />, [
-          getItem('Subjects', 'subjects', <BookOutlined />),
-          getItem('Teachers', 'teachers', <UserOutlined />),
-        ])
-      : getItem('Records', 'manage', <SettingOutlined />),
     getItem('Account', 'account', <UserAddOutlined />),
     getItem('Inbox', 'inbox', <InboxOutlined />),
   ];
