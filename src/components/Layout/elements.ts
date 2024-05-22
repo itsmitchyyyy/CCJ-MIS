@@ -49,10 +49,15 @@ export const AdminContentLayoutContainer = styled(Layout)``;
 
 export const LogoutWrapper = styled.div`
   display: flex;
-  flex: 1;
   justify-content: flex-end;
   align-items: center;
   padding: 0 1em;
+`;
+
+export const AccessWrapper = styled.div`
+  display: flex;
+  flex: 1;
+  justify-content: center;
 `;
 
 export const IconWrapper = styled.div`

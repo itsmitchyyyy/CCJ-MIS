@@ -12,6 +12,7 @@ import {
   IconWrapper,
   NotificationContent,
   NotificationContainer,
+  AccessWrapper,
 } from './elements';
 import {
   BellOutlined,
@@ -59,7 +60,7 @@ type Props = {
 
 const AdminLayout = ({ children }: Props) => {
   const {
-    useAuth: { avatar, id },
+    useAuth: { avatar, id, accessType },
   } = useGlobalState();
 
   const [search, setSearch] = useState<string | undefined>(undefined);
@@ -201,6 +202,9 @@ const AdminLayout = ({ children }: Props) => {
             icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
             onClick={() => setCollapsed(!collapsed)}
           />
+          <AccessWrapper>
+            <strong>{accessType.toUpperCase()}</strong>
+          </AccessWrapper>
           <LogoutWrapper>
             <IconWrapper>
               <NotificationContainer
