@@ -1,7 +1,6 @@
-import { Checkbox, Form, Input } from 'antd';
+import { Form, Input } from 'antd';
 import {
   LoginContainer,
-  RememberMeFormItem,
   StyledAlert,
   StyledButton,
   StyledCard,
@@ -70,15 +69,6 @@ export const LoginForm = ({ onSubmit, loading }: Props) => {
               </Form.Item>
             )}
           />
-          {/* <RememberMeFormItem>
-            <Form.Item name="remember" valuePropName="checked" noStyle>
-              <Checkbox>Stay Login</Checkbox>
-            </Form.Item>
-
-            <a className="login-form-forgot" href="">
-              Forgot password
-            </a>
-          </RememberMeFormItem> */}
           <Form.Item>
             <StyledButton
               disabled={!(isDirty && isValid) || loading}

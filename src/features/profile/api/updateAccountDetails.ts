@@ -1,11 +1,7 @@
 import dependencies from '@/core/dependencies';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
-import {
-  FetchAccountDetailsResponse,
-  UpdateAccountDetailResponse,
-  UpdateAccountDetails,
-} from '../types';
+import { UpdateAccountDetailResponse, UpdateAccountDetails } from '../types';
 import { AxiosError } from 'axios';
 import { ErrorMessageObject } from '@/features/account/types';
 import { useGlobalState } from '@/hooks/global';
