@@ -14,7 +14,7 @@ import { FetchTeachersResponseDTO } from '@/core/domain/dto/user.dto';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { PATHS } from '@/constants/paths';
 import { Modal } from '@/components/Elements/Modal';
-import { Controller, set, useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { AttendanceOptions } from '@/constants/data';
 import dayjs from 'dayjs';
 import {
