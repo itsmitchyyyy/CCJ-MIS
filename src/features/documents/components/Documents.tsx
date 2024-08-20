@@ -233,7 +233,7 @@ const OfficeDocuments = ({
     setAutoExpandParent(false);
   };
 
-  const handleUploadFile = (request: { is_private: boolean }) => {
+  const handleUploadFile = (request: { is_private?: boolean }) => {
     if (documentFiles.length === 0) {
       messageApi.error('Please select a file to upload');
       return;

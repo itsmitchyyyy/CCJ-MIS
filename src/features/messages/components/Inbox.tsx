@@ -9,7 +9,6 @@ import { List } from 'antd';
 import { inboxDateFormatter } from '@/utils/format';
 import { colors } from '@/constants/themes';
 import { useNavigate } from 'react-router-dom';
-import { useGlobalState } from '@/hooks/global';
 
 type Props = {
   messages: Message[];
@@ -18,9 +17,6 @@ type Props = {
 };
 
 const Inbox = ({ messages, isFetchingMessages, onMarkAsRead }: Props) => {
-  const {
-    useAuth: { id },
-  } = useGlobalState();
   const navigate = useNavigate();
 
   const handleMarkAsRead = (item: Message) => {

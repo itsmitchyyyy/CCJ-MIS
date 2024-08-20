@@ -57,7 +57,7 @@ import { useSearchParams } from 'react-router-dom';
 import { RangePickerProps } from 'antd/es/date-picker';
 import dayjs from 'dayjs';
 import { capitalizeString } from '@/utils/string';
-import { formatDate, formatStringDate } from '@/utils/format';
+import { formatStringDate } from '@/utils/format';
 import { UploadOutlined } from '@ant-design/icons';
 import { RcFile, UploadFile } from 'antd/es/upload';
 import { BACKEND_URL } from '@/config';

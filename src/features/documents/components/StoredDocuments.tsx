@@ -9,13 +9,10 @@ import {
 import {
   Breadcrumb,
   Button,
-  Col,
   Flex,
   Form,
-  Grid,
   Input,
   List,
-  Row,
   Upload,
   UploadFile,
   message,
@@ -142,7 +139,7 @@ const StoredDocuments = ({
     resolver: yupResolver(uploadValidationSchema),
   });
 
-  const handleUploadFile = (request: { type: string }) => {
+  const handleUploadFile = () => {
     if (documentFiles.length === 0) {
       messageApi.error('Please select a file to upload');
       return;

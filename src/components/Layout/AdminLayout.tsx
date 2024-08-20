@@ -196,7 +196,7 @@ const AdminLayout = ({ children }: Props) => {
     });
 
     const channel = pusher.subscribe('send-message-channel');
-    channel.bind('send.message', (data: any) => {
+    channel.bind('send.message', () => {
       refetchNotifications();
     });
 
