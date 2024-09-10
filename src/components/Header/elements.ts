@@ -21,7 +21,7 @@ export const HeaderWrapper = styled(Header)`
 
 export const LogoWrapper = styled.div`
   display: flex;
-  height: 100px;
+  height: 85px;
   width: 100px;
 
   img {
@@ -45,5 +45,16 @@ export const TitleWrapper = styled.div`
     @media only screen and ${breakpoints.lg} {
       display: block;
     }
+  }
+`;
+
+export const HeaderTitleWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  span {
+    ${typography.body.medium}
+    font-weight: bold;
   }
 `;
