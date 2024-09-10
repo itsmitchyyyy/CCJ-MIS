@@ -1,6 +1,7 @@
 import { Form, Input } from 'antd';
 import {
   LoginContainer,
+  SecondaryOptions,
   StyledAlert,
   StyledButton,
   StyledCard,
@@ -79,6 +80,10 @@ export const LoginForm = ({ onSubmit, loading }: Props) => {
               Login
             </StyledButton>
           </Form.Item>
+          <SecondaryOptions>
+            <a>Register</a>
+            <a>Forgot Password</a>
+          </SecondaryOptions>
         </Form>
       </StyledCard>
     </LoginContainer>

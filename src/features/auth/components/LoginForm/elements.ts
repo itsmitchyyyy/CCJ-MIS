@@ -29,3 +29,8 @@ export const StyledButton = styled(Button)`
 export const StyledAlert = styled(Alert)`
   color: ${colors.keyColors.danger};
 `;
+
+export const SecondaryOptions = styled.div`
+  display: flex;
+  justify-content: space-between;
+`;
