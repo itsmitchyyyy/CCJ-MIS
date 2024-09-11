@@ -6,7 +6,9 @@ export const LogoWrapper = styled.div`
   padding: 1em;
 
   img {
-    height: 70px;
-    width: 72px;
+    object-fit: cover;
+    border-radius: 50%;
+    height: 80px;
+    width: 80px;
   }
 `;

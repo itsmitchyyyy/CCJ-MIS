@@ -4,7 +4,7 @@ import {
   LogoWrapper,
   TitleWrapper,
 } from './elements';
-import logo from '@/assets/images/logo.png';
+import logo from '@/assets/images/ccj.jpg';
 // import anotherLogo from '@/assets/images/logo_4.png';
 import uc from '@/assets/images/uc.jpg';
 
