@@ -11,6 +11,8 @@ import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { validationSchema } from './validation';
 import { useGlobalState } from '@/hooks/global';
+import { useNavigate } from 'react-router-dom';
+import { PATHS } from '@/constants/paths';
 
 type Props = {
   onSubmit: (data: LoginFormValues) => void;
@@ -18,6 +20,8 @@ type Props = {
 };
 
 export const LoginForm = ({ onSubmit, loading }: Props) => {
+  const navigate = useNavigate();
+
   const {
     useAuth: { isLoggedInError },
   } = useGlobalState();
@@ -82,7 +86,9 @@ export const LoginForm = ({ onSubmit, loading }: Props) => {
           </Form.Item>
           <SecondaryOptions>
             <a>Register</a>
-            <a>Forgot Password</a>
+            <a onClick={() => navigate(PATHS.FORGOT_PASSWORD.BASE)}>
+              Forgot Password
+            </a>
           </SecondaryOptions>
         </Form>
       </StyledCard>

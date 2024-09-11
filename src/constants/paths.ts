@@ -46,4 +46,7 @@ export const PATHS = {
     SENT: '/messages/sent',
     MESSAGE: '/messages/inbox/:id',
   },
+  FORGOT_PASSWORD: {
+    BASE: '/forgot-password',
+  },
 };
