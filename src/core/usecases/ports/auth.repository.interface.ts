@@ -1,4 +1,5 @@
 import {
+  ForgotPasswordSuccessDTO,
   LoginDTO,
   LoginSuccessDTO,
   RegisterDTO,
@@ -10,4 +11,5 @@ export default interface AuthRepositoryInterface {
   register(data: RegisterDTO): Promise<LoginSuccessDTO>;
   logout(): Promise<void>;
   changePassword(data: ChangePasswordRequest): Promise<void>;
+  forgotPassword(email: string): Promise<ForgotPasswordSuccessDTO>;
 }

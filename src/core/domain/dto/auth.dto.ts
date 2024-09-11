@@ -36,3 +36,7 @@ export type RegisterDTO = {
   email: string;
   password_confirmation: string;
 };
+
+export type ForgotPasswordSuccessDTO = {
+  code: string;
+};

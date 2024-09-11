@@ -4,6 +4,7 @@ export default {
     register: `/register`,
     logout: `/logout`,
     changePassword: '/change-password',
+    forgotPassword: '/forgot-password',
   },
   user: {
     base: '/user',

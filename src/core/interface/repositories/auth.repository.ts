@@ -1,5 +1,6 @@
 import urls from '@/constants/urls';
 import {
+  ForgotPasswordSuccessDTO,
   LoginDTO,
   LoginSuccessDTO,
   RegisterDTO,
@@ -29,5 +30,9 @@ export default class AuthRepository implements AuthRepositoryInterface {
 
   changePassword = async (data: ChangePasswordRequest): Promise<void> => {
     return await this.httpAdapter.post(urls.auth.changePassword, data);
+  };
+
+  forgotPassword = async (email: string): Promise<ForgotPasswordSuccessDTO> => {
+    return await this.httpAdapter.post(urls.auth.forgotPassword, { email });
   };
 }
